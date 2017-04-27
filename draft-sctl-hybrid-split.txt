@@ -1,0 +1,280 @@
+
+
+
+
+Network Working Group                                        S. Cheshire
+Internet-Draft                                                Apple Inc.
+Intended status: Standards Track                                T. Lemon
+Expires: October 28, 2017                                  Nominum, Inc.
+                                                          April 26, 2017
+
+
+              A Split Model for Multicast Discovery Proxy
+                       draft-sctl-hybrid-split-00
+
+Abstract
+
+   This document extends the Multicast Service Discovery Proxy
+   specification by splitting the Discovery Proxy into two seperable
+   modules, one of which is lightweight and stateless, while the other
+   manages all necessary state and need not be present on every link.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on October 28, 2017.
+
+Copyright Notice
+
+   Copyright (c) 2017 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+Cheshire & Lemon        Expires October 28, 2017                [Page 1]
+
+Internet-Draft            Discovery Proxy Split               April 2017
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Query Proxy . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   3.  Relay Proxy . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
+   6.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   4
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .   5
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   5
+
+1.  Introduction
+
+   The Multicast Service Discovery Proxy [I-D.ietf-dnssd-hybrid]
+   specification defines a mechanism for discovering services on a
+   subnetted network using Multicast DNS (mDNS) [RFC6762], through the
+   use of Discovery Proxies, which issue mDNS requests on various links
+   in the network on behalf of a host attempting service discovery.
+
+   The original Discovery Proxy is specified as a single service,
+   instances of which are present on every link in a particular network.
+   When a client wishes to enumerate all services of a particular type,
+   it first queries for a list of "browsing domains," and then queries
+   for the particular service it wants, asking the same question in each
+   of the browsing domains.
+
+   In practice, for a host that is relying on a caching resolver, this
+   means that a sequence of queries will arrive at the caching resolver,
+   all nearly identical, one for each of the the set of browsing
+   domains, of which there will be one per link.  Each of the browsing
+   domains has to be at least notionally a separate zone, because each
+   domain is served by a different server.
+
+   Some of the practical implications of this are that each hybrid proxy
+   has to have a complete configuration that allows it to do data
+   translation (see Multicast Service Discovery Proxy
+   [I-D.ietf-dnssd-hybrid] section 5.5).  The local caching resolver
+   must support DNS Push, or that functionality is lost.  Supporting DNS
+   push in a general-purpose caching resolver adds complexity that in
+   most cases is not needed.
+
+   This document proposes a new architecture in which the Discovery
+   Proxy is simplified, and the caching server takes over part of the
+   work of the Discovery Proxy, and is customized to suit the specific
+   needs of multi-link service discovery.  The Discovery Proxy is split
+   into two separable modules:
+
+
+
+Cheshire & Lemon        Expires October 28, 2017                [Page 2]
+
+Internet-Draft            Discovery Proxy Split               April 2017
+
+
+   Query Proxy  which is a stateful proxy that answers queries from
+      clients and issues queries to Relay Proxies.  Any DNSSD
+      installation must have at least one Query Proxy.
+
+   Relay Proxy  which is a stateless proxy that asks questions posed by
+      Query Proxies on a link and returns responses to such questions to
+      the Query Proxy.  Exactly one query proxy is required for each
+      link on which service discovery will be supported.
+
+2.  Query Proxy
+
+   The Query proxy performs queries on behalf of hosts.  Hosts can both
+   enumerate and use services.  When a host asks to enumerate a service,
+   the Query Proxy will query Relay Proxies on every local link to
+   provide a set of answers to the host.  When a host asks to use a
+   service, the Query Proxy will issue its query only on the link on
+   which that service is known to exist. [what if it's been forgotten?]
+
+   The Query Proxy also receives sleep proxy requests and service
+   announcements that are relayed by Relay Proxies. [hm]
+
+   The Query Proxy maintains a cache which contains:
+
+   o  proactive registrations from services on local links
+
+   o  cached results of previous queries that have not yet timed out
+
+   o  sleep proxy registrations
+
+   All responses from relay proxies are cached for a period of
+   'INTERVAL' or the TTL of the response, whichever is shorter [?].
+
+   When a host has requested DNS push, or has issued a "use" query, any
+   answers available in the cache are returned immediately.  If a host
+   requests enumeration of a service type, and does not request DNS
+   push, the Query Proxy waits for 'INTERVAL' and then composes an
+   answer using whatever information is present in the cache, which will
+   include any answers that have come in from the relay proxy during the
+   wait.
+
+   The Query Proxy performs data translation, as described in Multicast
+   Service Discovery Hybrid section 5.5 [I-D.ietf-dnssd-hybrid].
+
+3.  Relay Proxy
+
+   Relay proxies are essentially stateless, although they must be
+   configured with the IP Address of a Query Proxy to which bonjour
+
+
+
+
+Cheshire & Lemon        Expires October 28, 2017                [Page 3]
+
+Internet-Draft            Discovery Proxy Split               April 2017
+
+
+   sleep proxy requests and mDNS service announcements [term?] can be
+   sent.
+
+   Relay proxies listen for DNS queries as in section 4.2 of [RFC1034].
+   Queries are tagged with EDNS0 option 'TBD' to indicate the set of
+   links on which the query is to be relayed. [this is an open item,
+   could also use different ports, or derive link name from query and
+   send a query for every link, but this requires proxies to know link
+   names.]
+
+   The Relay Proxy retransmits any question received from the Query
+   Proxy on the specified link or links using Multicast DNS [RFC6762].
+   Responses to the question are then forwarded back to the Query Proxy,
+   tagged with the link through which the response was received using
+   EDNS0 option 'TBD'.  [or port, or link name, see previous paragraph.]
+
+   The Query Proxy MUST enable DNS Push.  The Hybrid Proxy returns
+   answers using the DNS Push session in which the question was asked.
+   Questions asked outside of a DNS Push session are answered with a
+   result code of REFUSED.
+
+4.  Security Considerations
+
+5.  IANA Considerations
+
+6.  Acknowledgments
+
+7.  References
+
+7.1.  Normative References
+
+   [RFC1034]  Mockapetris, P., "Domain names - concepts and facilities",
+              STD 13, RFC 1034, DOI 10.17487/RFC1034, November 1987,
+              <http://www.rfc-editor.org/info/rfc1034>.
+
+   [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
+              DOI 10.17487/RFC6762, February 2013,
+              <http://www.rfc-editor.org/info/rfc6762>.
+
+   [I-D.ietf-dnssd-hybrid]
+              Cheshire, S., "Discovery Proxy for Multicast DNS-Based
+              Service Discovery", draft-ietf-dnssd-hybrid-06 (work in
+              progress), March 2017.
+
+
+
+
+
+
+
+
+Cheshire & Lemon        Expires October 28, 2017                [Page 4]
+
+Internet-Draft            Discovery Proxy Split               April 2017
+
+
+7.2.  Informative References
+
+   [RFC1035]  Mockapetris, P., "Domain names - implementation and
+              specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
+              November 1987, <http://www.rfc-editor.org/info/rfc1035>.
+
+Authors' Addresses
+
+   Stuart Cheshire
+   Apple Inc.
+   1 Infinite Loop
+   Cupertino, California  95014
+   USA
+
+   Phone: +1 408 974 3207
+   Email: cheshire@apple.com
+
+
+   Ted Lemon
+   Nominum, Inc.
+   800 Bridge Parkway
+   Redwood City, California  94065
+   United States of America
+
+   Phone: +1 650 381 6000
+   Email: ted.lemon@nominum.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon        Expires October 28, 2017                [Page 5]
