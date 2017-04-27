@@ -1,5 +1,7 @@
 # Original makefile from https://github.com/martinthomson/i-d-template
 
+all: draft-sctl-hybrid-bis.txt draft-sctl-hybrid-split.txt
+
 # Edited by wkumari to remove a bunch of the extra stuff I'll never use.
 
 # The following tools are used by this file.
