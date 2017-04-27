@@ -46,12 +46,9 @@
 
     <abstract>
       <t>
-	This document extends the Multicast Service Discovery Proxy specification by splitting
-	the Discovery Proxy into two seperable modules, one of which is lightweight and
-	stateless, while the other manages all necessary state and need not be present on every
-	link.  This document additionally defines a mode of service advertising where the
-	service proactively registers itself with the network rather than having to be
-	discovered.
+	This document extends the Multicast Service Discovery Proxy specification by defining a
+	mode of service advertising where the service proactively registers itself with the
+	network rather than having to be discovered.
       </t>
     </abstract>
   </front>
@@ -61,26 +58,13 @@
       <t>
 	The Multicast Service Discovery Proxy <xref target="I-D.ietf-dnssd-hybrid"/>
 	specification defines a mechanism for discovering services on a subnetted network using
-	mDNS, through the use of Discovery Proxies, which issue mDNS requests on various links
-	in the network on behalf of a host attempting service discovery.
+	Multicast DNS (mDNS) <xref target="RFC6762"/>, through the use of Discovery Proxies,
+	which issue mDNS requests on various links in the network on behalf of a host attempting
+	service discovery.
       </t>
       <t>
 	This document extends the Multicast Service Discovery Proxy in several ways:
 	<list style="symbols">
-	  <t>
-	    Split the Discovery Proxy into two separable modules:
-	    <list style="hanging">
-	      <t hangText="Query Proxy">
-		which is a stateful proxy that answers queries from clients and issues queries to
-		Relay Proxies.  Any DNSSD installation must have at least one Query Proxy.
-	      </t>
-	      <t hangText="Relay Proxy">
-		which is a stateless proxy that asks questions posed by Query Proxies on a link
-		and returns responses to such questions to the Query Proxy.  Exactly one query
-		proxy is required for each link on which service discovery will be supported.
-	      </t>
-	    </list>
-	  </t>
 	  <t>
 	    Provide a mechanism whereby a DNSSD service can advertise services proactively,
 	    instead of requiring that a service be discovered.
@@ -105,7 +89,7 @@
 	</list>	  
       </t>
     </section>
-    <section anchor="qtype" title="Query Types">
+    <section anchor="qtype" title="Operation Types">
       <t>[Is this already in a document somewhere, e.g. RFC 6763?]</t>
       <t>
 	Bonjour [ref] originally provided three primitives:
@@ -136,69 +120,6 @@
 	  </t>
 	</list>
 	[What about the other primitives implied by list in intro?]
-      </t>
-    </section>
-    <section anchor="qproxy" title="Query Proxy">
-      <t>
-	The Query proxy performs queries on behalf of hosts.  Hosts can both enumerate and use
-	services.  When a host asks to enumerate a service, the Query Proxy will query Relay
-	Proxies on every local link to provide a set of answers to the host.  When a host asks
-	to use a service, the Query Proxy will issue its query only on the link on which that
-	service is known to exist. [what if it's been forgotten?]
-      </t>
-      <t>
-	The Query Proxy also receives sleep proxy requests and service announcements that
-	are relayed by Relay Proxies. [hm]
-      </t>
-      <t>
-	The Query Proxy maintains a cache which contains:
-	<list style="symbols">
-	  <t>proactive registrations from services on local links</t>
-	  <t>cached results of previous queries that have not yet timed out</t>
-	  <t>sleep proxy registrations</t>
-	</list>
-      </t>
-      <t>
-	All responses from relay proxies are cached for a period of 'INTERVAL' or the TTL of the
-	response, whichever is shorter [?].
-      </t>
-      <t>
-	When a host has requested DNS push, or has issued a "use" query, any answers available
-	in the cache are returned immediately.  If a host requests enumeration of a service type,
-	and does not request DNS push, the Query Proxy waits for 'INTERVAL' and then composes
-	an answer using whatever information is present in the cache, which will include any
-	answers that have come in from the relay proxy during the wait.
-      </t>
-      <t>
-	The Query Proxy performs data translation, as described in Multicast Service Discovery
-	Hybrid section 5.5 <xref target="I-D.ietf-dnssd-hybrid"/>.
-      </t>
-    </section>
-
-    <section anchor="rproxy" title="Relay Proxy">
-      <t>
-	Relay proxies are essentially stateless, although they must be configured with the
-	IP Address of a Query Proxy to which bonjour sleep proxy requests and mDNS service
-	announcements [term?] can be sent.
-      </t>
-      <t>
-	Relay proxies listen for DNS queries as in section 4.2 of <xref target="RFC1034"/>.
-	Queries are tagged with EDNS0 option 'TBD' to indicate the set of links on which the
-	query is to be relayed. [this is an open item, could also use different ports, or
-	derive link name from query and send a query for every link, but this requires
-	proxies to know link names.]
-      </t>
-      <t>
-	The Relay Proxy retransmits any question received from the Query Proxy on the specified
-	link or links using Multicast DNS <xref target="RFC6762"/>.  Responses to the question
-	are then forwarded back to the Query Proxy, tagged with the link through which the
-	response was received using EDNS0 option 'TBD'.  [or port, or link name, see previous
-	paragraph.]
-      </t>
-      <t>
-	The Query Proxy MUST enable DNS Push.   The Hybrid Proxy returns answers using the DNS
-	Push session in which the question was asked.   Questions asked outside of a DNS Push
-	session are answered with a result code of REFUSED.
       </t>
     </section>
 

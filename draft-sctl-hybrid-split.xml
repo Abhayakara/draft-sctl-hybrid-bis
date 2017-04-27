@@ -80,7 +80,7 @@
       <t>
 	Some of the practical implications of this are that each hybrid proxy has to have a
 	complete configuration that allows it to do data translation (see Multicast Service
-	Discovery Proxy <xref target="I-D.ietf-dnssd-hybrid"> section 5.5).   The local
+	Discovery Proxy <xref target="I-D.ietf-dnssd-hybrid"/> section 5.5).   The local
 	caching resolver must support DNS Push, or that functionality is lost.   Supporting
 	DNS push in a general-purpose caching resolver adds complexity that in most cases
 	is not needed.
@@ -139,6 +139,97 @@
 	The Query Proxy performs data translation, as described in Multicast Service Discovery
 	Hybrid section 5.5 <xref target="I-D.ietf-dnssd-hybrid"/>.
       </t>
+      <section anchor="qp-listen" title="Query Proxy Listener Configuration">
+	<t>
+	  The Query Proxy may be implemented as a standalone DNS server that is authoritative
+	  for the local zones, or may be embedded in a DNS Proxy <xref target="RFC5625"/> or
+	  caching resolver.   How this is done depends on the context in which the Query Proxy
+	  is being used: in a campus network with knowledgable operators, it may make sense
+	  for the Query Proxy to be a simple authoritative server answering queries on port
+	  53.
+	</t>
+	<t>
+	  In a homenet <xref target="RFC7368"/>, it may be necessary to have a dedicated DNS
+	  resolver or proxy co-located in the same homenet router as the Query Proxy.  In
+	  this case, the two services will have to share port 53, or else the Query Proxy will
+	  have to listen on a dedicated IP address.   The caching resolver or proxy will
+	  have to know to direct queries for local domains to the query proxy, and not to
+	  the ISP-provided caching resolver or to authoritative servers on the Internet.
+	</t>
+	<t>
+	  If the local domains exist in the global namespace, no special configuration is
+	  required beyond what is described in DNS Service Discovery <xref target="RFC6763"/>.
+	  However, in some environments, for example the homenet environment, the local domains
+	  are in non-unique, locally-served namespaces.  These cannot be delegated in the global
+	  DNS, which means that hosts that are to access services enumerated in these zones
+	  must use a resolver that answers with the locally-served names.
+	</t>
+	<t>
+	  It may also be the case that even though the local domains exist in the global
+	  namespace, the Query Proxy is configured not to answer queries from outside of the
+	  campus network, so that if a caching resolver off of the campus network is queried,
+	  no services can be discovered.
+	</t>
+	<t>
+	  Consequently, hosts that intend to discover services must use the resolver that is
+	  offered by the local network, e.g. with DHCPv4 <xref target="RFC2132"/>, DHCPv6 <xref
+	  target="RFC3646"/> or through the RDNSS option <xref target="RFC6106"/> delivered in a
+	  router advertisement <xref target="RFC4861"/>.  Hosts that override the
+	  locally-provided DNS caching resolver risk being unable to discover services on the
+	  local network.
+	</t>
+      </section>
+      <section anchor="qp-service" title="Authoritative Service">
+	<t>
+	  The Query Proxy is functionally an authoritative server for all local zones.  It may
+	  or may not provide the full services of a local authoritative server.  For example, an
+	  authoritative server for a zone is expected to provide an SOA record for the zone and
+	  to provide a strictly increasing serial number <xref target="RFC1982"/> which
+	  increases each time the content of the zone changes.   Query Proxies may or may not
+	  provide such a service.
+	</t>
+	<t>
+	  Authoritative servers also generally provide notify and zone transfer service for
+	  secondary DNS servers.   Such services allow for secondary DNS service to be provided.
+	  However, secondary service requires that the zone contents be completely known;
+	  the Multicast Discovery Proxy does not know the full set of names in a zone, so if
+	  secondary service were provided, the contents of the zone would be incomplete, and
+	  service discovery could not succeed through the secondary server.
+	</t>
+	<t>
+	  An additional characteristic of authoritative servers is that it is expected to be the
+	  case a caching resolver may cache the content of that record for the duration of its
+	  TTL and respond directly to a query for it without consulting the authoritative
+	  server.  Similarly, an NXDOMAIN may be cached for some period of time, typically the
+	  TTL of the zone.  This is discussed in section 5.5.1 of <xref target="I-D.ietf-dnssd-hybrid"/>.
+	</t>
+      </section>
+      <section anchor="qp-cache" title="Multicast Resolution Process">
+	<t>
+	  The Query Proxy maintains a cache of answers that it has received from services on
+	  the local network.   This cache is updated whenever new data is received from the
+	  network.   Cache entries have lifetimes as specified in the TTLs of the answers that
+	  are received for mDNS queries done on local links: when a new entry is added to the
+	  cache, it is marked for expiration at the current time plus the TTL [refresh time?].
+	  At expiration, the entry is removed from the cache.
+	</t>
+	<t>
+	  When a host asks a question, the Query Proxy begins a Multicast Resolution process
+	  for that question. ...
+	</t>
+	<t>
+	  The question is then answered out of the cache.  If the host requests DNS Push service
+	  <xref target="I-D.ietf-dnssd-push"/>, answers are provided immediately for any information
+	  that is already in the cache; as new entries are added to the cache, these entries are
+	  pushed to the client as long as the DNS push session for that query remains valid.
+	</t>
+	<t>
+	  If a host did not request DNS push, the Query Proxy sets a timer for QUERYWAIT seconds
+	  and awaits results from the multicast resolution process.   When the timer has expired,
+	  the Query Proxy answers the question using whatever information is available in the
+	  cache at that time.
+	</t>
+      </section>	  
     </section>
 
     <section anchor="rproxy" title="Relay Proxy">
@@ -184,19 +275,16 @@
     <references title="Normative References">
       <?rfc include="reference.RFC.1034.xml"?>
       <?rfc include="reference.RFC.6762.xml"?>
-      <?rfc include="reference.RFC.6763.xml"?>
+      <?rfc include="reference.RFC.5625"?>
+      <?rfc include="reference.RFC.7368"?>
+      <?rfc include="reference.RFC.2132"?>
+      <?rfc include="reference.RFC.4861"?>
       <?rfc include="reference.I-D.ietf-dnssd-hybrid"?>
-      <reference anchor="SLEEP"
-		 target="https://www.torproject.org">
-	<front>
-	  <title>Bonjour Sleep Proxy</title>
-
-	  <author>
-	    <organization>Apple Computer, Inc.</organization>
-	  </author>
-	  <date year="unknown"/>
-	</front>
-      </reference>
+      <?rfc include="reference.I-D.ietf-dnssd-push"?>
+      <?rfc include="reference.RFC.3646"?>
+      <?rfc include="reference.RFC.6763"?>
+      <?rfc include="reference.RFC.6106"?>
+      <?rfc include="reference.RFC.1982"?>
     </references>
 
     <references title="Informative References">
