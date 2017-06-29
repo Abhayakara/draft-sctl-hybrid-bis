@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<rfc ipr="trust200902"
+     docName="draft-sctl-dnssd-mdns-relay-00"
+     category="std">
+
+  <?rfc toc="yes"?> <?rfc symrefs="yes"?> <?rfc autobreaks="yes"?>
+  <?rfc tocindent="yes"?> <?rfc compact="yes"?> <?rfc subcompact="no"?>
+
+  <front>
+    <title abbrev="mDNS Discovery Relay">Multicast DNS Discovery Relay</title>
+
+    <author initials='S.' surname='Cheshire' fullname='Stuart Cheshire'>
+      <organization>Apple Inc.</organization>
+      <address>
+	<postal>
+          <street>1 Infinite Loop</street>
+          <city>Cupertino</city>
+          <region>California</region>
+          <code>95014</code>
+          <country>USA</country>
+	</postal>
+	<phone>+1 408 974 3207</phone>
+	<email>cheshire@apple.com</email>
+      </address>
+    </author>
+
+    <author initials="T" surname="Lemon" fullname="Ted Lemon">
+      <organization>Nominum, Inc.</organization>
+      <address>
+	<postal>
+	  <street>800 Bridge Parkway</street>
+	  <city>Redwood City</city>
+	  <region>California</region>
+	  <country>United States of America</country>
+	  <code>94065</code>
+	</postal>
+	<phone>+1 650 381 6000</phone>
+	<email>ted.lemon@nominum.com</email>
+      </address>
+    </author>
+
+    <date month="June" year="2017" />
+
+    <abstract>
+      <t>
+	This document extends the Discovery Proxy for Multicast DNS-Based Service Discovery
+	specification.   It describes a lightweight relay mechanism, a Discovery Relay, which
+	allows Discovery Proxies to provide service on links to which the hosts on which they
+	are running are not directly attached.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="intro" title="Introduction">
+      <t>
+	The Discovery Proxy for Multicast DNS-Based Service Discovery <xref
+	target="I-D.ietf-dnssd-hybrid"/> specification defines a mechanism for discovering
+	services on a subnetted network using Multicast DNS (mDNS) <xref target="RFC6762"/>,
+	through the use of Discovery Proxies, which issue mDNS requests on various links in the
+	network on behalf of a host attempting service discovery.
+      </t>
+      <t>
+        In the original Discovery Proxy specification, it is assumed that for every link on
+        which services will be discovered, a host will be present running a full Discovery
+	Proxy.   This document introduces a lightweight Discovery Relay which can be used
+	to provide discovery services on a link without requiring a full Discovery Proxy
+	on every link.
+      </t>
+      <t>
+	The Discovery Relay operates by listening for TCP connections from Discovery Proxies.  When
+	a Discovery Proxy conneects, the connection is authenticated and secured using TLS.  The
+	Discovery Proxy can then send messages that will be relayed to specified links.  The
+	Discovery Proxy may also specify one or more links from which it wishes to receive mDNS
+	traffic.  DNS Session Signaling <xref target="I-D.ietf-dnsop-session-signal"/> is used as
+	a framework for conveying interface and IP header information associated with each
+	message.
+      </t>
+      <t>
+	The Discovery Relay functions essentially as a set of one or more virtual interfaces for the
+	Discovery proxy, one on each link to which the Discovery Relay is connected.  In a complex
+	network, it is possible that more than one Discovery Relay will be connected to the same
+	link; in this case, the Discovery Proxy ideally should only be using one such Relay
+	Proxy per link, since using more than one will generate duplicate traffic.
+      </t>
+      <t>
+	How such duplication is detected and avoided is out of scope for this document: in
+	principle it could be detected using HNCP <xref target="RFC7788"/> or configured using
+	some sort of orchestration software in conjunction with NETCONF <xref target="RFC6241"/>
+	or CPE WAN Management Protocol <xref target="TR-069"/>.
+      </t>
+    </section>
+
+    <section anchor="terms" title="Terminology">
+      <t>
+	The following definitions may be of use:
+	<list style="hanging">
+	  <t hangText="mDNS Agent">
+	    A host which sends and/or responds to mDNS queries.
+	  </t>
+	  <t hangText="Discovery Proxy">
+	    A network service which receives well-formed questions using the DNS protocol,
+	    performs multicast DNS queries to answer those questions, and responds with those
+	    answers using the DNS protocol.
+	  </t>
+	  <t hangText="Discovery Relay">
+	    A network service which sends mDNS messages on behalf of a Discovery Proxy and
+	    relays mDNS messages to a Discovery Relay.
+	  </t>
+	  <t hangText="link">
+	    A maximal set of network connection points such that any host connected to any
+	    connection point may send a packet to a host connected to any other connection
+	    point without the help of a layer 3 router.
+	  </t>
+	  <t hangText="whitelist">
+	    A list of one or more IP addresses from which a Discovery Relay may accept
+	    connections.
+	  </t>
+	</list>
+      </t>
+    </section>
+
+    <section anchor="overview" title="Protocol Overview">
+      <t>
+	This document describes a way for Discovery Proxies to communicate with mDNS agents on
+	networks to which they are not directly connected using a Discovery Relay.  As such, there
+	are two parts to the protocol: connections between Discovery Proxies and Discovery Relays,
+	and communications between Discovery Relays and mDNS agents.
+      </t>
+      <section anchor="tcpov" title="Connections between Discovery and Discovery Relays">
+	<t>
+	  Discovery Relays listen for connections.  Connections between Discovery Proxies and
+	  Discovery Relays are established by Discovery Proxies. Connections are authenticated
+	  and encrypted using TLS, with both client and server certificates.  Connections are
+	  long-lived: a Discovery Proxy is expected to send many queries over the same
+	  connection, and Discovery Relays will forward all mDNS traffic from subscribed
+	  interfaces over the connection.
+	</t>
+	<t>
+	  The stream encapsulated in TLS will carry DNS frames as in the DNS TCP protocol
+	  <xref target="RFC1035"/> Section 4.2.2.   However, all messages will be DNS Session
+	  Signaling messages <xref target="I-D.ietf-dnsop-session-signal"/>.  There will be
+	  three types of such messages:
+	  <list style="symbols">
+	    <t>Subscribe messages from Discovery Proxy to Discovery Relay</t>
+	    <t>mDNS messages from Discovery Proxy to Discovery Relay</t>
+	    <t>mDNS messages from Discovery Relay to Discovery Proxy</t>
+	  </list>
+	</t>
+	<t>
+	  Subscribe messages from the Discovery Proxy to the Discovery Relay indicate to the
+	  Discovery Relay that mDNS messages from one or more specified links are to be
+	  relayed to the Discovery Proxy.
+	</t>
+	<t>
+	  mDNS messages from a Discovery Proxy to a Discovery Relay cause the Discovery Relay
+	  to re-transmit the mDNS message on one or more links to which the Discovery Relay
+	  host is directly attached.
+	</t>
+	<t>
+	  mDNS messages from a Discovery Relay to a Discovery Proxy are sent whenever an
+	  mDNS message is received on a link to which the Discovery Relay has subscribed.
+	</t>
+	<t>
+	  Discovery Relays are responsible for keeping connections alive when no traffic has
+	  been sent during a keepalive period <xref target="I-D.ietf-dnsop-session-signal"/>
+	  Section 4.
+	</t>
+      </section>
+      <section anchor="mdnsov" title="mDNS Messages On Links">
+	<t>
+	  Discovery Relays listen for mDNS traffic on all configured links.  When a mDNS message
+	  is received on a link, it is forwarded on every open Discovery Proxy connection that
+	  is subscribed to mDNS traffic on that link.  In the event of congestion, where a
+	  particular Discovery Proxy connection has no buffer space for an mDNS message that
+	  would otherwise be forwarded to it, the mDNS message is not forwarded to it.  Normal
+	  mDNS retry behavior is used to recover from this sort of packet loss.   Discovery Relays
+	  are not expected to buffer more than a few mDNS packets.
+	</t>
+	<t>
+	  Discovery Relays accept mDNS traffic from Discovery Proxies.   Such traffic is forwarded
+	  to zero or more more links to which the Discovery Relay host is directly connected.
+	</t>
+      </section>
+    </section>
+
+    <section anchor="configuration" title="Configuration">
+      <t>
+	Discovery Proxies and Discovery Relays are configurable while in operation.
+      </t>
+      <t>
+	Discovery Relays may have a whitelist of IP addresses or IP prefixes from which connections
+	are permitted.
+      </t>
+      <t>
+	Discovery Relays publish IP address and port pairs on which they are listening for connections.
+      </t>
+      <t>
+	Discovery Proxies have lists of relay proxies to which they can connect.
+      </t>
+      <t>
+	Discovery Proxies have lists of links on which service discovery is to be supported.
+	Each link has exactly one relay proxy designated to provide service on that link.
+	If more than one Discovery Proxy is present, it is not required that each Discovery
+	Proxy use the same Discovery Relay for any particular link.
+      </t>
+    </section>
+
+    <section anchor="tlsconn" title="Connections between Discovery Proxies and Discovery Relays">
+      <t>
+	Discovery Relays listen for connections from Discovery Proxies.  Because
+	communications between Discovery Relays and Discovery Proxies must be orchestrated, no
+	special port number is reserved.   Rather, the Discovery Proxy is configured with a
+	list of Discovery Relays, their IP addresses, and the ports on which they are listening.
+	The Discovery Proxy can be reconfigured while in operation as the set of available
+	Discovery Relays, or the ports on which Discovery Relays are listening, changes.
+      </t>
+      <t>
+	When a Discovery Relay receives a connection from a discovery proxy, it may check a
+	whitelist to validate the source IP address of the connection.   If the connection
+	is not on the whitelist, the Discovery Relay will respond to the TLS Client Hello message
+	with a TLS user_canceled alert <xref target="I-D.ietf-tls-tls13"/> Section 6.1.
+      </t>
+      <t>
+	Otherwise, the Discovery Relay will attempt to complete a TLS handshake with the
+	Discovery Proxy.   Discovery Proxies are required to send the post_handshake_auth
+	extension (<xref target="I-D.ietf-tls-tls13"/> Section 4.2.5).   If a relay proxy
+	receives a ClientHello message with no post_handshake_auth extension, the
+	Discovery Relay rejects the connection with an handshake_failure alert.
+      </t>
+      <t>
+      </t>
+    </section>
+
+    <!--
+    <section anchor="qproxy" title="Query Proxy">
+      <t>
+	The Query proxy performs queries on behalf of hosts.  Hosts can both enumerate and use
+	services.  When a host asks to enumerate a service, the Query Proxy will query Relay
+	Proxies on every local link to provide a set of answers to the host.  When a host asks
+	to use a service, the Query Proxy will issue its query only on the link on which that
+	service is known to exist. [what if it's been forgotten?]
+      </t>
+      <t>
+	The Query Proxy also receives sleep proxy requests and service announcements that
+	are relayed by Discovery Relays.
+      </t>
+      <t>
+	The Query Proxy maintains a cache which contains:
+	<list style="symbols">
+	  <t>proactive registrations from services on local links</t>
+	  <t>cached results of previous queries that have not yet timed out</t>
+	  <t>sleep proxy registrations</t>
+	</list>
+      </t>
+      <t>
+	All responses from relay proxies are cached for a period of 'INTERVAL' or the TTL of the
+	response, whichever is shorter [?].
+      </t>
+      <t>
+	When a host has requested DNS push, or has issued a "use" query, any answers available
+	in the cache are returned immediately.  If a host requests enumeration of a service type,
+	and does not request DNS push, the Query Proxy waits for 'INTERVAL' and then composes
+	an answer using whatever information is present in the cache, which will include any
+	answers that have come in from the relay proxy during the wait.
+      </t>
+      <t>
+	The Query Proxy performs data translation, as described in Multicast Service Discovery
+	Hybrid section 5.5 <xref target="I-D.ietf-dnssd-hybrid"/>.
+      </t>
+      <section anchor="qp-listen" title="Query Proxy Listener Configuration">
+	<t>
+	  The Query Proxy may be implemented as a standalone DNS server that is authoritative
+	  for the local zones, or may be embedded in a DNS Proxy <xref target="RFC5625"/> or
+	  caching resolver.   How this is done depends on the context in which the Query Proxy
+	  is being used: in a campus network with knowledgable operators, it may make sense
+	  for the Query Proxy to be a simple authoritative server answering queries on port
+	  53.
+	</t>
+	<t>
+	  In a homenet <xref target="RFC7368"/>, it may be necessary to have a dedicated DNS
+	  resolver or proxy co-located in the same homenet router as the Query Proxy.  In
+	  this case, the two services will have to share port 53, or else the Query Proxy will
+	  have to listen on a dedicated IP address.   The caching resolver or proxy will
+	  have to know to direct queries for local domains to the query proxy, and not to
+	  the ISP-provided caching resolver or to authoritative servers on the Internet.
+	</t>
+	<t>
+	  If the local domains exist in the global namespace, no special configuration is
+	  required beyond what is described in DNS Service Discovery <xref target="RFC6763"/>.
+	  However, in some environments, for example the homenet environment, the local domains
+	  are in non-unique, locally-served namespaces.  These cannot be delegated in the global
+	  DNS, which means that hosts that are to access services enumerated in these zones
+	  must use a resolver that answers with the locally-served names.
+	</t>
+	<t>
+	  It may also be the case that even though the local domains exist in the global
+	  namespace, the Query Proxy is configured not to answer queries from outside of the
+	  campus network, so that if a caching resolver off of the campus network is queried,
+	  no services can be discovered.
+	</t>
+	<t>
+	  Consequently, hosts that intend to discover services must use the resolver that is
+	  offered by the local network, e.g. with DHCPv4 <xref target="RFC2132"/>, DHCPv6 <xref
+	  target="RFC3646"/> or through the RDNSS option <xref target="RFC6106"/> delivered in a
+	  router advertisement <xref target="RFC4861"/>.  Hosts that override the
+	  locally-provided DNS caching resolver risk being unable to discover services on the
+	  local network.
+	</t>
+      </section>
+      <section anchor="qp-service" title="Authoritative Service">
+	<t>
+	  The Query Proxy is functionally an authoritative server for all local zones.  It may
+	  or may not provide the full services of a local authoritative server.  For example, an
+	  authoritative server for a zone is expected to provide an SOA record for the zone and
+	  to provide a strictly increasing serial number <xref target="RFC1982"/> which
+	  increases each time the content of the zone changes.   Query Proxies may or may not
+	  provide such a service.
+	</t>
+	<t>
+	  Authoritative servers also generally provide notify and zone transfer service for
+	  secondary DNS servers.   Such services allow for secondary DNS service to be provided.
+	  However, secondary service requires that the zone contents be completely known;
+	  the Multicast Discovery Proxy does not know the full set of names in a zone, so if
+	  secondary service were provided, the contents of the zone would be incomplete, and
+	  service discovery could not succeed through the secondary server.
+	</t>
+	<t>
+	  An additional characteristic of authoritative servers is that it is expected to be the
+	  case a caching resolver may cache the content of that record for the duration of its
+	  TTL and respond directly to a query for it without consulting the authoritative
+	  server.  Similarly, an NXDOMAIN may be cached for some period of time, typically the
+	  TTL of the zone.  This is discussed in section 5.5.1 of <xref target="I-D.ietf-dnssd-hybrid"/>.
+	</t>
+      </section>
+      <section anchor="qp-cache" title="Multicast Resolution Process">
+	<t>
+	  The Query Proxy maintains a cache of answers that it has received from services on
+	  the local network.   This cache is updated whenever new data is received from the
+	  network.   Cache entries have lifetimes as specified in the TTLs of the answers that
+	  are received for mDNS queries done on local links: when a new entry is added to the
+	  cache, it is marked for expiration at the current time plus the TTL [refresh time?].
+	  At expiration, the entry is removed from the cache.
+	</t>
+	<t>
+	  When a host asks a question, the Query Proxy begins a Multicast Resolution process
+	  for that question. ...
+	</t>
+	<t>
+	  The question is then answered out of the cache.  If the host requests DNS Push service
+	  <xref target="I-D.ietf-dnssd-push"/>, answers are provided immediately for any information
+	  that is already in the cache; as new entries are added to the cache, these entries are
+	  pushed to the client as long as the DNS push session for that query remains valid.
+	</t>
+	<t>
+	  If a host did not request DNS push, the Query Proxy sets a timer for QUERYWAIT seconds
+	  and awaits results from the multicast resolution process.   When the timer has expired,
+	  the Query Proxy answers the question using whatever information is available in the
+	  cache at that time.
+	</t>
+      </section>	  
+    </section>
+
+    <section anchor="rproxy" title="Discovery Relay">
+      <t>
+	Relay proxies are essentially stateless, although they must be configured with the
+	IP Address of a Query Proxy to which bonjour sleep proxy requests and mDNS service
+	announcements [term?] can be sent.
+      </t>
+      <t>
+	Relay proxies listen for DNS queries as in section 4.2 of <xref target="RFC1034"/>.
+	Queries are tagged with EDNS0 option 'TBD' to indicate the set of links on which the
+	query is to be relayed. [this is an open item, could also use different ports, or
+	derive link name from query and send a query for every link, but this requires
+	proxies to know link names.]
+      </t>
+      <t>
+	The Discovery Relay retransmits any question received from the Query Proxy on the specified
+	link or links using Multicast DNS <xref target="RFC6762"/>.  Responses to the question
+	are then forwarded back to the Query Proxy, tagged with the link through which the
+	response was received using EDNS0 option 'TBD'.  [or port, or link name, see previous
+	paragraph.]
+      </t>
+      <t>
+	The Query Proxy MUST enable DNS Push.   The Hybrid Proxy returns answers using the DNS
+	Push session in which the question was asked.   Questions asked outside of a DNS Push
+	session are answered with a result code of REFUSED.
+      </t>
+    </section>
+    -->
+
+    <section anchor="security" title="Security Considerations">
+    </section>
+
+    <section title="IANA Considerations">
+    </section>
+
+    <section title="Acknowledgments">
+    </section>
+
+  </middle>
+
+  <back>
+
+    <references title="Normative References">
+      <?rfc include="reference.RFC.1035.xml"?>
+      <?rfc include="reference.RFC.6241.xml"?>
+      <?rfc include="reference.RFC.6762.xml"?>
+      <?rfc include="reference.RFC.6763"?>
+      <?rfc include="reference.RFC.7788"?>
+      <?rfc include="reference.I-D.ietf-dnssd-hybrid"?>
+      <?rfc include="reference.I-D.ietf-dnsop-session-signal"?>
+      <?rfc include="reference.I-D.ietf-tls-tls13"?>
+    </references>
+
+    <references title="Informative References">
+      <reference anchor="TR-069"
+                 target="https://www.broadband-forum.org/technical/download/TR-069_Amendment-5.pdf">
+        <front>
+          <title>CPE WAN Management Protocol</title>
+
+          <author>
+            <organization>Broadband Forum</organization>
+          </author>
+
+          <date month="November" year="2013"/>
+        </front>
+      </reference>
+    </references>
+  </back>
+</rfc>
