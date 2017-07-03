@@ -42,7 +42,7 @@
       </address>
     </author>
 
-    <date month="June" year="2017" />
+    <date month="July" year="2017" />
 
     <abstract>
       <t>
@@ -119,6 +119,21 @@
 	    A list of one or more IP addresses from which a Discovery Relay may accept
 	    connections.
 	  </t>
+	  <t hangText="silently discard">
+	    When a message that is not supported or not permitted is received, and the
+	    required response to that message is to "silently discard" it, that means that
+	    no response is sent by the service that is discarding the message to the service
+	    that sent it.   The service receiving the message may log the event, and may also
+	    count such events: "silently" does not preclude such behavior.
+	  </t>
+	  <t hangText="Director">
+	    A central or coordinated controlling function in an orchestrated network of
+	    Discovery Proxies and Discovery Relays (<xref target="orchfunc"/>).
+	  </t>
+	  <t hangText="Performer">
+	    The interface through which the Director directs the behavior of Discovery Proxies
+	    and Discovery Relays (<xref target="orchfunc"/>).
+	  </t>
 	</list>
       </t>
     </section>
@@ -187,6 +202,461 @@
       </section>
     </section>
 
+    <section anchor="orchestration" title="Orchestration">
+      <t>
+	In order for one or more Discovery Proxies to make use of one or more Discovery Relays
+	to provide service discovery on one or more links, the set of links on which service
+	will be provided must be known, the set of Discovery Relays for those links must be
+	known, and the set of Discovery Proxies allowed to connect to those Discovery Relays
+	must be known.  We assume that this information is maintained in some sort of
+	orchestration system.
+      </t>
+      <t>
+	Although it is of course possible to configure such an environment with a set of static
+	configuration files, it is most useful to consider such a network to be dynamic, with
+	links potentially being added and removed, Discovery Proxies being added and removed,
+	and Discovery Relays being added and removed.  This document takes no position on which
+	specific orchestration system will be used, but does specify the inputs and outputs of
+	such a system that will be required for successful operation.  In the case of static
+	configuration, these inputs and outputs are also the same; the only difference is that
+	they do not change without human intervention.
+      </t>
+      <t>
+	It is not strictly necessary that all participants in the orchestration process have
+	complete information.  It may be desirable for example to have more than one Discovery
+	Proxy managed by an orchestration system, but to have different Discovery Proxies
+	support different links.   The set of primitives described here can be used to
+	implement configurations where multiple Discovery Proxies are present and supporting
+	disjoint, overlapping or identical sets of links.
+      </t>
+      <t>
+	There is a special case of orchestration that may be desirable in some settings: when a
+	node may need to be capable of providing either Discovery Proxy service or Discovery
+	Relay service, and is configured to provide Discovery Proxy service, it would be useful
+	to have a way to automatically configure the Discovery Relay to use the Discovery Proxy
+	just on that one node, without requiring a network-wide orchestration system.  In the
+	case of a node that supports orchestration through HNCP, however, this is unnecessary:
+	HNCP will work to provide orchestration even on a single node.
+      </t>
+      <section anchor="orchfunc" title="Orchestration System Functional Overview">
+	<t>
+	  Conceptually, the orchestration system has two parts: the part that manages the
+	  network, and the part an instance of which is present on each node in the network that
+	  is orchestrated by the system.  In a cooperative system such as HNCP <xref
+	  target="RFC7788"/>, orchestration is done cooperatively, and the two functions are
+	  present on every participating node.  In a managed system using NETCONF <xref
+	  target="RFC6241"/>, a central service pushes configuration information to managed
+	  nodes, and pulls status information from managed nodes.  For this discussion, which of
+	  these models is used (or whether some other model is used) is immaterial.  The
+	  functional division is the same in either case: conceptually there is one function
+	  that does the orchestration called the Director, and there are one more more
+	  functions to which the orchestration applies, called Performers.
+	</t>
+	<t>
+	  The Director is receptive to primitives from Performers.  Performers apply primitives
+	  announced to them by the Director, and announce primitives to the Director.  The
+	  Director announces primitives to Performers, based on its operating model and its
+	  configuration, based either in changes to the network or to announcements from
+	  Performers.
+	</t>
+	<t>
+	  It is permissible for nodes to provide both Discovery Proxy and Discovery Relay
+	  service at the same time.  In this case, there is a further conceptual functional
+	  division: on such a node, there are two Performers: the Discovery Proxy Performer and
+	  the Discovery Relay Performer.  These may be the same program, or they may be
+	  functionally separate; which is the case is beyond the scope of this document.  The
+	  reason for making this distinction is to point out that on a node providing both
+	  services, both Performers may receive every announcement sent by the Director.  And
+	  of course the Director receives announcements sent by either Performer.
+	</t>
+      </section>
+      <section anchor="orchprim" title="Orchestration Primitives">
+	<section title="Link Present">
+	  <t>
+	    The 'Link Present' primitive is used by the Director to communicate the presence
+	    of a link to Performers.   'Link Present' primitives include the following data:
+	    <list style="hanging">
+	      <t hangText="link identifier">
+		One or more opaque identifiers, each of which identifies a link that is present
+		on the orchestrated network.  Each identifier is unique among all link
+		identifiers managed by the Director.
+	      </t>
+	    </list>
+	  </t>
+	</section>
+	<section title="Link Remove">
+	  <t>
+	    The 'Link Remove' primitive is used by the Director to communicate to Performers
+	    that a link that was formerly present is no longer present.  The 'Link Remove'
+	    primitive includes the following data:
+	    <list style="hanging">
+	      <t hangText="link identifier">
+		One or more opaque identifiers, each of which identifies a link that is present
+		on the orchestrated network.  Each identifier is unique among all link
+		identifiers managed by the Director.
+	      </t>
+	    </list>
+	  </t>
+	</section>
+	<section anchor="dpa" title="Discovery Proxy Available">
+	  <t>
+	    The 'Discovery Proxy Available' primitive is used by Discovery Proxy Performers to
+	    announce their availability to the Director, and by the Director to announce to
+	    Discovery Relay Performers that Discovery Proxies are present and enabled.  This
+	    primitive is only used for nodes that provide Discovery Proxy service and can use
+	    Discovery Relays: a Discovery Proxy that does not support Discovery Proxy service is
+	    never announced in this way.  The 'Discovery Proxy Available' primitive includes the
+	    following data:
+	    <list style="hanging">
+	      <t hangText="node identifier">
+		The node identifier of the Discovery Proxy, unique among all nodes managed by a
+		Director.
+	      </t>
+	      <t hangText="IP addresses">
+		One or more IP addresses configured on the network interfaces of the node
+		making the announcement.   This list must include all IP addresses from which
+		the Discovery Proxy might connect to Discovery Relays, but need not include
+		any other IP addresses.
+	      </t>
+	      <t hangText="TLS Certificate">
+		A TLS PKI certificate or bare public key which will be used by the Discovery
+		Proxy to authenticate itself when connecting to Discovery Relays.
+	      </t>
+	    </list>
+	  </t>
+	</section>
+	<section title="Discovery Proxy Resigning">
+	  <t>
+	    The 'Discovery Proxy Resigning' primitive is used by Discovery Proxies to announce
+	    to the Conductor that they are no longer available, and by the Conductor to announce
+	    to Discovery Relay performers that a Discovery Proxy is no longer present or
+	    enabled.  The 'Discovery Proxy Resigning' primitive includes the following data:
+	    <list>
+	      <t hangText="node identifier">
+		The node identifier of the Discovery Proxy, unique among all nodes managed by a
+		Director.
+	      </t>
+	    </list>
+	  </t>
+	</section>
+	<section title="Discovery Relay Available">
+	  <t>
+	    Nodes that can provide Discovery Relay service announce their presence to the
+	    Director.  The 'Discovery Relay Available' primitive includes the following data:
+	    <list style="hanging">
+	      <t hangText="node identifier">
+		The node identifier of the Discovery Relay, unique among all nodes managed by a
+		Director.
+	      </t>
+	      <t hangText="IP addresses">
+		A list of IP addresses on which the Discovery Relay may be contacted.
+	      </t>
+	      <t hangText="Port">
+		TCP Port on which the Discovery Relay will be listening for connections.
+	      </t>
+	      <t hangText="Server Certificate">
+		A TLS PKI certificate or bare public key which will be presented to Discovery
+		Proxies when they initiate TLS connections with the Discovery Relay.  This is
+		used both to authenticate the Discovery Relay, and also to establish an
+		encrypted connection between the two services.
+	      </t>
+	      <t hangText="Links">
+		A list of links on which the Discovery Relay provides service.   Each link
+		identifier corresponds to a link identified by a previous 'Link Present'
+		primitive sent by the orchestration system.
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    When the set of IP addresses configured on the node providing Discovery Relay
+	    service changes, or the port on which it is listening changes, or the set of links
+	    it supports changes, The Discovery Relay Performer sends a new 'Discovery Relay
+	    Available' primitive with the complete set of information for that node's Discovery
+	    Relay service.
+	  </t>
+	</section>
+	<section title="Discovery Relay Resigning">
+	  <t>
+	    When a node providing Discovery Relay support can no longer continue to do so, it
+	    announces to the Conductor that it is no longer available using this primitive.  The
+	    'Discovery Relay Resigning' primitive includes the following data:
+	    <list style="hanging">
+	      <t hangText="node identifier">
+		The node identifier of the Discovery Relay, unique among all nodes managed by a
+		Director.
+	      </t>
+	    </list>
+	  </t>
+	</section>
+      </section>
+      <section title="Orchestration System Behavior">
+	<section title="Link Present">
+	  <t>
+	    The Director detects new links, or is configured with new links by the network
+	    operator.  It is responsible for noticing that a link to which more than one
+	    participating node is connected is the same link.  For example, see Section 6.1 of
+	    <xref target="RFC7788"/>.  When a new link is detected, the Director reports the
+	    presence of that link to all enabled Discovery Proxy Performers, and to all
+	    Discovery Relay Performers.  If the Director becomes aware of more than one link at
+	    the same time, or within an implementation-specific interval, it may announce the
+	    presence of more than one link at a time using the 'Link Present' primitive.
+	  </t>
+	</section>
+	<section title="Link Remove">
+	  <t>
+	    The Director detects the removal of links, either as a result of routers that are
+	    connected to those links becoming unavailable, or as a result of manual changes to
+	    the configuration by the network operator.  When a link that had previously been
+	    present is removed, the Director announces the removal of this link to all enabled
+	    Discovery Proxy performers and to all Discovery Relay performers.  If the removal of
+	    more than one link is detected at the same time or within an implementation-specific
+	    interval, the removal of each such link may be announced in a single 'Link Remove'
+	    primitive.
+	  </t>
+	</section>
+	<section anchor="osdpa" title="Discovery Proxy Available">
+	  <t>
+	    When the Director receives a 'Discovery Proxy Available' primitive, it records the
+	    information in its list of available Discovery Proxies (henceforth "Discovery Proxy
+	    List").  If that node had previously reported that Discovery Proxy service was
+	    available, the entry in Discovery Proxy List for that node is replaced with an entry
+	    generated from the new update; any information in the previous entry that is not
+	    present in the update is discarded.
+	  </t>
+	  <t>
+	    Whether or not the Director enables Discovery Proxy service on the Discovery Proxy
+	    announced in a newly-received 'Discovery Proxy Available' primitive is dependent on
+	    the operational model and configuration of that particular orchestration system,
+	    which is out of scope for this document.  The same is true as to whether service
+	    discovery is enabled on all known links, or not.  We assume here that Discovery
+	    Proxy service may be available but not enabled on some nodes, whereas Discovery
+	    Relay service is generally available, since it will only be used by enabled
+	    Discovery Proxies on interfaces on which service discovery is enabled.
+	  </t>
+	  <t>
+	    If the Director enables Discovery Proxy service on that node, the Discovery
+	    Proxy is announced to all nodes currently providing Discovery Relay service, using
+	    'Discovery Proxy Available' primitives.  In addition, the set of all known Discovery
+	    Relays, and the information provided by them to the orchestration system, is
+	    announced to the node providing the Discovery Proxy service, using one or more
+	    'Discovery Relay Available' primitives.
+	  </t>
+	  <t>
+	    When a 'Discovery Proxy Available' primitive is received from a Discovery Proxy
+	    Performer for which service is already enabled, but the update includes different
+	    information than was present in the previous announcement, the Discovery Proxy
+	    service is re-announced to every Discovery Relay Performer.
+	  </t>
+	</section>
+	<section title="Discovery Proxy Resigning">
+	  <t>
+	    When the Conductor receives a 'Discovery Proxy Resigning' primitive from a Discovery
+	    Proxy Performer that had previously sent a 'Discovery Proxy available' primitive,
+	    the Conductor first determines if Discovery Proxy service had been enabled on that
+	    node.  If so, 'Discovery Proxy Resigning' notifications are sent to Discovery Relay
+	    Performers.
+	  </t>
+	  <t>
+	    The Conductor may, as a result of a node's resignation from providing Discovery
+	    Proxy service, enable Discovery Proxy on some other node.  If so, it does so as
+	    described in <xref target="osdpa"/>.
+	  </t>
+	  <t>
+	    In addition to any announcements sent as a result of a node's resignation from
+	    providing Discovery Proxy service, the Conductor also looks for an entry in the
+	    Discovery Proxy List for that node.  If one is present, it is removed.
+	  </t>
+	</section>
+	<section title="Discovery Relay Available">
+	  <t>
+	    When the Conductor receives a 'Discovery Relay Available' primitive, it records the
+	    information in its list of available Discovery Relay Performers (henceforth
+	    "Discovery Relay List").  If that list already contains an entry for the Performer
+	    making the new report, the entry from the list is discarded and a new one generated
+	    from the new announcement.
+	  </t>
+	  <t>
+	    Whether or not the Conductor enables service discovery through a particular
+	    Discovery Relay is dependent on the operation of that particular orchestration
+	    system, which is out of scope for this document.   It is assumed that a Conductor
+	    may or may not enable a particular Discovery Relay.
+	  </t>
+	  <t>
+	    If the Conductor enables service discovery through the relay that made the
+	    announcement, the relay is announced to all enabled Discovery Proxy Performers.  In
+	    addition, if the relay had not previously been enabled for service discovery, the
+	    Conductor sends a 'Discovery Proxy Available' primitive to that Performer for each
+	    Discovery Proxy Performer on the Discovery Proxy List.
+	  </t>	    
+	</section>
+	<section title="Discovery Relay Resigning">
+	  <t>
+	    When the Conductor receives a 'Discovery Relay Resigning' primitive, it
+	    checks to see if the node making the announcement had previously been listed as
+	    providing Discovery Relay service; if so, the entry for that node is removed from
+	    the list.  If Discovery Relay service was enabled for that node, all nodes providing
+	    Discovery Proxy service are notified that this node is no longer providing Discovery
+	    Relay service, by sending a 'Discovery Relay Resigning' primitive to each such node.
+	  </t>
+	</section>
+	<section title="Node Available">
+	  <t>
+	    The orchestration system may or may not track the coming and going of nodes that
+	    provide service discovery.  If it does, depending on the operation of the system, it
+	    may be necessary to send some notification to the node to trigger its announcement
+	    of service discovery services.   How this is done is out of scope for this document.
+	  </t>
+	</section>
+	<section title="Node Resigning">
+	  <t>
+	    The orchestration system may or may not track the coming and going of nodes that
+	    provide service discovery.   If it does, then when the departure of a node that has
+	    previously announced Discovery Relay and/or Discovery Proxy service should result
+	    in the synthesis of resignation events for those services on that node.   The exact
+	    operation of this mechanism is out of scope for this document.
+	  </t>
+	</section>
+      </section>
+      <section title="Discovery Proxy Node Behavior">
+	<t>
+	  Nodes may provide both Discovery Proxy and Discovery Relay service: the two services
+	  share no ports and are mutually compatible.   When a node is providing both services,
+	  the behaviors described in this section are specific to the operation of the Discovery
+	  Proxy service on that node, not to the Discovery Relay service.
+	</t>
+	<section anchor="dplp" title="Link Present">
+	  <t>
+	    When a node that is providing Discovery Proxy service receives a link present
+	    notification, it checks to see if it currently has Discovery Relay service
+	    configured for each such link.  For any such link for which it does not have
+	    Discovery Relay service configured, it identifies the set of Relay Proxies that
+	    provide service on that link.  It then chooses a Discovery Relay node from this set
+	    using a random number generator.  If it already has a connection to the Relay Proxy,
+	    it attempts to subscribe to mDNS messages from that link.  If it does not have a
+	    connection, it attempts to establish one.  If that succeeds, it attempts to
+	    subscribe to mDNS messages from that link.  If the outcome of each of these attempts
+	    to get Discovery Relay service on the new link fails, it eliminates this Discovery
+	    Relay from the set and repeats the process until the set is empty.
+	  </t>
+	  <t>
+	    If no attempt to subscribe to mDNS messages on the link is successful, then
+	    service discovery on that link is not possible.   The Discovery Proxy node
+	    maintains a list of links on which Discovery Relay service is desired but
+	    not available; when an attempt to get Discovery Relay service on a link fails,
+	    either because no node is providing Discovery Relay service on that link,
+	    or because attempting to get service on that link from all nodes claiming to
+	    provide it has failed, the link is added to this list.
+	  </t>
+	</section>
+	<section anchor="dplr" title="Link Removed">
+	  <t>
+	    When a link is removed, the Discovery Relay checks its list of connections to
+	    Discovery Relays for subscription for mDNS messages on that link.  If one is
+	    present, the Discovery Relay unsubscribes from mDNS messages on that link.  If there
+	    are no subscriptions present on that connection, the Discovery Relay terminates the
+	    connection.  If the link is on the list of links for which Discovery Relay service
+	    is desired but not available, the link is removed from that list.
+	  </t>
+	</section>
+	<section title="Discovery Proxy Available">
+	  <t>
+	    When a node with Discovery Proxy service becomes available to the orchestration
+	    system, it informs the orchestration system that it can provide Discovery Proxy
+	    service.  It also provides the orchestration system with a list of IP addresses from
+	    which it may originate connections to Discovery Relays, and provides a TLS PKI cert
+	    or suitable bare public key which will be used for TLS Client Authentication.
+	  </t>
+	  <t>
+	    Whenever the set of IP addresses from which the Discovery Proxy may initiate
+	    a connection to a Discovery Relay changes, the Discovery Proxy sends a new 'Discovery
+	    Proxy Available' primitive with its complete information, as above.   It may be
+	    desirable for the Discovery Proxy node to choose a specific IP address from which
+	    all such connections will originate, so as to minimize the number of such updates
+	    that may be required, but this behavior is optional.
+	  </t>
+	  <t>
+	    It is not ordinarily the case that the key or certificate used for authentication
+	    will change, but if it does, the Discovery Proxy node sends a complete new
+	    'Discovery Proxy Available' primitive, which will contain the new key or certificate.
+	  </t>
+	</section>
+	<section title="Discovery Proxy Resigning">
+	  <t>
+	    When a node that had previously provided Discovery Proxy service is no longer able
+	    to do so for any reason, it announces this to the orchestration system using
+	    a 'Discovery Proxy Resigning' primitive.
+	  </t>
+	</section>
+	<section title="Discovery Relay Available">
+	  <t>
+	    When a node providing Discovery Proxy service receives a 'Discovery Relay Available'
+	    notification, it adds that Discovery Relay to its list of available Discovery
+	    Relays.  If the Discovery Relay is already on the list, the information the list
+	    entry is compared to the new information provided in the 'Discovery Relay Available'
+	    primitive.  If a connection to that Discovery Relay is present, and the destination
+	    IP address of that connection is no longer on the list of IP addresses supported by
+	    the Discovery Relay, or the public key of the Discovery Relay has changed, the
+	    connection is dropped and the process described in <xref target="dpdrr"/> is
+	    followed.
+	  </t>
+	  <t>
+	    Otherwise, if there is a connection to the Discovery Relay, the list of links
+	    subscribed to on that connection is compared to the list of served links listed in
+	    the 'Discovery Relay Available' primitive; any links for which subscriptions exist
+	    that are not listed in the 'Discovery Relay Available' announcement are
+	    unsubscribed, and those links added to the list of links on which Discovery Relay
+	    service is not available.
+	  </t>
+	  <t>
+	    At this point the process described in <xref target="dplp"/> is followed for each
+	    link on the list of links for which Discovery Relay service is not available.
+	  </t>
+	</section>
+	<section anchor="dpdrr" title="Discovery Relay Resigning">
+	  <t>
+	    Discovery Relay drops its connection to that Discovery Relay and puts all links for
+	    which subscriptions existed on that connection onto the list of links on which
+	    Discovery Relay service is not available.  Because it is possible that another
+	    Discovery Relay is available for that link, the Discovery Proxy node again follows
+	    the process described in <xref target="dplp"/>.
+	  </t>
+	</section>
+      </section>
+      <section title="Discovery Relay Performer Behavior">
+	<t>
+	  Nodes that support service discovery may support both Discovery Proxy and Discovery
+	  Relay.   Behaviors described here are specific to nodes that are providing Discovery
+	  Relay service.   A node that provides both types of service will follow both the
+	  behavior described here and the behavior described for Discovery Proxy nodes.
+	</t>
+	<section anchor="drlp" title="Link Present">
+	  <t>
+	    When a Discovery Relay performer receives a link present notification, it determines
+	    whether for each link announced whether it has an interface that is directly
+	    connected to that link.  If so, it determines whether it has previously announced
+	    the availability of service on that link.  If not, it adds the link to the list of
+	    links on which it provides Discovery Relay service (henceforth "Discovery Relay link
+	    list").
+	  </t>
+	  <t>
+	    If as a result of a 'Link Present' announcement the Discovery Relay link list has
+	    changed, the Discovery Relay performer sends a new 'Discovery Relay Available'
+	    primitive to the director.
+	  </t>
+	</section>
+	<section anchor="drlr" title="Link Removed">
+	</section>	
+	<section title="Discovery Proxy Available">
+	</section>
+	<section title="Discovery Proxy Resigning">
+	</section>
+	<section title="Discovery Relay Available">
+	</section>
+	<section title="Discovery Relay Resigning">
+	</section>
+      </section>
+    </section>
+      
     <section anchor="configuration" title="Configuration">
       <t>
 	Discovery Proxies and Discovery Relays are configurable while in operation.
@@ -199,15 +669,38 @@
 	Discovery Relays publish IP address and port pairs on which they are listening for connections.
       </t>
       <t>
-	Discovery Proxies have lists of relay proxies to which they can connect.
+	Discovery Proxies are provisioned with lists of Discovery Relays.   Each entry in the
+	list includes one or more IP addresses and ports on which the Discovery Relay can be
+	contacted.   Each entry also includes a list of links to which the Discovery Relay is
+	connected.  Each entry includes the public key used by that Discovery Relay.
       </t>
       <t>
 	Discovery Proxies have lists of links on which service discovery is to be supported.
-	Each link has exactly one relay proxy designated to provide service on that link.
 	If more than one Discovery Proxy is present, it is not required that each Discovery
 	Proxy use the same Discovery Relay for any particular link.
       </t>
     </section>
+
+    <section title="foo">
+      <figure>
+	<artwork>
+    discovery proxy behavior:
+    - Assume initial state: no links configured, no relay proxies configured
+    - When link is added, look for relay proxies supporting that link.
+    If there is one, pick that one. If there is more than one, pick one at random.
+    If zero, add link to list of links lacking relays.   If one picked, if not connected, connect.   If rejected,
+    pick another; else add to lack list, queue retry in REATTEMPT_INTERVAL.   Once have connection, send subscribe for
+    new link.
+    - When relay is added, see if it supports any links on lacking list.   If so, attempt to connect.  If success,
+    subscribe for any such links.
+    - When link is deleted, send unsubscribe for that link to relay for which subscription exists, if any.
+    - When relay is deleted, close connection to relay if open.   For every link subscribed on that relay, attempt to subscribe on another relay.   Add links
+	</artwork>
+      </figure>
+    </section>
+
+
+
 
     <section anchor="tlsconn" title="Connections between Discovery Proxies and Discovery Relays">
       <t>
@@ -222,16 +715,18 @@
 	When a Discovery Relay receives a connection from a discovery proxy, it may check a
 	whitelist to validate the source IP address of the connection.   If the connection
 	is not on the whitelist, the Discovery Relay will respond to the TLS Client Hello message
-	with a TLS user_canceled alert <xref target="I-D.ietf-tls-tls13"/> Section 6.1.
+	with a TLS user_canceled alert (<xref target="I-D.ietf-tls-tls13"/> Section 6.1).
       </t>
       <t>
 	Otherwise, the Discovery Relay will attempt to complete a TLS handshake with the
 	Discovery Proxy.   Discovery Proxies are required to send the post_handshake_auth
 	extension (<xref target="I-D.ietf-tls-tls13"/> Section 4.2.5).   If a relay proxy
 	receives a ClientHello message with no post_handshake_auth extension, the
-	Discovery Relay rejects the connection with an handshake_failure alert.
+	Discovery Relay rejects the connection with an handshake_failure alert
+	(<xref target="I-D.ietf-tls-tls13"/> Section 6.2).
       </t>
       <t>
+	The Discovery Proxy is 
       </t>
     </section>
 
