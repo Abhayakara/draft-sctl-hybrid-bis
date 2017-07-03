@@ -514,7 +514,7 @@
 	  </t>
 	</section>
       </section>
-      <section title="Discovery Proxy Node Behavior">
+      <section title="Discovery Proxy Performer Behavior">
 	<t>
 	  Nodes may provide both Discovery Proxy and Discovery Relay service: the two services
 	  share no ports and are mutually compatible.   When a node is providing both services,
@@ -770,16 +770,16 @@
 	The mere act of connecting to a Discovery Relay does not result in any mDNS traffic
 	being forwarded.  In order to request that mDNS traffic from a particular link be
 	forwarded on a particular connection, the Discovery Proxy must send a session signaling
-	message containing one or more MDNS Link Request TLVs <xref target="MDNSlinkrq"/>
+	message containing one or more MDNS Link Request TLVs (<xref target="MDNSlinkrq"/>)
 	indicating the link from which traffic is requested.
       </t>
       <t>
 	When such a message is received, the Discovery Relay validates that each specified link
 	is available for forwarding, and that forwarding is enabled for that link.  For each
 	such message the Discovery Relay validates each link specified and includes in a single
-	response a list of zero or more MDNS Link Invalid TLVs <xref target="MDNSLinkInvalid"/>
-	for links that are not valid, and zero or more MDNS Link Subscribed TLVs <xref
-	target="MDNSlsub"/> for links that are valid.  For each valid link, it begins forwarding
+	response a list of zero or more MDNS Link Invalid TLVs )<xref target="MDNSLinkInvalid"/>)
+	for links that are not valid, and zero or more MDNS Link Subscribed TLVs (<xref
+	target="MDNSlsub"/>) for links that are valid.  For each valid link, it begins forwarding
 	all mDNS traffic from that link to the Discovery Proxy.  Delivery is not guaranteed: if
 	there is no buffer space, packets will be dropped.  It is expected that regular mDNS
 	retry processing will take care of retransmission of lost packets.  The amount of buffer
@@ -790,18 +790,18 @@
 	mDNS messages from Relays to Proxies are framed within DNS Session Signaling messages.
 	This allows multiple TLVs to be included.  Each forwarded mDNS message is contained in
 	an MDNS Message TLV <xref target="MDNSmessage"/>.  The layer 2 source address of the
-	message, if known, MAY be encoded in a Layer 2 Source <xref target="l2sa"/> TLV.  The
-	source IP address of the message MUST be encoded in a IP Source Address <xref
-	target="srcaddr"/> TLV.  The source port of the message MUST be encoded in an IP Source
-	port TLV <xref target="srcpt"/>.  The link on which the message was received MUST be
-	encoded in a Link Identifier TLV <xref target="linkid"/>.  The Discovery Proxy MUST
+	message, if known, MAY be encoded in a Layer 2 Source TLV (<xref target="l2sa"/>).  The
+	source IP address of the message MUST be encoded in a IP Source Address TLV (<xref
+	target="srcaddr"/>).  The source port of the message MUST be encoded in an IP Source
+	port TLV (<xref target="srcpt"/>).  The link on which the message was received MUST be
+	encoded in a Link Identifier TLV (<xref target="linkid"/>).  The Discovery Proxy MUST
 	silently ignore unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS messages
 	that include unrecognized TLVs.
       </t>
       <t>
 	A Discovery Proxy may discontinue listening for mDNS messages on a particular link by
-	sending a session signaling message containing an MDNS Link Discontinue TLV <xref
-	target="MDNSdis"/>.  Subsequent messages from that link that had previously been queued
+	sending a session signaling message containing an MDNS Link Discontinue TLV (<xref
+	target="MDNSdis"/>).  Subsequent messages from that link that had previously been queued
 	indicating may arrive.  The Discovery Proxy should silently ignore such messages.  The
 	Discovery Relay MUST discontinue generating such messages as soon as the request is
 	received.   The Discovery Relay does not respond to this message other than to discontinue
@@ -812,11 +812,11 @@
     <section title="Traffic from Proxies to Relays">
       <t>
 	Like mDNS traffic from relays, each mDNS message sent by a Discovery Proxie to a
-	Discovery Relay is encapsulated in an MDNS Message TLV <xref target="MDNSmessage"/>
+	Discovery Relay is encapsulated in an MDNS Message TLV (<xref target="MDNSmessage"/>)
 	within a session signaling message.  Each message MUST contain one or more Link
-	Identifier TLVs <xref target="linkid"/>.  The Discovery Relay will transmit the message
+	Identifier TLVs (<xref target="linkid"/>).  The Discovery Relay will transmit the message
 	to the mDNS port and multicast address on each link.  The message MUST include one or
-	more IP family TLVs <xref target="ipfam"/>.  For each such TLVs that is included, the
+	more IP family TLVs (<xref target="ipfam"/>).  For each such TLVs that is included, the
 	message will be sent on each link using the specified IP family.   If no family codes
 	are recognized, no packets will be transmitted.
       </t>
