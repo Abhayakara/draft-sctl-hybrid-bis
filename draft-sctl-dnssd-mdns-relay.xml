@@ -271,15 +271,18 @@
 	</t>
       </section>
       <section anchor="orchprim" title="Orchestration Primitives">
-	<section title="Link Present">
+	<section anchor="lp" title="Link Present">
 	  <t>
 	    The 'Link Present' primitive is used by the Director to communicate the presence
 	    of a link to Performers.   'Link Present' primitives include the following data:
 	    <list style="hanging">
 	      <t hangText="link identifier">
-		One or more opaque identifiers, each of which identifies a link that is present
-		on the orchestrated network.  Each identifier is unique among all link
-		identifiers managed by the Director.
+		One or more opaque 32-bit identifiers, each of which identifies a link that is
+		present on the orchestrated network.  Each identifier is unique among all link
+		identifiers managed by the Director.  These link identifiers are used in the
+		Discovery Relay protocol to identify links on which mDNS requests will be sent
+		and received, and are consistent across all participants in the orchestration
+		system.
 	      </t>
 	    </list>
 	  </t>
@@ -291,9 +294,7 @@
 	    primitive includes the following data:
 	    <list style="hanging">
 	      <t hangText="link identifier">
-		One or more opaque identifiers, each of which identifies a link that is present
-		on the orchestrated network.  Each identifier is unique among all link
-		identifiers managed by the Director.
+		One or more opaque 32-bit identifiers, as described in <xref target="lp"/>.
 	      </t>
 	    </list>
 	  </t>
@@ -328,7 +329,7 @@
 	<section title="Discovery Proxy Resigning">
 	  <t>
 	    The 'Discovery Proxy Resigning' primitive is used by Discovery Proxies to announce
-	    to the Conductor that they are no longer available, and by the Conductor to announce
+	    to the Director that they are no longer available, and by the Director to announce
 	    to Discovery Relay performers that a Discovery Proxy is no longer present or
 	    enabled.  The 'Discovery Proxy Resigning' primitive includes the following data:
 	    <list>
@@ -341,8 +342,11 @@
 	</section>
 	<section title="Discovery Relay Available">
 	  <t>
-	    Nodes that can provide Discovery Relay service announce their presence to the
-	    Director.  The 'Discovery Relay Available' primitive includes the following data:
+	    The 'Discovery Relay Available' primitive is used by Discovery Relay Performers to
+	    inform the Director that they are available to provide service.  It is used by the
+	    Director to announce to Discovery Proxy Performers that a Discovery Relay is
+	    available and enabled.  The 'Discovery Relay Available' primitive includes the
+	    following data:
 	    <list style="hanging">
 	      <t hangText="node identifier">
 		The node identifier of the Discovery Relay, unique among all nodes managed by a
@@ -363,22 +367,15 @@
 	      <t hangText="Links">
 		A list of links on which the Discovery Relay provides service.   Each link
 		identifier corresponds to a link identified by a previous 'Link Present'
-		primitive sent by the orchestration system.
+		primitive sent by the Director, as described in <xref target="lp"/>.
 	      </t>
 	    </list>
-	  </t>
-	  <t>
-	    When the set of IP addresses configured on the node providing Discovery Relay
-	    service changes, or the port on which it is listening changes, or the set of links
-	    it supports changes, The Discovery Relay Performer sends a new 'Discovery Relay
-	    Available' primitive with the complete set of information for that node's Discovery
-	    Relay service.
 	  </t>
 	</section>
 	<section title="Discovery Relay Resigning">
 	  <t>
 	    When a node providing Discovery Relay support can no longer continue to do so, it
-	    announces to the Conductor that it is no longer available using this primitive.  The
+	    announces to the Director that it is no longer available using this primitive.  The
 	    'Discovery Relay Resigning' primitive includes the following data:
 	    <list style="hanging">
 	      <t hangText="node identifier">
@@ -450,48 +447,48 @@
 	</section>
 	<section title="Discovery Proxy Resigning">
 	  <t>
-	    When the Conductor receives a 'Discovery Proxy Resigning' primitive from a Discovery
+	    When the Director receives a 'Discovery Proxy Resigning' primitive from a Discovery
 	    Proxy Performer that had previously sent a 'Discovery Proxy available' primitive,
-	    the Conductor first determines if Discovery Proxy service had been enabled on that
+	    the Director first determines if Discovery Proxy service had been enabled on that
 	    node.  If so, 'Discovery Proxy Resigning' notifications are sent to Discovery Relay
 	    Performers.
 	  </t>
 	  <t>
-	    The Conductor may, as a result of a node's resignation from providing Discovery
+	    The Director may, as a result of a node's resignation from providing Discovery
 	    Proxy service, enable Discovery Proxy on some other node.  If so, it does so as
 	    described in <xref target="osdpa"/>.
 	  </t>
 	  <t>
 	    In addition to any announcements sent as a result of a node's resignation from
-	    providing Discovery Proxy service, the Conductor also looks for an entry in the
+	    providing Discovery Proxy service, the Director also looks for an entry in the
 	    Discovery Proxy List for that node.  If one is present, it is removed.
 	  </t>
 	</section>
 	<section title="Discovery Relay Available">
 	  <t>
-	    When the Conductor receives a 'Discovery Relay Available' primitive, it records the
+	    When the Director receives a 'Discovery Relay Available' primitive, it records the
 	    information in its list of available Discovery Relay Performers (henceforth
 	    "Discovery Relay List").  If that list already contains an entry for the Performer
 	    making the new report, the entry from the list is discarded and a new one generated
 	    from the new announcement.
 	  </t>
 	  <t>
-	    Whether or not the Conductor enables service discovery through a particular
+	    Whether or not the Director enables service discovery through a particular
 	    Discovery Relay is dependent on the operation of that particular orchestration
-	    system, which is out of scope for this document.   It is assumed that a Conductor
+	    system, which is out of scope for this document.   It is assumed that a Director
 	    may or may not enable a particular Discovery Relay.
 	  </t>
 	  <t>
-	    If the Conductor enables service discovery through the relay that made the
+	    If the Director enables service discovery through the relay that made the
 	    announcement, the relay is announced to all enabled Discovery Proxy Performers.  In
 	    addition, if the relay had not previously been enabled for service discovery, the
-	    Conductor sends a 'Discovery Proxy Available' primitive to that Performer for each
+	    Director sends a 'Discovery Proxy Available' primitive to that Performer for each
 	    Discovery Proxy Performer on the Discovery Proxy List.
 	  </t>	    
 	</section>
 	<section title="Discovery Relay Resigning">
 	  <t>
-	    When the Conductor receives a 'Discovery Relay Resigning' primitive, it
+	    When the Director receives a 'Discovery Relay Resigning' primitive, it
 	    checks to see if the node making the announcement had previously been listed as
 	    providing Discovery Relay service; if so, the entry for that node is removed from
 	    the list.  If Discovery Relay service was enabled for that node, all nodes providing
@@ -560,6 +557,14 @@
 	</section>
 	<section title="Discovery Proxy Available">
 	  <t>
+	    Discovery Proxy Performers send 'Discovery Proxy Available' primitives to the
+	    Director whenever their configuration changes in a way that affects the content of
+	    the primitive, and also whenever their node becomes newly available to the
+	    Director.  In addition to notifying the Director when they first become connected
+	    to the Director's orchestration system, they must also notify the Director when
+	    they disconnect and reconnect.
+	  </t>
+	  <t>
 	    When a node with Discovery Proxy service becomes available to the orchestration
 	    system, it informs the orchestration system that it can provide Discovery Proxy
 	    service.  It also provides the orchestration system with a list of IP addresses from
@@ -583,8 +588,8 @@
 	<section title="Discovery Proxy Resigning">
 	  <t>
 	    When a node that had previously provided Discovery Proxy service is no longer able
-	    to do so for any reason, it announces this to the orchestration system using
-	    a 'Discovery Proxy Resigning' primitive.
+	    to do so for any reason, it announces this to the orchestration system using a
+	    'Discovery Proxy Resigning' primitive.
 	  </t>
 	</section>
 	<section title="Discovery Relay Available">
@@ -632,102 +637,331 @@
 	<section anchor="drlp" title="Link Present">
 	  <t>
 	    When a Discovery Relay performer receives a link present notification, it determines
-	    whether for each link announced whether it has an interface that is directly
-	    connected to that link.  If so, it determines whether it has previously announced
-	    the availability of service on that link.  If not, it adds the link to the list of
-	    links on which it provides Discovery Relay service (henceforth "Discovery Relay link
+	    for each link announced whether it has an interface that is directly connected to
+	    that link.  If so, it determines whether it has previously announced the
+	    availability of service on that link.  If not, it adds the link to the list of links
+	    on which it provides Discovery Relay service (henceforth "Discovery Relay link
 	    list").
 	  </t>
 	  <t>
 	    If as a result of a 'Link Present' announcement the Discovery Relay link list has
 	    changed, the Discovery Relay performer sends a new 'Discovery Relay Available'
-	    primitive to the director.
+	    primitive to the Director.
 	  </t>
 	</section>
 	<section anchor="drlr" title="Link Removed">
+	  <t>
+	    When the Discovery Relay Performer receives a 'Link Removed' primitive, for each
+	    link mentioned in the primitive it checks to see if it is currently providing
+	    service on that link.   For each link mentioned in the primitive for which it
+	    is providing service, it deletes that link from its list of links on which it is
+	    providing service.   If any links were deleted from the list, the Discovery Relay
+	    Performer sends a new 'Discovery Relay Available' message to the Director.
+	  </t>
 	</section>	
 	<section title="Discovery Proxy Available">
+	  <t>
+	    Directors send 'Discovery Proxy Available' primitives to Discovery Relay Performers
+	    when new Discovery Proxy Performers announce their availability, and also when
+	    Discovery Proxy Performers announce changes to their configuration.  When a
+	    Discovery Relay Performer receives one of these primitives, it updates its Discovery
+	    Proxy IP address whitelist with the set of IP addresses from the primitive, and
+	    updates the Discovery Proxy authentication certificate as well.  If the Discovery
+	    Proxy is connected to the Discovery Relay and either the certificate changed, or the
+	    source IP address of the connection is no longer on the whitelist, the Discovery
+	    Relay drops the connection.
+	  </t>
 	</section>
 	<section title="Discovery Proxy Resigning">
+	  <t>
+	    Directors send 'Discovery Proxy Resigning' messages to Discovery Relay Performers
+	    when Discovery Proxy Performers indicate that they are no longer available, or when
+	    they are disabled by the orchestration system.  When a Discovery Relay Performer
+	    receives this primitive, it checks to see if any connections from that Discovery
+	    Proxy are present.  Any such connections are terminated.
+	  </t>
 	</section>
 	<section title="Discovery Relay Available">
+	  <t>
+	    Discovery Relay Performers send 'Discovery Relay Available' primitives to the
+	    Director whenever their configuration changes in a way that affects the content of
+	    the primitive, and also whenever their node becomes newly available to the
+	    Director.  In addition to notifying the Director when they first become connected
+	    to the Director's orchestration system, they must also notify the Director when
+	    they disconnect and reconnect.
+	  </t>
+	  <t>
+	    Discovery Relays listen for connections from Discovery Proxies.  Because no port is
+	    reserved for Discovery Relays, it is not useful to announce the availability of the
+	    service until the service is listening for connections, at which point it will know
+	    which port it is listening on.  Therefore, before sending a 'Discovery Relay
+	    Available' primitive, a Discovery Relay Performer must have received its listening
+	    port from the Discovery Relay service.
+	  </t>
 	</section>
 	<section title="Discovery Relay Resigning">
+	  <t>
+	    When a node providing Discovery Relay service must stop providing that service,
+	    it sends a 'Discovery Relay Resigning' primitive to the Director.
+	  </t>
 	</section>
       </section>
     </section>
       
-    <section anchor="configuration" title="Configuration">
-      <t>
-	Discovery Proxies and Discovery Relays are configurable while in operation.
-      </t>
-      <t>
-	Discovery Relays may have a whitelist of IP addresses or IP prefixes from which connections
-	are permitted.
-      </t>
-      <t>
-	Discovery Relays publish IP address and port pairs on which they are listening for connections.
-      </t>
-      <t>
-	Discovery Proxies are provisioned with lists of Discovery Relays.   Each entry in the
-	list includes one or more IP addresses and ports on which the Discovery Relay can be
-	contacted.   Each entry also includes a list of links to which the Discovery Relay is
-	connected.  Each entry includes the public key used by that Discovery Relay.
-      </t>
-      <t>
-	Discovery Proxies have lists of links on which service discovery is to be supported.
-	If more than one Discovery Proxy is present, it is not required that each Discovery
-	Proxy use the same Discovery Relay for any particular link.
-      </t>
-    </section>
-
-    <section title="foo">
-      <figure>
-	<artwork>
-    discovery proxy behavior:
-    - Assume initial state: no links configured, no relay proxies configured
-    - When link is added, look for relay proxies supporting that link.
-    If there is one, pick that one. If there is more than one, pick one at random.
-    If zero, add link to list of links lacking relays.   If one picked, if not connected, connect.   If rejected,
-    pick another; else add to lack list, queue retry in REATTEMPT_INTERVAL.   Once have connection, send subscribe for
-    new link.
-    - When relay is added, see if it supports any links on lacking list.   If so, attempt to connect.  If success,
-    subscribe for any such links.
-    - When link is deleted, send unsubscribe for that link to relay for which subscription exists, if any.
-    - When relay is deleted, close connection to relay if open.   For every link subscribed on that relay, attempt to subscribe on another relay.   Add links
-	</artwork>
-      </figure>
-    </section>
-
-
-
-
     <section anchor="tlsconn" title="Connections between Discovery Proxies and Discovery Relays">
       <t>
-	Discovery Relays listen for connections from Discovery Proxies.  Because
-	communications between Discovery Relays and Discovery Proxies must be orchestrated, no
-	special port number is reserved.   Rather, the Discovery Proxy is configured with a
-	list of Discovery Relays, their IP addresses, and the ports on which they are listening.
-	The Discovery Proxy can be reconfigured while in operation as the set of available
-	Discovery Relays, or the ports on which Discovery Relays are listening, changes.
+	When a Discovery Relay starts, it opens a passive TCP listener to receive connections
+	from Discovery Proxies.  This listener may be bound to one or more source IP addresses,
+	or to the wildcard address, depending on the TCP implementation.  When a connection is
+	received, the relay must first validate that it is a connection to an IP address to
+	which connections are allowed.   For example, it may be that only connections to ULAs
+	are allowed, or to the IP addresses configured on certain interfaces.   If the listener
+	is bound to a specific IP address, this check is unnecessary.
       </t>
       <t>
-	When a Discovery Relay receives a connection from a discovery proxy, it may check a
-	whitelist to validate the source IP address of the connection.   If the connection
-	is not on the whitelist, the Discovery Relay will respond to the TLS Client Hello message
-	with a TLS user_canceled alert (<xref target="I-D.ietf-tls-tls13"/> Section 6.1).
+	The relay must then validate that the source IP address of the connection is on its
+	whitelist.  If the connection is not permitted either because of the source address or
+	the destination address, the Discovery Relay responds to the TLS Client Hello message
+	from the Discovery Proxy with a TLS user_canceled alert
+	(<xref target="I-D.ietf-tls-tls13"/> Section 6.1).
       </t>
       <t>
 	Otherwise, the Discovery Relay will attempt to complete a TLS handshake with the
-	Discovery Proxy.   Discovery Proxies are required to send the post_handshake_auth
-	extension (<xref target="I-D.ietf-tls-tls13"/> Section 4.2.5).   If a relay proxy
-	receives a ClientHello message with no post_handshake_auth extension, the
-	Discovery Relay rejects the connection with an handshake_failure alert
-	(<xref target="I-D.ietf-tls-tls13"/> Section 6.2).
+	Discovery Proxy.  Discovery Proxies are required to send the post_handshake_auth
+	extension (<xref target="I-D.ietf-tls-tls13"/> Section 4.2.5).  If a relay proxy
+	receives a ClientHello message with no post_handshake_auth extension, the Discovery
+	Relay rejects the connection with a certificate_required alert (<xref
+	target="I-D.ietf-tls-tls13"/> Section 6.2).
       </t>
       <t>
-	The Discovery Proxy is 
+	Once the TLS handshake is complete, the Discovery Relay MUST request post-handshake
+	authentication as described in (<xref target="I-D.ietf-tls-tls13"/> Section 4.6.2).  If
+	the Discovery Proxy refuses to send a certificate, or the key presented does not match
+	the key associated with the IP address from which the connection originated, or the
+	CertificateVerify does not validate, the connection is dropped with the TLS
+	access_denied alert (<xref target="I-D.ietf-tls-tls13"/> Section 6.2).
       </t>
+      <t>
+	Once the connection is established and authenticated, it is treated as a DNS TCP
+	connection <xref target="RFC1035"/>.
+      </t>
+      <t>
+	Aliveness of connections between Discovery Proxies and Relays is maintained as described
+	in Section 4 of <xref target="I-D.ietf-dnsop-session-signal"/>.  Discovery Proxies must
+	also honor the 'Retry Delay' TLV (section 5 of
+	<xref target="I-D.ietf-dnsop-session-signal"/>) if sent by the Discovery Relay.
+      </t>
+      <t>
+	Discovery Proxies may establish more than one connection to a specific Discovery Relay.
+	This would happen in the case that a TCP connection stalls, and the Discovery Proxy is
+	able to reconnect before the previous connection has timed out.  It could also happen as
+	a result of a server restart.  It is not likely that two active connections from the
+	same Discovery Proxy would be present at the same time, but it must be possible for
+	additional connections to be established.  The Discovery Relay may drop the old
+	connection when the new one has been fully established, including a successful TLS
+	handshake.  What it means for two connections to be from the same Discovery Proxy is
+	that the connections both have source addresses that belong to the same proxy, and that
+	they were authenticated using the same client certificate.
+      </t>
+    </section>
+
+    <section title="Traffic from Relays to Proxies">
+      <t>
+	The mere act of connecting to a Discovery Relay does not result in any mDNS traffic
+	being forwarded.  In order to request that mDNS traffic from a particular link be
+	forwarded on a particular connection, the Discovery Proxy must send a session signaling
+	message containing one or more MDNS Link Request TLVs <xref target="MDNSlinkrq"/>
+	indicating the link from which traffic is requested.
+      </t>
+      <t>
+	When such a message is received, the Discovery Relay validates that each specified link
+	is available for forwarding, and that forwarding is enabled for that link.  For each
+	such message the Discovery Relay validates each link specified and includes in a single
+	response a list of zero or more MDNS Link Invalid TLVs <xref target="MDNSLinkInvalid"/>
+	for links that are not valid, and zero or more MDNS Link Subscribed TLVs <xref
+	target="MDNSlsub"/> for links that are valid.  For each valid link, it begins forwarding
+	all mDNS traffic from that link to the Discovery Proxy.  Delivery is not guaranteed: if
+	there is no buffer space, packets will be dropped.  It is expected that regular mDNS
+	retry processing will take care of retransmission of lost packets.  The amount of buffer
+	space is implementation dependent, but generally should not be more than the bandwidth
+	delay product of the TCP connection <xref target="RFC1323"/>.
+      </t>
+      <t>
+	mDNS messages from Relays to Proxies are framed within DNS Session Signaling messages.
+	This allows multiple TLVs to be included.  Each forwarded mDNS message is contained in
+	an MDNS Message TLV <xref target="MDNSmessage"/>.  The layer 2 source address of the
+	message, if known, MAY be encoded in a Layer 2 Source <xref target="l2sa"/> TLV.  The
+	source IP address of the message MUST be encoded in a IP Source Address <xref
+	target="srcaddr"/> TLV.  The source port of the message MUST be encoded in an IP Source
+	port TLV <xref target="srcpt"/>.  The link on which the message was received MUST be
+	encoded in a Link Identifier TLV <xref target="linkid"/>.  The Discovery Proxy MUST
+	silently ignore unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS messages
+	that include unrecognized TLVs.
+      </t>
+      <t>
+	A Discovery Proxy may discontinue listening for mDNS messages on a particular link by
+	sending a session signaling message containing an MDNS Link Discontinue TLV <xref
+	target="MDNSdis"/>.  Subsequent messages from that link that had previously been queued
+	indicating may arrive.  The Discovery Proxy should silently ignore such messages.  The
+	Discovery Relay MUST discontinue generating such messages as soon as the request is
+	received.   The Discovery Relay does not respond to this message other than to discontinue
+	forwarding mDNS messages from the specified links.
+      </t>
+    </section>
+
+    <section title="Traffic from Proxies to Relays">
+      <t>
+	Like mDNS traffic from relays, each mDNS message sent by a Discovery Proxie to a
+	Discovery Relay is encapsulated in an MDNS Message TLV <xref target="MDNSmessage"/>
+	within a session signaling message.  Each message MUST contain one or more Link
+	Identifier TLVs <xref target="linkid"/>.  The Discovery Relay will transmit the message
+	to the mDNS port and multicast address on each link.  The message MUST include one or
+	more IP family TLVs <xref target="ipfam"/>.  For each such TLVs that is included, the
+	message will be sent on each link using the specified IP family.   If no family codes
+	are recognized, no packets will be transmitted.
+      </t>
+    </section>
+
+    <section title="Discovery Proxy Behavior">
+      <t>
+	Discovery Proxies treat links for which Discovery Relay service is being used as if they
+	were virtual interfaces; in other words, a Discovery Proxy serving multiple links using
+	multiple Discovery Relays behaves the same as a Discovery Proxy serving multiple links
+	using multiple physical network interfaces.
+      </t>
+      <t>
+	Discovery Proxies responding to mDNS messages for non-link-local IP addresses where the
+	unicast bit is set respond directly, rather than through a proxy.   Link-local responses
+	are not supported for links to which Discovery Proxies are not directly connected.
+      </t>
+    </section>
+
+    <section anchor="tlvs" title="Session Signaling TLVs">
+      <t>
+	This document defines a modest number of new DNS Session Signaling TLVs.
+      </t>
+      <section anchor="MDNSlinkrq" title="MDNS Link Request">
+	<t>
+	  The MDNS Link Request TLV conveys a 32-bit link identifier from which a Discovery
+	  Proxy is requesting that a Discovery Relay forward mDNS traffic.   The link identifier
+	  comes from the orchestration system (see <xref target="lp"/>).   The SSOP-TYPE
+	  for this TLV is TBD1.   The SSOP-LENGTH is always 4.   The SSOP-DATA is the 32-bit
+	  identifier in network byte order.
+	</t>
+      </section>
+      <section anchor="MDNSLinkInvalid" title="MDNS Link Invalid">
+	<t>
+	  The MDNS Link Invalid TLV is returned in response to a session signaling message
+	  containing an MDNS Link Request, and returns the 32-bit identifier that was contained
+	  in that request.  The link identifier comes from an MDNS Link Request TLV in the
+	  message being responded to. The TLV indicates that the specified link identifier does
+	  not refer to a valid link, either because the link is not supported by the Discovery
+	  Relay, or because the identifier is not known.  The SSOP-TYPE for this TLV is TBD2.
+	  The SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit identifier in network byte
+	  order.
+	</t>
+      </section>
+      <section anchor="MDNSlsub" title="MDNS Link Subscribed">
+	<t>
+	  The MDNS Link Subscribed TLV is returned in response to a session signaling message
+	  containing an MDNS Link Request, and returns the 32-bit identifier from a MDNS Link
+	  Request TLV that was contained in that request.  It indicates that MDNS messages for
+	  the specified link have been successfully subscribed.  The SSOP-TYPE for this TLV is
+	  TBD3.  The SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit identifier in network
+	  byte order.
+	</t>
+      </section>
+      <section anchor="MDNSmessage" title="MDNS Message">
+	<t>
+	  The MDNS Message TLV is used to encapsulate an mDNS message that is being forwarded
+	  from a link to a Discovery Proxy, or is being forwarded from a Discovery Proxy to a
+	  link.  The SSOP-TYPE for this TLV is TBD4.  SSOP-LENGTH is the length of the
+	  application layer payload of the MDNS message.  SSOP-DATA is the application layer
+	  payload of the message.
+	</t>
+      </section>
+      <section anchor="l2sa" title="Layer 2 Source Address">
+	<t>
+	  The Layer 2 Source Address TLV is used to report the layer 2 address from which an
+	  mDNS message was received.  This TLV is optionally present in session signaling
+	  messages from Discovery Relays to Discovery Proxies that contain mDNS messages when
+	  the source link-layer address is known.  The SSOP-TYPE is TBD5.  SSOP-LENGTH is
+	  variable, depending on the length of link-layer addresses on the link from which the
+	  message was received.  SSOP-data is the link-layer address as it was received on the
+	  link.
+	</t>
+      </section>
+      <section anchor="srcaddr" title="IP Source Address">
+	<t>
+	  The IP Source Address TLV is used to report the IP source address from which an mDNS
+	  message was received.  This TLV is present in session signaling messages from
+	  Discovery Relays to Discovery Proxies that contain mDNS messages.  SSOP-TYPE is TBD6.
+	  SSOP-LENGTH is either 4, for an IPv4 address, or 16, for an IPv6 address.  SSOP-DATA
+	  is the IP Address.
+	</t>
+      </section>
+      <section anchor="srcpt" title="IP Source Port">
+	<t>
+	  The IP Source Port TLV is used to report the IP source port from which an mDNS message
+	  was received.  This TLV is present in session signaling messages from Discovery Relays
+	  to Discovery Proxies.  SSOP-TYPE is TBD7.  SSOP-LENGTH is 2.  SSOP-DATA is the source
+	  port in network byte order.
+	</t>
+      </section>
+      <section anchor="linkid" title="Link Identifier">
+	<t>
+	  This option is used both in session signaling messages from Discovery Proxies to
+	  Discovery Relays that contain mDNS messages, and in message from Discovery Relays to
+	  Discovery Proxies that contain mDNS messages.   In the former case, it indicates a
+	  link to which the message should be forwarded; in the latter case, it indicates the
+	  link on which the message was received.   SSOP-TYPE is TBD8.   SSOP-LENGTH is 4.
+	  SSOP-DATA is a 32-bit link identifier as described in <xref target="lp"/>.
+	</t>
+      </section>
+      <section anchor="MDNSdis" title="MDNS Discontinue">
+	<t>
+	  This option is used by Discovery Proxies to unsubscribe to mDNS messages on the
+	  specified link.  More than one may be present in a single session signaling message.
+	  SSOP-TYPE is TBD9.  SSOP-LENGTH is 4.  SSOP-DATA is a 32-bit link identifier as
+	  described in <xref target="lp"/>.
+	</t>
+      </section>
+      <section anchor="ipfam" title="IP Address Family">
+	<t>
+	  This option is used in mDNS messages sent by Discovery Proxies to links to indicate to
+	  the Discovery Relay which IP address family or families should be used when
+	  transmitting the message on the link.  More than one may be present in a single
+	  session signaling message.  SSOP-TYPE is TBD10.  SSOP-LENGTH is 1.  SSOP-DATA is a
+	  8-bit IP family identifier.  A value of 1 indicates IPv4.  A value of 2 indicates
+	  IPv6.   Other values are reserved, and MUST be ignored if not recognized.
+	</t>
+      </section>
+    </section>
+
+    <section anchor="security" title="Security Considerations">
+    </section>
+
+    <section title="IANA Considerations">
+      <t>
+	The IANA is kindly requested to update the DNS Session Signaling Type Codes Registry
+	<xref target="I-D.ietf-dnsop-session-signal"/> by allocating codes for each of the TBD
+	type codes listed in the following table, and by updating this document, here and in
+	<xref target="tlvs"/>.  Each type code should list this document as its reference
+	document.
+      </t>
+      <texttable title="DNS Session Signaling Type Codes to be allocated">
+	<ttcol>Opcode</ttcol>	<ttcol>Status</ttcol>	<ttcol>Name</ttcol>
+	<c>TBD1</c>		<c>Standard</c>		<c>MDNS Link Request</c>
+	<c>TBD2</c>		<c>Standard</c>		<c>MDNS Link Invalid</c>
+	<c>TBD3</c>		<c>Standard</c>		<c>MDNS Link Subscribed</c>
+	<c>TBD4</c>		<c>Standard</c>		<c>MDNS Messsage</c>
+	<c>TBD5</c>		<c>Standard</c>		<c>Layer Two Source Address</c>
+	<c>TBD6</c>		<c>Standard</c>		<c>IP Source Address</c>
+	<c>TBD7</c>		<c>Standard</c>		<c>IP Destination Address</c>
+	<c>TBD8</c>		<c>Standard</c>		<c>Link Identifier</c>
+	<c>TBD9</c>		<c>Standard</c>		<c>MDNS Discontinue</c>
+	<c>TBD10</c>		<c>Standard</c>		<c>IP Address Family</c>
+      </texttable>
     </section>
 
     <!--
@@ -887,9 +1121,6 @@
     </section>
     -->
 
-    <section anchor="security" title="Security Considerations">
-    </section>
-
     <section title="IANA Considerations">
     </section>
 
@@ -902,6 +1133,7 @@
 
     <references title="Normative References">
       <?rfc include="reference.RFC.1035.xml"?>
+      <?rfc include="reference.RFC.1323.xml"?>
       <?rfc include="reference.RFC.6241.xml"?>
       <?rfc include="reference.RFC.6762.xml"?>
       <?rfc include="reference.RFC.6763"?>

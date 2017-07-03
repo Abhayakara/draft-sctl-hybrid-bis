@@ -64,48 +64,48 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
-   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
-   3.  Protocol Overview . . . . . . . . . . . . . . . . . . . . . .   4
-     3.1.  Connections between Discovery and Discovery Relays  . . .   4
-     3.2.  mDNS Messages On Links  . . . . . . . . . . . . . . . . .   5
+   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   3.  Protocol Overview . . . . . . . . . . . . . . . . . . . . . .   5
+     3.1.  Connections between Discovery and Discovery Relays  . . .   5
+     3.2.  mDNS Messages On Links  . . . . . . . . . . . . . . . . .   6
    4.  Orchestration . . . . . . . . . . . . . . . . . . . . . . . .   6
-     4.1.  Orchestration System Functional Overview  . . . . . . . .   6
+     4.1.  Orchestration System Functional Overview  . . . . . . . .   7
      4.2.  Orchestration Primitives  . . . . . . . . . . . . . . . .   7
        4.2.1.  Link Present  . . . . . . . . . . . . . . . . . . . .   7
-       4.2.2.  Link Remove . . . . . . . . . . . . . . . . . . . . .   7
+       4.2.2.  Link Remove . . . . . . . . . . . . . . . . . . . . .   8
        4.2.3.  Discovery Proxy Available . . . . . . . . . . . . . .   8
        4.2.4.  Discovery Proxy Resigning . . . . . . . . . . . . . .   8
-       4.2.5.  Discovery Relay Available . . . . . . . . . . . . . .   8
+       4.2.5.  Discovery Relay Available . . . . . . . . . . . . . .   9
        4.2.6.  Discovery Relay Resigning . . . . . . . . . . . . . .   9
-     4.3.  Orchestration System Behavior . . . . . . . . . . . . . .   9
-       4.3.1.  Link Present  . . . . . . . . . . . . . . . . . . . .   9
+     4.3.  Orchestration System Behavior . . . . . . . . . . . . . .  10
+       4.3.1.  Link Present  . . . . . . . . . . . . . . . . . . . .  10
        4.3.2.  Link Remove . . . . . . . . . . . . . . . . . . . . .  10
        4.3.3.  Discovery Proxy Available . . . . . . . . . . . . . .  10
        4.3.4.  Discovery Proxy Resigning . . . . . . . . . . . . . .  11
        4.3.5.  Discovery Relay Available . . . . . . . . . . . . . .  11
-       4.3.6.  Discovery Relay Resigning . . . . . . . . . . . . . .  11
+       4.3.6.  Discovery Relay Resigning . . . . . . . . . . . . . .  12
        4.3.7.  Node Available  . . . . . . . . . . . . . . . . . . .  12
        4.3.8.  Node Resigning  . . . . . . . . . . . . . . . . . . .  12
      4.4.  Discovery Proxy Node Behavior . . . . . . . . . . . . . .  12
-       4.4.1.  Link Present  . . . . . . . . . . . . . . . . . . . .  12
+       4.4.1.  Link Present  . . . . . . . . . . . . . . . . . . . .  13
        4.4.2.  Link Removed  . . . . . . . . . . . . . . . . . . . .  13
        4.4.3.  Discovery Proxy Available . . . . . . . . . . . . . .  13
-       4.4.4.  Discovery Proxy Resigning . . . . . . . . . . . . . .  13
+       4.4.4.  Discovery Proxy Resigning . . . . . . . . . . . . . .  14
        4.4.5.  Discovery Relay Available . . . . . . . . . . . . . .  14
-       4.4.6.  Discovery Relay Resigning . . . . . . . . . . . . . .  14
-     4.5.  Discovery Relay Performer Behavior  . . . . . . . . . . .  14
-       4.5.1.  Link Present  . . . . . . . . . . . . . . . . . . . .  14
+       4.4.6.  Discovery Relay Resigning . . . . . . . . . . . . . .  15
+     4.5.  Discovery Relay Performer Behavior  . . . . . . . . . . .  15
+       4.5.1.  Link Present  . . . . . . . . . . . . . . . . . . . .  15
        4.5.2.  Link Removed  . . . . . . . . . . . . . . . . . . . .  15
        4.5.3.  Discovery Proxy Available . . . . . . . . . . . . . .  15
-       4.5.4.  Discovery Proxy Resigning . . . . . . . . . . . . . .  15
-       4.5.5.  Discovery Relay Available . . . . . . . . . . . . . .  15
-       4.5.6.  Discovery Relay Resigning . . . . . . . . . . . . . .  15
-   5.  Configuration . . . . . . . . . . . . . . . . . . . . . . . .  15
-   6.  foo . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  15
-   7.  Connections between Discovery Proxies and Discovery Relays  .  16
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  16
+       4.5.4.  Discovery Proxy Resigning . . . . . . . . . . . . . .  16
+       4.5.5.  Discovery Relay Available . . . . . . . . . . . . . .  16
+       4.5.6.  Discovery Relay Resigning . . . . . . . . . . . . . .  16
+   5.  Connections between Discovery Proxies and Discovery Relays  .  16
+   6.  Traffic from Relays to Proxies  . . . . . . . . . . . . . . .  18
+   7.  Traffic from Proxies to Relays  . . . . . . . . . . . . . . .  19
+   8.  Discovery Proxy Behavior  . . . . . . . . . . . . . . . . . .  19
+   9.  Session Signaling TLVs  . . . . . . . . . . . . . . . . . . .  19
+     9.1.  MDNS Link Request . . . . . . . . . . . . . . . . . . . .  19
 
 
 
@@ -114,10 +114,23 @@ Cheshire & Lemon         Expires January 4, 2018                [Page 2]
 Internet-Draft            mDNS Discovery Relay                 July 2017
 
 
-   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
-     11.1.  Normative References . . . . . . . . . . . . . . . . . .  17
-     11.2.  Informative References . . . . . . . . . . . . . . . . .  17
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
+     9.2.  MDNS Link Invalid . . . . . . . . . . . . . . . . . . . .  19
+     9.3.  MDNS Link Subscribed  . . . . . . . . . . . . . . . . . .  20
+     9.4.  MDNS Message  . . . . . . . . . . . . . . . . . . . . . .  20
+     9.5.  Layer 2 Source Address  . . . . . . . . . . . . . . . . .  20
+     9.6.  IP Source Address . . . . . . . . . . . . . . . . . . . .  20
+     9.7.  IP Source Port  . . . . . . . . . . . . . . . . . . . . .  20
+     9.8.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  21
+     9.9.  MDNS Discontinue  . . . . . . . . . . . . . . . . . . . .  21
+     9.10. IP Address Family . . . . . . . . . . . . . . . . . . . .  21
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .  21
+   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  21
+   12. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  22
+   13. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  22
+   14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  22
+     14.1.  Normative References . . . . . . . . . . . . . . . . . .  22
+     14.2.  Informative References . . . . . . . . . . . . . . . . .  23
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  23
 
 1.  Introduction
 
@@ -149,6 +162,14 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    the Discovery Relay is connected.  In a complex network, it is
    possible that more than one Discovery Relay will be connected to the
    same link; in this case, the Discovery Proxy ideally should only be
+
+
+
+Cheshire & Lemon         Expires January 4, 2018                [Page 3]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
    using one such Relay Proxy per link, since using more than one will
    generate duplicate traffic.
 
@@ -162,13 +183,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    The following definitions may be of use:
 
    mDNS Agent  A host which sends and/or responds to mDNS queries.
-
-
-
-Cheshire & Lemon         Expires January 4, 2018                [Page 3]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
 
    Discovery Proxy  A network service which receives well-formed
       questions using the DNS protocol, performs multicast DNS queries
@@ -202,6 +216,16 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    Performer  The interface through which the Director directs the
       behavior of Discovery Proxies and Discovery Relays (Section 4.1).
 
+
+
+
+
+
+Cheshire & Lemon         Expires January 4, 2018                [Page 4]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
 3.  Protocol Overview
 
    This document describes a way for Discovery Proxies to communicate
@@ -217,15 +241,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    Proxies.  Connections are authenticated and encrypted using TLS, with
    both client and server certificates.  Connections are long-lived: a
    Discovery Proxy is expected to send many queries over the same
-
-
-
-
-Cheshire & Lemon         Expires January 4, 2018                [Page 4]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
-
    connection, and Discovery Relays will forward all mDNS traffic from
    subscribed interfaces over the connection.
 
@@ -256,6 +271,17 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    no traffic has been sent during a keepalive period
    [I-D.ietf-dnsop-session-signal] Section 4.
 
+
+
+
+
+
+
+Cheshire & Lemon         Expires January 4, 2018                [Page 5]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
 3.2.  mDNS Messages On Links
 
    Discovery Relays listen for mDNS traffic on all configured links.
@@ -271,16 +297,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    Discovery Relays accept mDNS traffic from Discovery Proxies.  Such
    traffic is forwarded to zero or more more links to which the
    Discovery Relay host is directly connected.
-
-
-
-
-
-
-Cheshire & Lemon         Expires January 4, 2018                [Page 5]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
 
 4.  Orchestration
 
@@ -314,6 +330,14 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    There is a special case of orchestration that may be desirable in
    some settings: when a node may need to be capable of providing either
    Discovery Proxy service or Discovery Relay service, and is configured
+
+
+
+Cheshire & Lemon         Expires January 4, 2018                [Page 6]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
    to provide Discovery Proxy service, it would be useful to have a way
    to automatically configure the Discovery Relay to use the Discovery
    Proxy just on that one node, without requiring a network-wide
@@ -330,14 +354,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    cooperatively, and the two functions are present on every
    participating node.  In a managed system using NETCONF [RFC6241], a
    central service pushes configuration information to managed nodes,
-
-
-
-Cheshire & Lemon         Expires January 4, 2018                [Page 6]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
-
    and pulls status information from managed nodes.  For this
    discussion, which of these models is used (or whether some other
    model is used) is immaterial.  The functional division is the same in
@@ -370,22 +386,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    the presence of a link to Performers.  'Link Present' primitives
    include the following data:
 
-   link identifier  One or more opaque identifiers, each of which
-      identifies a link that is present on the orchestrated network.
-      Each identifier is unique among all link identifiers managed by
-      the Director.
-
-4.2.2.  Link Remove
-
-   The 'Link Remove' primitive is used by the Director to communicate to
-   Performers that a link that was formerly present is no longer
-   present.  The 'Link Remove' primitive includes the following data:
-
-   link identifier  One or more opaque identifiers, each of which
-      identifies a link that is present on the orchestrated network.
-      Each identifier is unique among all link identifiers managed by
-      the Director.
-
 
 
 
@@ -393,6 +393,23 @@ Cheshire & Lemon         Expires January 4, 2018                [Page 7]
 
 Internet-Draft            mDNS Discovery Relay                 July 2017
 
+
+   link identifier  One or more opaque 32-bit identifiers, each of which
+      identifies a link that is present on the orchestrated network.
+      Each identifier is unique among all link identifiers managed by
+      the Director.  These link identifiers are used in the Discovery
+      Relay protocol to identify links on which mDNS requests will be
+      sent and received, and are consistent across all participants in
+      the orchestration system.
+
+4.2.2.  Link Remove
+
+   The 'Link Remove' primitive is used by the Director to communicate to
+   Performers that a link that was formerly present is no longer
+   present.  The 'Link Remove' primitive includes the following data:
+
+   link identifier  One or more opaque 32-bit identifiers, as described
+      in Section 4.2.1.
 
 4.2.3.  Discovery Proxy Available
 
@@ -421,26 +438,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
 4.2.4.  Discovery Proxy Resigning
 
    The 'Discovery Proxy Resigning' primitive is used by Discovery
-   Proxies to announce to the Conductor that they are no longer
-   available, and by the Conductor to announce to Discovery Relay
+   Proxies to announce to the Director that they are no longer
+   available, and by the Director to announce to Discovery Relay
    performers that a Discovery Proxy is no longer present or enabled.
-   The 'Discovery Proxy Resigning' primitive includes the following
-   data:
-
-      The node identifier of the Discovery Proxy, unique among all nodes
-      managed by a Director.
-
-4.2.5.  Discovery Relay Available
-
-   Nodes that can provide Discovery Relay service announce their
-   presence to the Director.  The 'Discovery Relay Available' primitive
-   includes the following data:
-
-   node identifier  The node identifier of the Discovery Relay, unique
-      among all nodes managed by a Director.
-
-   IP addresses  A list of IP addresses on which the Discovery Relay may
-      be contacted.
 
 
 
@@ -449,6 +449,26 @@ Cheshire & Lemon         Expires January 4, 2018                [Page 8]
 
 Internet-Draft            mDNS Discovery Relay                 July 2017
 
+
+   The 'Discovery Proxy Resigning' primitive includes the following
+   data:
+
+      The node identifier of the Discovery Proxy, unique among all nodes
+      managed by a Director.
+
+4.2.5.  Discovery Relay Available
+
+   The 'Discovery Relay Available' primitive is used by Discovery Relay
+   Performers to inform the Director that they are available to provide
+   service.  It is used by the Director to announce to Discovery Proxy
+   Performers that a Discovery Relay is available and enabled.  The
+   'Discovery Relay Available' primitive includes the following data:
+
+   node identifier  The node identifier of the Discovery Relay, unique
+      among all nodes managed by a Director.
+
+   IP addresses  A list of IP addresses on which the Discovery Relay may
+      be contacted.
 
    Port  TCP Port on which the Discovery Relay will be listening for
       connections.
@@ -461,24 +481,30 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
 
    Links  A list of links on which the Discovery Relay provides service.
       Each link identifier corresponds to a link identified by a
-      previous 'Link Present' primitive sent by the orchestration
-      system.
-
-   When the set of IP addresses configured on the node providing
-   Discovery Relay service changes, or the port on which it is listening
-   changes, or the set of links it supports changes, The Discovery Relay
-   Performer sends a new 'Discovery Relay Available' primitive with the
-   complete set of information for that node's Discovery Relay service.
+      previous 'Link Present' primitive sent by the Director, as
+      described in Section 4.2.1.
 
 4.2.6.  Discovery Relay Resigning
 
    When a node providing Discovery Relay support can no longer continue
-   to do so, it announces to the Conductor that it is no longer
-   available using this primitive.  The 'Discovery Relay Resigning'
-   primitive includes the following data:
+   to do so, it announces to the Director that it is no longer available
+   using this primitive.  The 'Discovery Relay Resigning' primitive
+   includes the following data:
 
    node identifier  The node identifier of the Discovery Relay, unique
       among all nodes managed by a Director.
+
+
+
+
+
+
+
+
+Cheshire & Lemon         Expires January 4, 2018                [Page 9]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
 
 4.3.  Orchestration System Behavior
 
@@ -494,17 +520,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    the same time, or within an implementation-specific interval, it may
    announce the presence of more than one link at a time using the 'Link
    Present' primitive.
-
-
-
-
-
-
-
-Cheshire & Lemon         Expires January 4, 2018                [Page 9]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
 
 4.3.2.  Link Remove
 
@@ -539,6 +554,14 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    it will only be used by enabled Discovery Proxies on interfaces on
    which service discovery is enabled.
 
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 10]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
    If the Director enables Discovery Proxy service on that node, the
    Discovery Proxy is announced to all nodes currently providing
    Discovery Relay service, using 'Discovery Proxy Available'
@@ -553,63 +576,40 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    previous announcement, the Discovery Proxy service is re-announced to
    every Discovery Relay Performer.
 
-
-
-
-
-Cheshire & Lemon         Expires January 4, 2018               [Page 10]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
-
 4.3.4.  Discovery Proxy Resigning
 
-   When the Conductor receives a 'Discovery Proxy Resigning' primitive
+   When the Director receives a 'Discovery Proxy Resigning' primitive
    from a Discovery Proxy Performer that had previously sent a
-   'Discovery Proxy available' primitive, the Conductor first determines
+   'Discovery Proxy available' primitive, the Director first determines
    if Discovery Proxy service had been enabled on that node.  If so,
    'Discovery Proxy Resigning' notifications are sent to Discovery Relay
    Performers.
 
-   The Conductor may, as a result of a node's resignation from providing
+   The Director may, as a result of a node's resignation from providing
    Discovery Proxy service, enable Discovery Proxy on some other node.
    If so, it does so as described in Section 4.3.3.
 
    In addition to any announcements sent as a result of a node's
-   resignation from providing Discovery Proxy service, the Conductor
-   also looks for an entry in the Discovery Proxy List for that node.
-   If one is present, it is removed.
+   resignation from providing Discovery Proxy service, the Director also
+   looks for an entry in the Discovery Proxy List for that node.  If one
+   is present, it is removed.
 
 4.3.5.  Discovery Relay Available
 
-   When the Conductor receives a 'Discovery Relay Available' primitive,
+   When the Director receives a 'Discovery Relay Available' primitive,
    it records the information in its list of available Discovery Relay
    Performers (henceforth "Discovery Relay List").  If that list already
    contains an entry for the Performer making the new report, the entry
    from the list is discarded and a new one generated from the new
    announcement.
 
-   Whether or not the Conductor enables service discovery through a
+   Whether or not the Director enables service discovery through a
    particular Discovery Relay is dependent on the operation of that
    particular orchestration system, which is out of scope for this
-   document.  It is assumed that a Conductor may or may not enable a
+   document.  It is assumed that a Director may or may not enable a
    particular Discovery Relay.
 
-   If the Conductor enables service discovery through the relay that
-   made the announcement, the relay is announced to all enabled
-   Discovery Proxy Performers.  In addition, if the relay had not
-   previously been enabled for service discovery, the Conductor sends a
-   'Discovery Proxy Available' primitive to that Performer for each
-   Discovery Proxy Performer on the Discovery Proxy List.
 
-4.3.6.  Discovery Relay Resigning
-
-   When the Conductor receives a 'Discovery Relay Resigning' primitive,
-   it checks to see if the node making the announcement had previously
-   been listed as providing Discovery Relay service; if so, the entry
-   for that node is removed from the list.  If Discovery Relay service
-   was enabled for that node, all nodes providing Discovery Proxy
-   service are notified that this node is no longer providing Discovery
 
 
 
@@ -618,6 +618,21 @@ Cheshire & Lemon         Expires January 4, 2018               [Page 11]
 Internet-Draft            mDNS Discovery Relay                 July 2017
 
 
+   If the Director enables service discovery through the relay that made
+   the announcement, the relay is announced to all enabled Discovery
+   Proxy Performers.  In addition, if the relay had not previously been
+   enabled for service discovery, the Director sends a 'Discovery Proxy
+   Available' primitive to that Performer for each Discovery Proxy
+   Performer on the Discovery Proxy List.
+
+4.3.6.  Discovery Relay Resigning
+
+   When the Director receives a 'Discovery Relay Resigning' primitive,
+   it checks to see if the node making the announcement had previously
+   been listed as providing Discovery Relay service; if so, the entry
+   for that node is removed from the list.  If Discovery Relay service
+   was enabled for that node, all nodes providing Discovery Proxy
+   service are notified that this node is no longer providing Discovery
    Relay service, by sending a 'Discovery Relay Resigning' primitive to
    each such node.
 
@@ -647,6 +662,18 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    section are specific to the operation of the Discovery Proxy service
    on that node, not to the Discovery Relay service.
 
+
+
+
+
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 12]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
 4.4.1.  Link Present
 
    When a node that is providing Discovery Proxy service receives a link
@@ -666,14 +693,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    If no attempt to subscribe to mDNS messages on the link is
    successful, then service discovery on that link is not possible.  The
    Discovery Proxy node maintains a list of links on which Discovery
-
-
-
-Cheshire & Lemon         Expires January 4, 2018               [Page 12]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
-
    Relay service is desired but not available; when an attempt to get
    Discovery Relay service on a link fails, either because no node is
    providing Discovery Relay service on that link, or because attempting
@@ -692,9 +711,25 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
 
 4.4.3.  Discovery Proxy Available
 
+   Discovery Proxy Performers send 'Discovery Proxy Available'
+   primitives to the Director whenever their configuration changes in a
+   way that affects the content of the primitive, and also whenever
+   their node becomes newly available to the Director.  In addition to
+   notifying the Director when they first become connected to the
+   Director's orchestration system, they must also notify the Director
+   when they disconnect and reconnect.
+
    When a node with Discovery Proxy service becomes available to the
    orchestration system, it informs the orchestration system that it can
    provide Discovery Proxy service.  It also provides the orchestration
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 13]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
    system with a list of IP addresses from which it may originate
    connections to Discovery Relays, and provides a TLS PKI cert or
    suitable bare public key which will be used for TLS Client
@@ -718,17 +753,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    When a node that had previously provided Discovery Proxy service is
    no longer able to do so for any reason, it announces this to the
    orchestration system using a 'Discovery Proxy Resigning' primitive.
-
-
-
-
-
-
-
-Cheshire & Lemon         Expires January 4, 2018               [Page 13]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
 
 4.4.5.  Discovery Relay Available
 
@@ -755,6 +779,13 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
    each link on the list of links for which Discovery Relay service is
    not available.
 
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 14]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
 4.4.6.  Discovery Relay Resigning
 
    Discovery Relay drops its connection to that Discovery Relay and puts
@@ -775,65 +806,34 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
 4.5.1.  Link Present
 
    When a Discovery Relay performer receives a link present
-   notification, it determines whether for each link announced whether
-   it has an interface that is directly connected to that link.  If so,
-   it determines whether it has previously announced the availability of
-
-
-
-Cheshire & Lemon         Expires January 4, 2018               [Page 14]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
-
+   notification, it determines for each link announced whether it has an
+   interface that is directly connected to that link.  If so, it
+   determines whether it has previously announced the availability of
    service on that link.  If not, it adds the link to the list of links
    on which it provides Discovery Relay service (henceforth "Discovery
    Relay link list").
 
    If as a result of a 'Link Present' announcement the Discovery Relay
    link list has changed, the Discovery Relay performer sends a new
-   'Discovery Relay Available' primitive to the director.
+   'Discovery Relay Available' primitive to the Director.
 
 4.5.2.  Link Removed
 
+   When the Discovery Relay Performer receives a 'Link Removed'
+   primitive, for each link mentioned in the primitive it checks to see
+   if it is currently providing service on that link.  For each link
+   mentioned in the primitive for which it is providing service, it
+   deletes that link from its list of links on which it is providing
+   service.  If any links were deleted from the list, the Discovery
+   Relay Performer sends a new 'Discovery Relay Available' message to
+   the Director.
+
 4.5.3.  Discovery Proxy Available
 
-4.5.4.  Discovery Proxy Resigning
-
-4.5.5.  Discovery Relay Available
-
-4.5.6.  Discovery Relay Resigning
-
-5.  Configuration
-
-   Discovery Proxies and Discovery Relays are configurable while in
-   operation.
-
-   Discovery Relays may have a whitelist of IP addresses or IP prefixes
-   from which connections are permitted.
-
-   Discovery Relays publish IP address and port pairs on which they are
-   listening for connections.
-
-   Discovery Proxies are provisioned with lists of Discovery Relays.
-   Each entry in the list includes one or more IP addresses and ports on
-   which the Discovery Relay can be contacted.  Each entry also includes
-   a list of links to which the Discovery Relay is connected.  Each
-   entry includes the public key used by that Discovery Relay.
-
-   Discovery Proxies have lists of links on which service discovery is
-   to be supported.  If more than one Discovery Proxy is present, it is
-   not required that each Discovery Proxy use the same Discovery Relay
-   for any particular link.
-
-6.  foo
-
-
-
-
-
-
-
+   Directors send 'Discovery Proxy Available' primitives to Discovery
+   Relay Performers when new Discovery Proxy Performers announce their
+   availability, and also when Discovery Proxy Performers announce
+   changes to their configuration.  When a Discovery Relay Performer
 
 
 
@@ -842,54 +842,54 @@ Cheshire & Lemon         Expires January 4, 2018               [Page 15]
 Internet-Draft            mDNS Discovery Relay                 July 2017
 
 
-    discovery proxy behavior:
-    - Assume initial state: no links configured, no relay proxies configured
-    - When link is added, look for relay proxies supporting that link.
-    If there is one, pick that one. If there is more than one, pick one at random.
-    If zero, add link to list of links lacking relays.   If one picked, if not connected, connect.   If rejected,
-    pick another; else add to lack list, queue retry in REATTEMPT_INTERVAL.   Once have connection, send subscribe for
-    new link.
-    - When relay is added, see if it supports any links on lacking list.   If so, attempt to connect.  If success,
-    subscribe for any such links.
-    - When link is deleted, send unsubscribe for that link to relay for which subscription exists, if any.
-    - When relay is deleted, close connection to relay if open.   For every link subscribed on that relay, attempt to subscribe on another relay.   Add links
+   receives one of these primitives, it updates its Discovery Proxy IP
+   address whitelist with the set of IP addresses from the primitive,
+   and updates the Discovery Proxy authentication certificate as well.
+   If the Discovery Proxy is connected to the Discovery Relay and either
+   the certificate changed, or the source IP address of the connection
+   is no longer on the whitelist, the Discovery Relay drops the
+   connection.
 
-7.  Connections between Discovery Proxies and Discovery Relays
+4.5.4.  Discovery Proxy Resigning
+
+   Directors send 'Discovery Proxy Resigning' messages to Discovery
+   Relay Performers when Discovery Proxy Performers indicate that they
+   are no longer available, or when they are disabled by the
+   orchestration system.  When a Discovery Relay Performer receives this
+   primitive, it checks to see if any connections from that Discovery
+   Proxy are present.  Any such connections are terminated.
+
+4.5.5.  Discovery Relay Available
+
+   Discovery Relay Performers send 'Discovery Relay Available'
+   primitives to the Director whenever their configuration changes in a
+   way that affects the content of the primitive, and also whenever
+   their node becomes newly available to the Director.  In addition to
+   notifying the Director when they first become connected to the
+   Director's orchestration system, they must also notify the Director
+   when they disconnect and reconnect.
 
    Discovery Relays listen for connections from Discovery Proxies.
-   Because communications between Discovery Relays and Discovery Proxies
-   must be orchestrated, no special port number is reserved.  Rather,
-   the Discovery Proxy is configured with a list of Discovery Relays,
-   their IP addresses, and the ports on which they are listening.  The
-   Discovery Proxy can be reconfigured while in operation as the set of
-   available Discovery Relays, or the ports on which Discovery Relays
-   are listening, changes.
+   Because no port is reserved for Discovery Relays, it is not useful to
+   announce the availability of the service until the service is
+   listening for connections, at which point it will know which port it
+   is listening on.  Therefore, before sending a 'Discovery Relay
+   Available' primitive, a Discovery Relay Performer must have received
+   its listening port from the Discovery Relay service.
 
-   When a Discovery Relay receives a connection from a discovery proxy,
-   it may check a whitelist to validate the source IP address of the
-   connection.  If the connection is not on the whitelist, the Discovery
-   Relay will respond to the TLS Client Hello message with a TLS
-   user_canceled alert ([I-D.ietf-tls-tls13] Section 6.1).
+4.5.6.  Discovery Relay Resigning
 
-   Otherwise, the Discovery Relay will attempt to complete a TLS
-   handshake with the Discovery Proxy.  Discovery Proxies are required
-   to send the post_handshake_auth extension ([I-D.ietf-tls-tls13]
-   Section 4.2.5).  If a relay proxy receives a ClientHello message with
-   no post_handshake_auth extension, the Discovery Relay rejects the
-   connection with an handshake_failure alert ([I-D.ietf-tls-tls13]
-   Section 6.2).
+   When a node providing Discovery Relay service must stop providing
+   that service, it sends a 'Discovery Relay Resigning' primitive to the
+   Director.
 
-   The Discovery Proxy is
+5.  Connections between Discovery Proxies and Discovery Relays
 
-8.  Security Considerations
-
-9.  IANA Considerations
-
-10.  Acknowledgments
-
-
-
-
+   When a Discovery Relay starts, it opens a passive TCP listener to
+   receive connections from Discovery Proxies.  This listener may be
+   bound to one or more source IP addresses, or to the wildcard address,
+   depending on the TCP implementation.  When a connection is received,
+   the relay must first validate that it is a connection to an IP
 
 
 
@@ -898,9 +898,310 @@ Cheshire & Lemon         Expires January 4, 2018               [Page 16]
 Internet-Draft            mDNS Discovery Relay                 July 2017
 
 
-11.  References
+   address to which connections are allowed.  For example, it may be
+   that only connections to ULAs are allowed, or to the IP addresses
+   configured on certain interfaces.  If the listener is bound to a
+   specific IP address, this check is unnecessary.
 
-11.1.  Normative References
+   The relay must then validate that the source IP address of the
+   connection is on its whitelist.  If the connection is not permitted
+   either because of the source address or the destination address, the
+   Discovery Relay responds to the TLS Client Hello message from the
+   Discovery Proxy with a TLS user_canceled alert ([I-D.ietf-tls-tls13]
+   Section 6.1).
+
+   Otherwise, the Discovery Relay will attempt to complete a TLS
+   handshake with the Discovery Proxy.  Discovery Proxies are required
+   to send the post_handshake_auth extension ([I-D.ietf-tls-tls13]
+   Section 4.2.5).  If a relay proxy receives a ClientHello message with
+   no post_handshake_auth extension, the Discovery Relay rejects the
+   connection with a certificate_required alert ([I-D.ietf-tls-tls13]
+   Section 6.2).
+
+   Once the TLS handshake is complete, the Discovery Relay MUST request
+   post-handshake authentication as described in ([I-D.ietf-tls-tls13]
+   Section 4.6.2).  If the Discovery Proxy refuses to send a
+   certificate, or the key presented does not match the key associated
+   with the IP address from which the connection originated, or the
+   CertificateVerify does not validate, the connection is dropped with
+   the TLS access_denied alert ([I-D.ietf-tls-tls13] Section 6.2).
+
+   Once the connection is established and authenticated, it is treated
+   as a DNS TCP connection [RFC1035].
+
+   Aliveness of connections between Discovery Proxies and Relays is
+   maintained as described in Section 4 of
+   [I-D.ietf-dnsop-session-signal].  Discovery Proxies must also honor
+   the 'Retry Delay' TLV (section 5 of [I-D.ietf-dnsop-session-signal])
+   if sent by the Discovery Relay.
+
+   Discovery Proxies may establish more than one connection to a
+   specific Discovery Relay.  This would happen in the case that a TCP
+   connection stalls, and the Discovery Proxy is able to reconnect
+   before the previous connection has timed out.  It could also happen
+   as a result of a server restart.  It is not likely that two active
+   connections from the same Discovery Proxy would be present at the
+   same time, but it must be possible for additional connections to be
+   established.  The Discovery Relay may drop the old connection when
+   the new one has been fully established, including a successful TLS
+   handshake.  What it means for two connections to be from the same
+   Discovery Proxy is that the connections both have source addresses
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 17]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
+   that belong to the same proxy, and that they were authenticated using
+   the same client certificate.
+
+6.  Traffic from Relays to Proxies
+
+   The mere act of connecting to a Discovery Relay does not result in
+   any mDNS traffic being forwarded.  In order to request that mDNS
+   traffic from a particular link be forwarded on a particular
+   connection, the Discovery Proxy must send a session signaling message
+   containing one or more MDNS Link Request TLVs Section 9.1 indicating
+   the link from which traffic is requested.
+
+   When such a message is received, the Discovery Relay validates that
+   each specified link is available for forwarding, and that forwarding
+   is enabled for that link.  For each such message the Discovery Relay
+   validates each link specified and includes in a single response a
+   list of zero or more MDNS Link Invalid TLVs Section 9.2 for links
+   that are not valid, and zero or more MDNS Link Subscribed TLVs
+   Section 9.3 for links that are valid.  For each valid link, it begins
+   forwarding all mDNS traffic from that link to the Discovery Proxy.
+   Delivery is not guaranteed: if there is no buffer space, packets will
+   be dropped.  It is expected that regular mDNS retry processing will
+   take care of retransmission of lost packets.  The amount of buffer
+   space is implementation dependent, but generally should not be more
+   than the bandwidth delay product of the TCP connection [RFC1323].
+
+   mDNS messages from Relays to Proxies are framed within DNS Session
+   Signaling messages.  This allows multiple TLVs to be included.  Each
+   forwarded mDNS message is contained in an MDNS Message TLV
+   Section 9.4.  The layer 2 source address of the message, if known,
+   MAY be encoded in a Layer 2 Source Section 9.5 TLV.  The source IP
+   address of the message MUST be encoded in a IP Source Address
+   Section 9.6 TLV.  The source port of the message MUST be encoded in
+   an IP Source port TLV Section 9.7.  The link on which the message was
+   received MUST be encoded in a Link Identifier TLV Section 9.8.  The
+   Discovery Proxy MUST silently ignore unrecognized TLVs in mDNS
+   messages, and MUST NOT discard mDNS messages that include
+   unrecognized TLVs.
+
+   A Discovery Proxy may discontinue listening for mDNS messages on a
+   particular link by sending a session signaling message containing an
+   MDNS Link Discontinue TLV Section 9.9.  Subsequent messages from that
+   link that had previously been queued indicating may arrive.  The
+   Discovery Proxy should silently ignore such messages.  The Discovery
+   Relay MUST discontinue generating such messages as soon as the
+   request is received.  The Discovery Relay does not respond to this
+   message other than to discontinue forwarding mDNS messages from the
+   specified links.
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 18]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
+7.  Traffic from Proxies to Relays
+
+   Like mDNS traffic from relays, each mDNS message sent by a Discovery
+   Proxie to a Discovery Relay is encapsulated in an MDNS Message TLV
+   Section 9.4 within a session signaling message.  Each message MUST
+   contain one or more Link Identifier TLVs Section 9.8.  The Discovery
+   Relay will transmit the message to the mDNS port and multicast
+   address on each link.  The message MUST include one or more IP family
+   TLVs Section 9.10.  For each such TLVs that is included, the message
+   will be sent on each link using the specified IP family.  If no
+   family codes are recognized, no packets will be transmitted.
+
+8.  Discovery Proxy Behavior
+
+   Discovery Proxies treat links for which Discovery Relay service is
+   being used as if they were virtual interfaces; in other words, a
+   Discovery Proxy serving multiple links using multiple Discovery
+   Relays behaves the same as a Discovery Proxy serving multiple links
+   using multiple physical network interfaces.
+
+   Discovery Proxies responding to mDNS messages for non-link-local IP
+   addresses where the unicast bit is set respond directly, rather than
+   through a proxy.  Link-local responses are not supported for links to
+   which Discovery Proxies are not directly connected.
+
+9.  Session Signaling TLVs
+
+   This document defines a modest number of new DNS Session Signaling
+   TLVs.
+
+9.1.  MDNS Link Request
+
+   The MDNS Link Request TLV conveys a 32-bit link identifier from which
+   a Discovery Proxy is requesting that a Discovery Relay forward mDNS
+   traffic.  The link identifier comes from the orchestration system
+   (see Section 4.2.1).  The SSOP-TYPE for this TLV is TBD1.  The SSOP-
+   LENGTH is always 4.  The SSOP-DATA is the 32-bit identifier in
+   network byte order.
+
+9.2.  MDNS Link Invalid
+
+   The MDNS Link Invalid TLV is returned in response to a session
+   signaling message containing an MDNS Link Request, and returns the
+   32-bit identifier that was contained in that request.  The link
+   identifier comes from an MDNS Link Request TLV in the message being
+   responded to.  The TLV indicates that the specified link identifier
+   does not refer to a valid link, either because the link is not
+   supported by the Discovery Relay, or because the identifier is not
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 19]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
+   known.  The SSOP-TYPE for this TLV is TBD2.  The SSOP-LENGTH is
+   always 4.  The SSOP-DATA is the 32-bit identifier in network byte
+   order.
+
+9.3.  MDNS Link Subscribed
+
+   The MDNS Link Subscribed TLV is returned in response to a session
+   signaling message containing an MDNS Link Request, and returns the
+   32-bit identifier from a MDNS Link Request TLV that was contained in
+   that request.  It indicates that MDNS messages for the specified link
+   have been successfully subscribed.  The SSOP-TYPE for this TLV is
+   TBD3.  The SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit
+   identifier in network byte order.
+
+9.4.  MDNS Message
+
+   The MDNS Message TLV is used to encapsulate an mDNS message that is
+   being forwarded from a link to a Discovery Proxy, or is being
+   forwarded from a Discovery Proxy to a link.  The SSOP-TYPE for this
+   TLV is TBD4.  SSOP-LENGTH is the length of the application layer
+   payload of the MDNS message.  SSOP-DATA is the application layer
+   payload of the message.
+
+9.5.  Layer 2 Source Address
+
+   The Layer 2 Source Address TLV is used to report the layer 2 address
+   from which an mDNS message was received.  This TLV is optionally
+   present in session signaling messages from Discovery Relays to
+   Discovery Proxies that contain mDNS messages when the source link-
+   layer address is known.  The SSOP-TYPE is TBD5.  SSOP-LENGTH is
+   variable, depending on the length of link-layer addresses on the link
+   from which the message was received.  SSOP-data is the link-layer
+   address as it was received on the link.
+
+9.6.  IP Source Address
+
+   The IP Source Address TLV is used to report the IP source address
+   from which an mDNS message was received.  This TLV is present in
+   session signaling messages from Discovery Relays to Discovery Proxies
+   that contain mDNS messages.  SSOP-TYPE is TBD6.  SSOP-LENGTH is
+   either 4, for an IPv4 address, or 16, for an IPv6 address.  SSOP-DATA
+   is the IP Address.
+
+9.7.  IP Source Port
+
+   The IP Source Port TLV is used to report the IP source port from
+   which an mDNS message was received.  This TLV is present in session
+   signaling messages from Discovery Relays to Discovery Proxies.  SSOP-
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 20]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
+   TYPE is TBD7.  SSOP-LENGTH is 2.  SSOP-DATA is the source port in
+   network byte order.
+
+9.8.  Link Identifier
+
+   This option is used both in session signaling messages from Discovery
+   Proxies to Discovery Relays that contain mDNS messages, and in
+   message from Discovery Relays to Discovery Proxies that contain mDNS
+   messages.  In the former case, it indicates a link to which the
+   message should be forwarded; in the latter case, it indicates the
+   link on which the message was received.  SSOP-TYPE is TBD8.  SSOP-
+   LENGTH is 4.  SSOP-DATA is a 32-bit link identifier as described in
+   Section 4.2.1.
+
+9.9.  MDNS Discontinue
+
+   This option is used by Discovery Proxies to unsubscribe to mDNS
+   messages on the specified link.  More than one may be present in a
+   single session signaling message.  SSOP-TYPE is TBD9.  SSOP-LENGTH is
+   4.  SSOP-DATA is a 32-bit link identifier as described in
+   Section 4.2.1.
+
+9.10.  IP Address Family
+
+   This option is used in mDNS messages sent by Discovery Proxies to
+   links to indicate to the Discovery Relay which IP address family or
+   families should be used when transmitting the message on the link.
+   More than one may be present in a single session signaling message.
+   SSOP-TYPE is TBD10.  SSOP-LENGTH is 1.  SSOP-DATA is a 8-bit IP
+   family identifier.  A value of 1 indicates IPv4.  A value of 2
+   indicates IPv6.  Other values are reserved, and MUST be ignored if
+   not recognized.
+
+10.  Security Considerations
+
+11.  IANA Considerations
+
+   The IANA is kindly requested to update the DNS Session Signaling Type
+   Codes Registry [I-D.ietf-dnsop-session-signal] by allocating codes
+   for each of the TBD type codes listed in the following table, and by
+   updating this document, here and in Section 9.  Each type code should
+   list this document as its reference document.
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 21]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
+             +--------+----------+--------------------------+
+             | Opcode | Status   | Name                     |
+             +--------+----------+--------------------------+
+             | TBD1   | Standard | MDNS Link Request        |
+             | TBD2   | Standard | MDNS Link Invalid        |
+             | TBD3   | Standard | MDNS Link Subscribed     |
+             | TBD4   | Standard | MDNS Messsage            |
+             | TBD5   | Standard | Layer Two Source Address |
+             | TBD6   | Standard | IP Source Address        |
+             | TBD7   | Standard | IP Destination Address   |
+             | TBD8   | Standard | Link Identifier          |
+             | TBD9   | Standard | MDNS Discontinue         |
+             | TBD10  | Standard | IP Address Family        |
+             +--------+----------+--------------------------+
+
+             DNS Session Signaling Type Codes to be allocated
+
+12.  IANA Considerations
+
+13.  Acknowledgments
+
+14.  References
+
+14.1.  Normative References
 
    [I-D.ietf-dnsop-session-signal]
               Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
@@ -922,6 +1223,17 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
               November 1987, <http://www.rfc-editor.org/info/rfc1035>.
 
+   [RFC1323]  Jacobson, V., Braden, R., and D. Borman, "TCP Extensions
+              for High Performance", RFC 1323, DOI 10.17487/RFC1323, May
+              1992, <http://www.rfc-editor.org/info/rfc1323>.
+
+
+
+Cheshire & Lemon         Expires January 4, 2018               [Page 22]
+
+Internet-Draft            mDNS Discovery Relay                 July 2017
+
+
    [RFC6241]  Enns, R., Ed., Bjorklund, M., Ed., Schoenwaelder, J., Ed.,
               and A. Bierman, Ed., "Network Configuration Protocol
               (NETCONF)", RFC 6241, DOI 10.17487/RFC6241, June 2011,
@@ -939,20 +1251,11 @@ Internet-Draft            mDNS Discovery Relay                 July 2017
               Control Protocol", RFC 7788, DOI 10.17487/RFC7788, April
               2016, <http://www.rfc-editor.org/info/rfc7788>.
 
-11.2.  Informative References
+14.2.  Informative References
 
    [TR-069]   Broadband Forum, "CPE WAN Management Protocol", November
               2013, <https://www.broadband-forum.org/technical/download/
               TR-069_Amendment-5.pdf>.
-
-
-
-
-
-Cheshire & Lemon         Expires January 4, 2018               [Page 17]
-
-Internet-Draft            mDNS Discovery Relay                 July 2017
-
 
 Authors' Addresses
 
@@ -982,27 +1285,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Cheshire & Lemon         Expires January 4, 2018               [Page 18]
+Cheshire & Lemon         Expires January 4, 2018               [Page 23]
