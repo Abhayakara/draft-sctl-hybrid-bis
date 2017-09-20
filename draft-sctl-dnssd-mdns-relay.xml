@@ -72,7 +72,7 @@
       </t>
       <t>
 	The Discovery Relay operates by listening for TCP connections from Discovery Proxies.  When
-	a Discovery Proxy conneects, the connection is authenticated and secured using TLS.  The
+	a Discovery Proxy connects, the connection is authenticated and secured using TLS.  The
 	Discovery Proxy can then send messages that will be relayed to specified links.  The
 	Discovery Proxy may also specify one or more links from which it wishes to receive mDNS
 	traffic.  DNS Session Signaling <xref target="I-D.ietf-dnsop-session-signal"/> is used as
@@ -830,6 +830,12 @@
 	using multiple physical network interfaces.
       </t>
       <t>
+	<!-- This isn't going to work because a unicast from a source address not on-link is
+	     going to be discarded.
+	     Stuart proposes that we have two modes of connection: one is advertising proxy mode,
+	     which requires the ability to do unicast responses, and the other is discovery proxy
+	     mode, which does not have this requirement: discovery proxies do not accept queries
+	     via mDNS. -->
 	Discovery Proxies responding to mDNS messages for non-link-local IP addresses where the
 	unicast bit is set respond directly, rather than through a proxy.   Link-local responses
 	are not supported for links to which Discovery Proxies are not directly connected.
