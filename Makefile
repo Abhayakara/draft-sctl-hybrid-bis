@@ -1,6 +1,6 @@
 # Original makefile from https://github.com/martinthomson/i-d-template
 
-all: draft-sctl-hybrid-bis.txt draft-sctl-hybrid-split.txt
+all: draft-sctl-hybrid-bis.txt draft-sctl-dnssd-mdns-relay.txt
 
 # Edited by wkumari to remove a bunch of the extra stuff I'll never use.
 
