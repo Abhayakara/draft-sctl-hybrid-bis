@@ -72,13 +72,12 @@
 	on every link.
       </t>
       <t>
-	The Discovery Relay operates by listening for TCP connections from Discovery Proxies.  When
-	a Discovery Proxy connects, the connection is authenticated and secured using TLS.  The
-	Discovery Proxy can then send messages that will be relayed to specified links.  The
-	Discovery Proxy may also specify one or more links from which it wishes to receive mDNS
-	traffic.  DNS Session Signaling <xref target="I-D.ietf-dnsop-session-signal"/> is used as
-	a framework for conveying interface and IP header information associated with each
-	message.
+	The Discovery Relay operates by listening for TCP connections from Discovery Proxies.
+	When a Discovery Proxy connects, the connection is authenticated and secured using TLS.
+	The Discovery Proxy can then send messages that will be relayed to specified links.
+	The Discovery Proxy may also specify one or more links from which it wishes to receive mDNS traffic.
+	DNS Stateful Operations (DSO) <xref target="I-D.ietf-dnsop-session-signal"/> is used as
+	a framework for conveying interface and IP header information associated with each message.
       </t>
       <t>
 	The Discovery Relay functions essentially as a set of one or more virtual interfaces for the
@@ -150,8 +149,8 @@
 	</t>
 	<t>
 	  The stream encapsulated in TLS will carry DNS frames as in the DNS TCP protocol
-	  <xref target="RFC1035"/> Section 4.2.2.   However, all messages will be DNS Session
-	  Signaling messages <xref target="I-D.ietf-dnsop-session-signal"/>.  There will be
+	  <xref target="RFC1035"/> Section 4.2.2.   However, all messages will be DSO
+	  messages <xref target="I-D.ietf-dnsop-session-signal"/>.  There will be
 	  three types of such messages:
 	  <list style="symbols">
 	    <t>Subscribe messages from Discovery Proxy to Discovery Relay</t>
@@ -258,7 +257,7 @@
       <t>
 	The mere act of connecting to a Discovery Relay does not result in any mDNS traffic
 	being forwarded.  In order to request that mDNS traffic from a particular link be
-	forwarded on a particular connection, the Discovery Proxy must send a session signaling
+	forwarded on a particular connection, the Discovery Proxy must send a DSO
 	message containing one or more MDNS Link Request TLVs (<xref target="MDNSlinkrq"/>)
 	indicating the link from which traffic is requested.
       </t>
@@ -276,7 +275,7 @@
 	delay product of the TCP connection <xref target="RFC1323"/>.
       </t>
       <t>
-	mDNS messages from Relays to Proxies are framed within DNS Session Signaling messages.
+	mDNS messages from Relays to Proxies are framed within DSO messages.
 	This allows multiple TLVs to be included.  Each forwarded mDNS message is contained in
 	an MDNS Message TLV <xref target="MDNSmessage"/>.  The layer 2 source address of the
 	message, if known, MAY be encoded in a Layer 2 Source TLV (<xref target="l2sa"/>).  The
@@ -289,7 +288,7 @@
       </t>
       <t>
 	A Discovery Proxy may discontinue listening for mDNS messages on a particular link by
-	sending a session signaling message containing an MDNS Link Discontinue TLV (<xref
+	sending a DSO message containing an MDNS Link Discontinue TLV (<xref
 	target="MDNSdis"/>).  Subsequent messages from that link that had previously been queued
 	may arrive after listening has been discontinued.  The Discovery Proxy should silently
 	ignore such messages.  The Discovery Relay MUST discontinue generating such messages as
@@ -302,7 +301,7 @@
       <t>
 	Like mDNS traffic from relays, each mDNS message sent by a Discovery Proxy to a
 	Discovery Relay is encapsulated in an MDNS Message TLV (<xref target="MDNSmessage"/>)
-	within a session signaling message.  Each message MUST contain one or more Link
+	within a DSO message.  Each message MUST contain one or more Link
 	Identifier TLVs (<xref target="linkid"/>).  The Discovery Relay will transmit the
 	message to the mDNS port and multicast address on each link.  The message MUST include
 	one or more IP address family TLVs (<xref target="ipfam"/>).  For each such TLVs that is
@@ -346,9 +345,9 @@
       </t>
     </section>
 
-    <section anchor="tlvs" title="Session Signaling TLVs">
+    <section anchor="tlvs" title="DSO TLVs">
       <t>
-	This document defines a modest number of new DNS Session Signaling TLVs.
+	This document defines a modest number of new DSO TLVs.
       </t>
       <section anchor="MDNSlinkrq" title="MDNS Link Request">
 	<t>
@@ -361,7 +360,7 @@
       </section>
       <section anchor="MDNSLinkInvalid" title="MDNS Link Invalid">
 	<t>
-	  The MDNS Link Invalid TLV is returned in response to a session signaling message
+	  The MDNS Link Invalid TLV is returned in response to a DSO message
 	  containing an MDNS Link Request, and returns the 32-bit identifier that was contained
 	  in that request.  The link identifier comes from an MDNS Link Request TLV in the
 	  message being responded to. The TLV indicates that the specified link identifier does
@@ -374,7 +373,7 @@
       <section anchor="MDNSlsub" title="MDNS Link Subscribed">
 	<!-- XXX why do we need this if we don't need MDNS Link Unsubscribed? -->
 	<t>
-	  The MDNS Link Subscribed TLV is returned in response to a session signaling message
+	  The MDNS Link Subscribed TLV is returned in response to a DSO message
 	  containing an MDNS Link Request, and returns the 32-bit identifier from a MDNS Link
 	  Request TLV that was contained in that request.  It indicates that MDNS messages for
 	  the specified link have been successfully subscribed.  The SSOP-TYPE for this TLV is
@@ -394,7 +393,7 @@
       <section anchor="l2sa" title="Layer 2 Source Address">
 	<t>
 	  The Layer 2 Source Address TLV is used to report the link-layer address from which an
-	  mDNS message was received.  This TLV is optionally present in session signaling
+	  mDNS message was received.  This TLV is optionally present in DSO
 	  messages from Discovery Relays to Discovery Proxies that contain mDNS messages when
 	  the source link-layer address is known.  The SSOP-TYPE is TBD5.  SSOP-LENGTH is
 	  variable, depending on the length of link-layer addresses on the link from which the
@@ -405,7 +404,7 @@
       <section anchor="srcaddr" title="IP Source Address">
 	<t>
 	  The IP Source Address TLV is used to report the IP source address from which an mDNS
-	  message was received.  This TLV is present in session signaling messages from
+	  message was received.  This TLV is present in DSO messages from
 	  Discovery Relays to Discovery Proxies that contain mDNS messages.  SSOP-TYPE is TBD6.
 	  SSOP-LENGTH is either 4, for an IPv4 address, or 16, for an IPv6 address.  SSOP-DATA
 	  is the IP Address.
@@ -414,14 +413,14 @@
       <section anchor="srcpt" title="IP Source Port">
 	<t>
 	  The IP Source Port TLV is used to report the IP source port from which an mDNS message
-	  was received.  This TLV is present in session signaling messages from Discovery Relays
+	  was received.  This TLV is present in DSO messages from Discovery Relays
 	  to Discovery Proxies.  SSOP-TYPE is TBD7.  SSOP-LENGTH is 2.  SSOP-DATA is the source
 	  port in network byte order.
 	</t>
       </section>
       <section anchor="linkid" title="Link Identifier">
 	<t>
-	  This option is used both in session signaling messages from Discovery Proxies to
+	  This option is used both in DSO messages from Discovery Proxies to
 	  Discovery Relays that contain mDNS messages, and in message from Discovery Relays to
 	  Discovery Proxies that contain mDNS messages.   In the former case, it indicates a
 	  link to which the message should be forwarded; in the latter case, it indicates the
@@ -432,7 +431,7 @@
       <section anchor="MDNSdis" title="MDNS Discontinue">
 	<t>
 	  This option is used by Discovery Proxies to unsubscribe to mDNS messages on the
-	  specified link.  More than one may be present in a single session signaling message.
+	  specified link.  More than one may be present in a single DSO message.
 	  SSOP-TYPE is TBD9.  SSOP-LENGTH is 4.  SSOP-DATA is a 32-bit link identifier as
 	  described in <xref target="prov"/>.
 	</t>
@@ -442,7 +441,7 @@
 	  This option is used in mDNS messages sent by Discovery Proxies to links to indicate to
 	  the Discovery Relay which IP address family or families should be used when
 	  transmitting the message on the link.  More than one may be present in a single
-	  session signaling message.  SSOP-TYPE is TBD10.  SSOP-LENGTH is 1.  SSOP-DATA is a
+	  DSO message.  SSOP-TYPE is TBD10.  SSOP-LENGTH is 1.  SSOP-DATA is a
 	  8-bit IP family identifier.  A value of 1 indicates IPv4.  A value of 2 indicates
 	  IPv6.   Other values are reserved, and MUST be ignored if not recognized.
 	</t>
@@ -693,13 +692,13 @@ Proxy
 
     <section title="IANA Considerations">
       <t>
-	The IANA is kindly requested to update the DNS Session Signaling Type Codes Registry
+	The IANA is kindly requested to update the DSO Type Codes Registry
 	<xref target="I-D.ietf-dnsop-session-signal"/> by allocating codes for each of the TBD
 	type codes listed in the following table, and by updating this document, here and in
 	<xref target="tlvs"/>.  Each type code should list this document as its reference
 	document.
       </t>
-      <texttable title="DNS Session Signaling Type Codes to be allocated">
+      <texttable title="DSO Type Codes to be allocated">
 	<ttcol>Opcode</ttcol>	<ttcol>Status</ttcol>	<ttcol>Name</ttcol>
 	<c>TBD1</c>		<c>Standard</c>		<c>MDNS Link Request</c>
 	<c>TBD2</c>		<c>Standard</c>		<c>MDNS Link Invalid</c>
