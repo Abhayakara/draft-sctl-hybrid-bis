@@ -74,15 +74,15 @@ Table of Contents
    6.  Traffic from Proxies to Relays  . . . . . . . . . . . . . . .   7
    7.  Discovery Proxy Behavior  . . . . . . . . . . . . . . . . . .   8
    8.  DSO TLVs  . . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     8.1.  MDNS Link Request . . . . . . . . . . . . . . . . . . . .   8
-     8.2.  MDNS Link Invalid . . . . . . . . . . . . . . . . . . . .   9
-     8.3.  MDNS Link Subscribed  . . . . . . . . . . . . . . . . . .   9
-     8.4.  MDNS Message  . . . . . . . . . . . . . . . . . . . . . .   9
+     8.1.  mDNS Link Request . . . . . . . . . . . . . . . . . . . .   8
+     8.2.  mDNS Link Invalid . . . . . . . . . . . . . . . . . . . .   9
+     8.3.  mDNS Link Subscribed  . . . . . . . . . . . . . . . . . .   9
+     8.4.  mDNS Message  . . . . . . . . . . . . . . . . . . . . . .   9
      8.5.  Layer 2 Source Address  . . . . . . . . . . . . . . . . .   9
      8.6.  IP Source Address . . . . . . . . . . . . . . . . . . . .  10
      8.7.  IP Source Port  . . . . . . . . . . . . . . . . . . . . .  10
      8.8.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  10
-     8.9.  MDNS Discontinue  . . . . . . . . . . . . . . . . . . . .  10
+     8.9.  mDNS Discontinue  . . . . . . . . . . . . . . . . . . . .  10
      8.10. IP Address Family . . . . . . . . . . . . . . . . . . . .  10
    9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  10
      9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  11
@@ -241,7 +241,7 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 3.2.  mDNS Messages On Links
 
    Discovery Relays listen for mDNS traffic on all configured links.
-   When a mDNS message is received on a link, it is forwarded on every
+   When an mDNS message is received on a link, it is forwarded on every
    open Discovery Proxy connection that is subscribed to mDNS traffic on
    that link.  In the event of congestion, where a particular Discovery
    Proxy connection has no buffer space for an mDNS message that would
@@ -327,7 +327,7 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    any mDNS traffic being forwarded.  In order to request that mDNS
    traffic from a particular link be forwarded on a particular
    connection, the Discovery Proxy must send a DSO message containing
-   one or more MDNS Link Request TLVs (Section 8.1) indicating the link
+   one or more mDNS Link Request TLVs (Section 8.1) indicating the link
    from which traffic is requested.
 
 
@@ -342,8 +342,8 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    each specified link is available for forwarding, and that forwarding
    is enabled for that link.  For each such message the Discovery Relay
    validates each link specified and includes in a single response a
-   list of zero or more MDNS Link Invalid TLVs )Section 8.2) for links
-   that are not valid, and zero or more MDNS Link Subscribed TLVs
+   list of zero or more mDNS Link Invalid TLVs )Section 8.2) for links
+   that are not valid, and zero or more mDNS Link Subscribed TLVs
    (Section 8.3) for links that are valid.  For each valid link, it
    begins forwarding all mDNS traffic from that link to the Discovery
    Proxy.  Delivery is not guaranteed: if there is no buffer space,
@@ -355,7 +355,7 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
    mDNS messages from Relays to Proxies are framed within DSO messages.
    This allows multiple TLVs to be included.  Each forwarded mDNS
-   message is contained in an MDNS Message TLV Section 8.4.  The layer 2
+   message is contained in an mDNS Message TLV Section 8.4.  The layer 2
    source address of the message, if known, MAY be encoded in a Layer 2
    Source TLV (Section 8.5).  The source IP address of the message MUST
    be encoded in a IP Source Address TLV (Section 8.6).  The source port
@@ -366,7 +366,7 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    discard mDNS messages that include unrecognized TLVs.
 
    A Discovery Proxy may discontinue listening for mDNS messages on a
-   particular link by sending a DSO message containing an MDNS Link
+   particular link by sending a DSO message containing an mDNS Link
    Discontinue TLV (Section 8.9).  Subsequent messages from that link
    that had previously been queued may arrive after listening has been
    discontinued.  The Discovery Proxy should silently ignore such
@@ -378,7 +378,7 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 6.  Traffic from Proxies to Relays
 
    Like mDNS traffic from relays, each mDNS message sent by a Discovery
-   Proxy to a Discovery Relay is encapsulated in an MDNS Message TLV
+   Proxy to a Discovery Relay is encapsulated in an mDNS Message TLV
    (Section 8.4) within a DSO message.  Each message MUST contain one or
    more Link Identifier TLVs (Section 8.8).  The Discovery Relay will
    transmit the message to the mDNS port and multicast address on each
@@ -437,9 +437,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
    This document defines a modest number of new DSO TLVs.
 
-8.1.  MDNS Link Request
+8.1.  mDNS Link Request
 
-   The MDNS Link Request TLV conveys a 32-bit link identifier from which
+   The mDNS Link Request TLV conveys a 32-bit link identifier from which
    a Discovery Proxy is requesting that a Discovery Relay forward mDNS
    traffic.  The link identifier comes from the provisioning
 
@@ -454,35 +454,35 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    The SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit identifier
    in network byte order.
 
-8.2.  MDNS Link Invalid
+8.2.  mDNS Link Invalid
 
-   The MDNS Link Invalid TLV is returned in response to a DSO message
-   containing an MDNS Link Request, and returns the 32-bit identifier
+   The mDNS Link Invalid TLV is returned in response to a DSO message
+   containing an mDNS Link Request, and returns the 32-bit identifier
    that was contained in that request.  The link identifier comes from
-   an MDNS Link Request TLV in the message being responded to.  The TLV
+   an mDNS Link Request TLV in the message being responded to.  The TLV
    indicates that the specified link identifier does not refer to a
    valid link, either because the link is not supported by the Discovery
    Relay, or because the identifier is not known.  The SSOP-TYPE for
    this TLV is TBD2.  The SSOP-LENGTH is always 4.  The SSOP-DATA is the
    32-bit identifier in network byte order.
 
-8.3.  MDNS Link Subscribed
+8.3.  mDNS Link Subscribed
 
-   The MDNS Link Subscribed TLV is returned in response to a DSO message
-   containing an MDNS Link Request, and returns the 32-bit identifier
-   from a MDNS Link Request TLV that was contained in that request.  It
-   indicates that MDNS messages for the specified link have been
+   The mDNS Link Subscribed TLV is returned in response to a DSO message
+   containing an mDNS Link Request, and returns the 32-bit identifier
+   from an mDNS Link Request TLV that was contained in that request.  It
+   indicates that mDNS messages for the specified link have been
    successfully subscribed.  The SSOP-TYPE for this TLV is TBD3.  The
    SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit identifier in
    network byte order.
 
-8.4.  MDNS Message
+8.4.  mDNS Message
 
-   The MDNS Message TLV is used to encapsulate an mDNS message that is
+   The mDNS Message TLV is used to encapsulate an mDNS message that is
    being forwarded from a link to a Discovery Proxy, or is being
    forwarded from a Discovery Proxy to a link.  The SSOP-TYPE for this
    TLV is TBD4.  SSOP-LENGTH is the length of the application layer
-   payload of the MDNS message.  SSOP-DATA is the application layer
+   payload of the mDNS message.  SSOP-DATA is the application layer
    payload of the message.
 
 8.5.  Layer 2 Source Address
@@ -532,7 +532,7 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    message was received.  SSOP-TYPE is TBD8.  SSOP-LENGTH is 4.  SSOP-
    DATA is a 32-bit link identifier as described in Section 9.
 
-8.9.  MDNS Discontinue
+8.9.  mDNS Discontinue
 
    This option is used by Discovery Proxies to unsubscribe to mDNS
    messages on the specified link.  More than one may be present in a
@@ -855,15 +855,15 @@ Internet-Draft            mDNS Discovery Relay              October 2017
              +--------+----------+--------------------------+
              | Opcode | Status   | Name                     |
              +--------+----------+--------------------------+
-             | TBD1   | Standard | MDNS Link Request        |
-             | TBD2   | Standard | MDNS Link Invalid        |
-             | TBD3   | Standard | MDNS Link Subscribed     |
-             | TBD4   | Standard | MDNS Messsage            |
+             | TBD1   | Standard | mDNS Link Request        |
+             | TBD2   | Standard | mDNS Link Invalid        |
+             | TBD3   | Standard | mDNS Link Subscribed     |
+             | TBD4   | Standard | mDNS Messsage            |
              | TBD5   | Standard | Layer Two Source Address |
              | TBD6   | Standard | IP Source Address        |
              | TBD7   | Standard | IP Destination Address   |
              | TBD8   | Standard | Link Identifier          |
-             | TBD9   | Standard | MDNS Discontinue         |
+             | TBD9   | Standard | mDNS Discontinue         |
              | TBD10  | Standard | IP Address Family        |
              +--------+----------+--------------------------+
 

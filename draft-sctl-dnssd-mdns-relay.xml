@@ -181,7 +181,7 @@
 
       <section anchor="mdnsov" title="mDNS Messages On Links">
 	<t>
-	  Discovery Relays listen for mDNS traffic on all configured links.  When a mDNS message
+	  Discovery Relays listen for mDNS traffic on all configured links.  When an mDNS message
 	  is received on a link, it is forwarded on every open Discovery Proxy connection that
 	  is subscribed to mDNS traffic on that link.  In the event of congestion, where a
 	  particular Discovery Proxy connection has no buffer space for an mDNS message that
@@ -258,16 +258,16 @@
 	The mere act of connecting to a Discovery Relay does not result in any mDNS traffic
 	being forwarded.  In order to request that mDNS traffic from a particular link be
 	forwarded on a particular connection, the Discovery Proxy must send a DSO
-	message containing one or more MDNS Link Request TLVs (<xref target="MDNSlinkrq"/>)
+	message containing one or more mDNS Link Request TLVs (<xref target="mDNSlinkrq"/>)
 	indicating the link from which traffic is requested.
       </t>
       <t>
 	When such a message is received, the Discovery Relay validates that each specified link
 	is available for forwarding, and that forwarding is enabled for that link.  For each
 	such message the Discovery Relay validates each link specified and includes in a single
-	response a list of zero or more MDNS Link Invalid TLVs )<xref target="MDNSLinkInvalid"/>)
-	for links that are not valid, and zero or more MDNS Link Subscribed TLVs (<xref
-	target="MDNSlsub"/>) for links that are valid.  For each valid link, it begins forwarding
+	response a list of zero or more mDNS Link Invalid TLVs )<xref target="mDNSLinkInvalid"/>)
+	for links that are not valid, and zero or more mDNS Link Subscribed TLVs (<xref
+	target="mDNSlsub"/>) for links that are valid.  For each valid link, it begins forwarding
 	all mDNS traffic from that link to the Discovery Proxy.  Delivery is not guaranteed: if
 	there is no buffer space, packets will be dropped.  It is expected that regular mDNS
 	retry processing will take care of retransmission of lost packets.  The amount of buffer
@@ -277,7 +277,7 @@
       <t>
 	mDNS messages from Relays to Proxies are framed within DSO messages.
 	This allows multiple TLVs to be included.  Each forwarded mDNS message is contained in
-	an MDNS Message TLV <xref target="MDNSmessage"/>.  The layer 2 source address of the
+	an mDNS Message TLV <xref target="mDNSmessage"/>.  The layer 2 source address of the
 	message, if known, MAY be encoded in a Layer 2 Source TLV (<xref target="l2sa"/>).  The
 	source IP address of the message MUST be encoded in a IP Source Address TLV (<xref
 	target="srcaddr"/>).  The source port of the message MUST be encoded in an IP Source
@@ -288,8 +288,8 @@
       </t>
       <t>
 	A Discovery Proxy may discontinue listening for mDNS messages on a particular link by
-	sending a DSO message containing an MDNS Link Discontinue TLV (<xref
-	target="MDNSdis"/>).  Subsequent messages from that link that had previously been queued
+	sending a DSO message containing an mDNS Link Discontinue TLV (<xref
+	target="mDNSdis"/>).  Subsequent messages from that link that had previously been queued
 	may arrive after listening has been discontinued.  The Discovery Proxy should silently
 	ignore such messages.  The Discovery Relay MUST discontinue generating such messages as
 	soon as the request is received.  The Discovery Relay does not respond to this message
@@ -300,7 +300,7 @@
     <section title="Traffic from Proxies to Relays">
       <t>
 	Like mDNS traffic from relays, each mDNS message sent by a Discovery Proxy to a
-	Discovery Relay is encapsulated in an MDNS Message TLV (<xref target="MDNSmessage"/>)
+	Discovery Relay is encapsulated in an mDNS Message TLV (<xref target="mDNSmessage"/>)
 	within a DSO message.  Each message MUST contain one or more Link
 	Identifier TLVs (<xref target="linkid"/>).  The Discovery Relay will transmit the
 	message to the mDNS port and multicast address on each link.  The message MUST include
@@ -349,20 +349,20 @@
       <t>
 	This document defines a modest number of new DSO TLVs.
       </t>
-      <section anchor="MDNSlinkrq" title="MDNS Link Request">
+      <section anchor="mDNSlinkrq" title="mDNS Link Request">
 	<t>
-	  The MDNS Link Request TLV conveys a 32-bit link identifier from which a Discovery
+	  The mDNS Link Request TLV conveys a 32-bit link identifier from which a Discovery
 	  Proxy is requesting that a Discovery Relay forward mDNS traffic.   The link identifier
 	  comes from the provisioning configuration (see <xref target="prov"/>).   The SSOP-TYPE
 	  for this TLV is TBD1.   The SSOP-LENGTH is always 4.   The SSOP-DATA is the 32-bit
 	  identifier in network byte order.
 	</t>
       </section>
-      <section anchor="MDNSLinkInvalid" title="MDNS Link Invalid">
+      <section anchor="mDNSLinkInvalid" title="mDNS Link Invalid">
 	<t>
-	  The MDNS Link Invalid TLV is returned in response to a DSO message
-	  containing an MDNS Link Request, and returns the 32-bit identifier that was contained
-	  in that request.  The link identifier comes from an MDNS Link Request TLV in the
+	  The mDNS Link Invalid TLV is returned in response to a DSO message
+	  containing an mDNS Link Request, and returns the 32-bit identifier that was contained
+	  in that request.  The link identifier comes from an mDNS Link Request TLV in the
 	  message being responded to. The TLV indicates that the specified link identifier does
 	  not refer to a valid link, either because the link is not supported by the Discovery
 	  Relay, or because the identifier is not known.  The SSOP-TYPE for this TLV is TBD2.
@@ -370,23 +370,23 @@
 	  order.
 	</t>
       </section>
-      <section anchor="MDNSlsub" title="MDNS Link Subscribed">
-	<!-- XXX why do we need this if we don't need MDNS Link Unsubscribed? -->
+      <section anchor="mDNSlsub" title="mDNS Link Subscribed">
+	<!-- XXX why do we need this if we don't need mDNS Link Unsubscribed? -->
 	<t>
-	  The MDNS Link Subscribed TLV is returned in response to a DSO message
-	  containing an MDNS Link Request, and returns the 32-bit identifier from a MDNS Link
-	  Request TLV that was contained in that request.  It indicates that MDNS messages for
+	  The mDNS Link Subscribed TLV is returned in response to a DSO message
+	  containing an mDNS Link Request, and returns the 32-bit identifier from an mDNS Link
+	  Request TLV that was contained in that request.  It indicates that mDNS messages for
 	  the specified link have been successfully subscribed.  The SSOP-TYPE for this TLV is
 	  TBD3.  The SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit identifier in network
 	  byte order.
 	</t>
       </section>
-      <section anchor="MDNSmessage" title="MDNS Message">
+      <section anchor="mDNSmessage" title="mDNS Message">
 	<t>
-	  The MDNS Message TLV is used to encapsulate an mDNS message that is being forwarded
+	  The mDNS Message TLV is used to encapsulate an mDNS message that is being forwarded
 	  from a link to a Discovery Proxy, or is being forwarded from a Discovery Proxy to a
 	  link.  The SSOP-TYPE for this TLV is TBD4.  SSOP-LENGTH is the length of the
-	  application layer payload of the MDNS message.  SSOP-DATA is the application layer
+	  application layer payload of the mDNS message.  SSOP-DATA is the application layer
 	  payload of the message.
 	</t>
       </section>
@@ -428,7 +428,7 @@
 	  SSOP-DATA is a 32-bit link identifier as described in <xref target="prov"/>.
 	</t>
       </section>
-      <section anchor="MDNSdis" title="MDNS Discontinue">
+      <section anchor="mDNSdis" title="mDNS Discontinue">
 	<t>
 	  This option is used by Discovery Proxies to unsubscribe to mDNS messages on the
 	  specified link.  More than one may be present in a single DSO message.
@@ -700,15 +700,15 @@ Proxy
       </t>
       <texttable title="DSO Type Codes to be allocated">
 	<ttcol>Opcode</ttcol>	<ttcol>Status</ttcol>	<ttcol>Name</ttcol>
-	<c>TBD1</c>		<c>Standard</c>		<c>MDNS Link Request</c>
-	<c>TBD2</c>		<c>Standard</c>		<c>MDNS Link Invalid</c>
-	<c>TBD3</c>		<c>Standard</c>		<c>MDNS Link Subscribed</c>
-	<c>TBD4</c>		<c>Standard</c>		<c>MDNS Messsage</c>
+	<c>TBD1</c>		<c>Standard</c>		<c>mDNS Link Request</c>
+	<c>TBD2</c>		<c>Standard</c>		<c>mDNS Link Invalid</c>
+	<c>TBD3</c>		<c>Standard</c>		<c>mDNS Link Subscribed</c>
+	<c>TBD4</c>		<c>Standard</c>		<c>mDNS Messsage</c>
 	<c>TBD5</c>		<c>Standard</c>		<c>Layer Two Source Address</c>
 	<c>TBD6</c>		<c>Standard</c>		<c>IP Source Address</c>
 	<c>TBD7</c>		<c>Standard</c>		<c>IP Destination Address</c>
 	<c>TBD8</c>		<c>Standard</c>		<c>Link Identifier</c>
-	<c>TBD9</c>		<c>Standard</c>		<c>MDNS Discontinue</c>
+	<c>TBD9</c>		<c>Standard</c>		<c>mDNS Discontinue</c>
 	<c>TBD10</c>		<c>Standard</c>		<c>IP Address Family</c>
       </texttable>
     </section>
