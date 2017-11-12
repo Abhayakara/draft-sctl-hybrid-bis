@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date year='2017' month='October'/>
+    <date year='2017' month='October' day="30"/>
 
     <abstract>
       <t>
@@ -56,11 +56,13 @@
   <middle>
     <section anchor="intro" title="Introduction">
       <t>
-	The Discovery Proxy for Multicast DNS-Based Service Discovery <xref
-	target="I-D.ietf-dnssd-hybrid"/> specification defines a mechanism for discovering
-	services on a subnetted network using Multicast DNS (mDNS) <xref target="RFC6762"/>,
-	through the use of Discovery Proxies, which issue mDNS requests on various links in the
-	network on behalf of a host attempting service discovery.
+	The Discovery Proxy for Multicast DNS-Based Service Discovery
+	<xref target="I-D.ietf-dnssd-hybrid"/>
+	is a mechanism for discovering
+	services on a subnetted network through the use of Discovery Proxies,
+	which issue Multicast DNS (mDNS) requests <xref target="RFC6762"/>
+	on various links in the network on behalf of a remote host
+	performing DNS-Based Service Discovery <xref target="RFC6763"/>.
       </t>
       <t>
         In the original Discovery Proxy specification, it is assumed that for every link on
@@ -485,8 +487,8 @@
       <section title="Provisioned Objects">
 	<t>
 	  Three types of objects must be described in order for Discovery Proxies and Discovery
-	  Relays to be provisioned: Discovery Proxies, Links, and Discovery Relays.   "Human-
-	  readable" below means actual words or proper names that will make sense to an untrained
+	  Relays to be provisioned: Discovery Proxies, Links, and Discovery Relays.
+	  "Human-readable" below means actual words or proper names that will make sense to an untrained
 	  human being.   "Machine-readable" means a name that will be used by machines to identify
 	  the entity to which the name refers.   Each entity must have a machine-readable name and
 	  may have a human-readable name.   Every name must be unique: no two entities can have
@@ -559,7 +561,7 @@
 	    </list>
 	  </t>
 	  <t>
-	    The 'name' and 'label-name' names can be used to form the LDH and human readable
+	    The 'name' and 'label-name' names can be used to form the LDH and human-readable
 	    domain names as described in <xref target="I-D.ietf-dnssd-hybrid"/>, section 5.3.  A
 	    single Discovery Domain is likely to have a single domain in which all links will be
 	    named, so to form the LDH (letters, digits, hyphens) FQDN for each link, the
@@ -634,36 +636,34 @@
 	  Each object has a name and all the other data associated with it.   We do not formally
 	  specify the format of the file, but it might look something like this:
 	</t>
-	<artwork><![CDATA[
-	Relay upstairs
-	  public-key xxx
-	  connect-tuple 192.0.2.1 1917
-	  connect-tuple fd00::1 1917
-	  link upstairs-wifi
-	  link upstairs-wired
-	Relay downstairs
-	  public-key xxx
-	  connect-tuple 192.51.100.1 2088
-	  connect-tuple fd00::2 2088
-	  link downstairs-wifi
-	  link downstairs-wired
-	Proxy main
-	  public-key xxx
-	  address 203.1.113.1
-	Link upstairs-wifi
-	  id 1
-	  name "Upstairs Wifi"
-	Link upstairs-wired
-	  id 2
-	  hr-name "Upstairs Wired"
-	Link downstairs-wifi
-	  id 3
-	  name "Downstairs Wifi"
-	Link downstairs-wired
-	  id 4
-	  hr-name "Downstairs Wired"
-	  ]]>
-	</artwork>
+	<figure><artwork align="center"><![CDATA[
+Relay upstairs
+  public-key xxx
+  connect-tuple 192.0.2.1 1917
+  connect-tuple fd00::1 1917
+  link upstairs-wifi
+  link upstairs-wired
+Relay downstairs
+  public-key xxx
+  connect-tuple 192.51.100.1 2088
+  connect-tuple fd00::2 2088
+  link downstairs-wifi
+  link downstairs-wired
+Proxy main
+  public-key xxx
+  address 203.1.113.1
+Link upstairs-wifi
+  id 1
+  name "Upstairs Wifi"
+Link upstairs-wired
+  id 2
+  hr-name "Upstairs Wired"
+Link downstairs-wifi
+  id 3
+  name "Downstairs Wifi"
+Link downstairs-wired
+  id 4
+  hr-name "Downstairs Wired"]]></artwork></figure>
       </section>
       <section title="Discovery Proxy Configuration">
 	<t>
@@ -677,10 +677,10 @@
 	  An example configuration, following the convention used in this section, might look
 	  something like this:
 	</t>
-	<artwork><![CDATA[
-	Proxy 
-	]]>
-	</artwork>
+	<figure><artwork align="center"><![CDATA[
+Proxy
+[placeholder, to be completed later]
+]]></artwork></figure>
       </section>
       <section title="Discovery Relay Configuration">
 	<t>
