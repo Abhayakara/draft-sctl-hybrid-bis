@@ -75,8 +75,8 @@
       <t>
 	The Discovery Relay operates by listening for TCP connections from Discovery Proxies.
 	When a Discovery Proxy connects, the connection is authenticated and secured using TLS.
-	The Discovery Proxy can then send messages that will be relayed to specified links.
-	The Discovery Proxy may also specify one or more links from which it wishes to receive mDNS traffic.
+	The Discovery Proxy can then specify one or more links from which it wishes to receive mDNS traffic.
+	The Discovery Proxy can also send messages to be transmitted on its behalf on one or more of those links.
 	DNS Stateful Operations (DSO) <xref target="I-D.ietf-dnsop-session-signal"/> is used as
 	a framework for conveying interface and IP header information associated with each message.
       </t>
@@ -108,8 +108,8 @@
 	    answers using the DNS protocol.
 	  </t>
 	  <t hangText="Discovery Relay">
-	    A network service which sends mDNS messages on behalf of a Discovery Proxy and
-	    relays mDNS messages to a Discovery Relay.
+	    A network service which relays received mDNS messages to a Discovery Proxy,
+	    and can transmit mDNS messages on behalf of that Discovery Proxy.
 	  </t>
 	  <t hangText="link">
 	    A maximal set of network connection points such that any host connected to any
@@ -154,9 +154,9 @@
 	  messages <xref target="I-D.ietf-dnsop-session-signal"/>.  There will be
 	  three types of such messages:
 	  <list style="symbols">
-	    <t>Subscribe messages from Discovery Proxy to Discovery Relay</t>
-	    <t>mDNS messages from Discovery Proxy to Discovery Relay</t>
+	    <t>Control messages from Discovery Proxy to Discovery Relay</t>
 	    <t>mDNS messages from Discovery Relay to Discovery Proxy</t>
+	    <t>mDNS messages from Discovery Proxy to Discovery Relay</t>
 	  </list>
 	</t>
 	<t>
