@@ -186,7 +186,7 @@ Internet-Draft            mDNS Discovery Relay              October 2017
       correctly delivered, but multicast packets are not forwarded
       between the various Wi-Fi Access Points.  Given the slowness of
       Wi-Fi multicast, the decision to not forward multicast packets
-      between Wi-Fi Access Points is quite reasonable, and that further
+      between Wi-Fi Access Points is reasonable, and that further
       supports the need for technologies like Discovery Proxy and
       Discovery Relay to facilitate discovery on these networks.
 
@@ -204,10 +204,11 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 3.  Protocol Overview
 
    This document describes a way for Discovery Proxies to communicate
-   with mDNS agents on networks to which they are not directly
-   connected, using a Discovery Relay.  As such, there are two parts to
-   the protocol: connections between Discovery Proxies and Discovery
-   Relays, and communications between Discovery Relays and mDNS agents.
+   with mDNS agents on remote multicast links to which they are not
+   directly connected, using a Discovery Relay.  As such, there are two
+   parts to the protocol: connections between Discovery Proxies and
+   Discovery Relays, and communications between Discovery Relays and
+   mDNS agents.
 
 3.1.  Connections between Proxies and Relays (overview)
 
@@ -217,7 +218,6 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    encrypted using TLS, with both client and server certificates.
    Connections are long-lived: a Discovery Proxy is expected to send
    many queries over a single connection, and Discovery Relays will
-
 
 
 

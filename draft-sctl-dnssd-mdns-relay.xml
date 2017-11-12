@@ -146,8 +146,9 @@
     <section anchor="overview" title="Protocol Overview">
       <t>
 	This document describes a way for Discovery Proxies to communicate with mDNS agents on
-	networks to which they are not directly connected, using a Discovery Relay.  As such, there
-	are two parts to the protocol: connections between Discovery Proxies and Discovery Relays,
+	remote multicast links to which they are not directly connected, using a Discovery Relay.
+	As such, there are two parts to the protocol:
+	connections between Discovery Proxies and Discovery Relays,
 	and communications between Discovery Relays and mDNS agents.
       </t>
 
