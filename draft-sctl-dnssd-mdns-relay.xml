@@ -55,6 +55,8 @@
   </front>
 
   <middle>
+
+<?rfc needLines="30" ?>
     <section anchor="intro" title="Introduction">
       <t>
 	The Discovery Proxy for Multicast DNS-Based Service Discovery
@@ -93,6 +95,7 @@
 	some sort of orchestration software in conjunction with NETCONF <xref target="RFC6241"/>
 	or CPE WAN Management Protocol <xref target="TR-069"/>.
       </t>
+<?rfc needLines="30" ?>
     </section>
 
     <section anchor="terms" title="Terminology">
@@ -370,6 +373,7 @@
 	such devices exist, and therefore the preferred behavior is that all queries be resolved
 	with unicast rather than multicast.
       </t>
+<?rfc needLines="30" ?>
     </section>
 
     <section anchor="tlvs" title="DSO TLVs">
@@ -407,6 +411,18 @@
 	  SSOP-DATA is the content of the encapsulated mDNS message.
 	</t>
       </section>
+      <section anchor="linkid" title="Link Identifier">
+	<t>
+	  This option is used both in DSO messages
+	  from Discovery Relays to Discovery Proxies that contain received mDNS messages, and
+	  from Discovery Proxies to Discovery Relays that contain mDNS messages to be transmitted on the multicast link.
+	  In the former case, it indicates the multicast link on which the message was received;
+	  in the latter case, it indicates the multicast link on which the message should be transmitted.
+	  SSOP-TYPE is TBD-L.  SSOP-LENGTH is 5.
+	  SSOP-DATA is the 8-bit address family followed by the 32-bit link identifier, in network byte order, as
+	  described in <xref target="prov"/>.
+	</t>
+      </section>
       <section anchor="l2sa" title="Layer Two Source Address">
 	<t>
 	  The Layer Two Source Address TLV is used to report the link-layer address from which an
@@ -434,18 +450,7 @@
 	  to Discovery Proxies.  SSOP-TYPE is TBD-P.  SSOP-LENGTH is 2.  SSOP-DATA is the source
 	  port in network byte order.
 	</t>
-      </section>
-      <section anchor="linkid" title="Link Identifier">
-	<t>
-	  This option is used both in DSO messages
-	  from Discovery Relays to Discovery Proxies that contain received mDNS messages, and
-	  from Discovery Proxies to Discovery Relays that contain mDNS messages to be transmitted on the multicast link.
-	  In the former case, it indicates the multicast link on which the message was received;
-	  in the latter case, it indicates the multicast link on which the message should be transmitted.
-	  SSOP-TYPE is TBD-L.  SSOP-LENGTH is 5.
-	  SSOP-DATA is the 8-bit address family followed by the 32-bit link identifier, in network byte order, as
-	  described in <xref target="prov"/>.
-	</t>
+<?rfc needLines="30" ?>
       </section>
     </section>
 
@@ -537,6 +542,7 @@
 	    The private key should never be distributed to other hosts; all of the other
 	    information describing a Discovery Proxy can be safely shared with Discovery Relays.
 	  </t>
+<?rfc needLines="30" ?>
 	</section>
 	<section title="Multicast Link">
 	  <t>
@@ -678,6 +684,8 @@ Proxy
     </section>
 
     <section anchor="security" title="Security Considerations">
+	<t>
+	</t>
     </section>
 
     <section title="IANA Considerations">
@@ -701,6 +709,7 @@ Proxy
     </section>
 
     <section title="Acknowledgments">
+<?rfc needLines="30" ?>
     </section>
   </middle>
 
