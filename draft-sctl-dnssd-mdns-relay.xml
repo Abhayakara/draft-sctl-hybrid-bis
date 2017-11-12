@@ -282,17 +282,16 @@
       <t>
 	The mere act of connecting to a Discovery Relay does not result in any mDNS traffic
 	being forwarded.  In order to request that mDNS traffic from a particular multicast link be
-	forwarded on a particular connection, the Discovery Proxy must send a DSO
-	message containing one or more mDNS Link Request TLVs (<xref target="mDNSlinkrq"/>)
+	forwarded on a particular connection, the Discovery Proxy must send one or more DSO
+	messages containing mDNS a Link Request TLV (<xref target="mDNSlinkrq"/>)
 	indicating the multicast link from which traffic is requested.
       </t>
       <t>
-	When such a message is received, the Discovery Relay validates that each specified multicast link
+	When such a message is received, the Discovery Relay validates that the specified multicast link
 	is available for forwarding, and that forwarding is enabled for that multicast link.  For each
-	such message the Discovery Relay validates each multicast link specified and includes in a single
-	response a list of zero or more mDNS Link Invalid TLVs (<xref target="mDNSLinkInvalid"/>)
-	for multicast links that are not valid, and zero or more mDNS Link Subscribed TLVs (<xref
-	target="mDNSlsub"/>) for multicast links that are valid.  For each valid multicast link, it begins forwarding
+	such message the Discovery Relay validates the multicast link specified and includes in a single
+	response RCODE 0 if the multicast link specified is valid, or RCODE 11 (DSOFAIL) otherwise.
+	For each valid multicast link, it begins forwarding
 	all mDNS traffic from that link to the Discovery Proxy.  Delivery is not guaranteed: if
 	there is no buffer space, packets will be dropped.  It is expected that regular mDNS
 	retry processing will take care of retransmission of lost packets.  The amount of buffer
@@ -308,8 +307,8 @@
 	Each DSO message can contain multiple TLVs,
 	but only a single mDNS message is conveyed per DSO message.
 	Each forwarded mDNS message is contained in
-	an mDNS Message TLV (<xref target="mDNSmessage"/>).  The layer 2 source address of the
-	message, if known, MAY be encoded in a Layer 2 Source TLV (<xref target="l2sa"/>).  The
+	an mDNS Message TLV (<xref target="mDNSmessage"/>).  The layer two source address of the
+	message, if known, MAY be encoded in a Layer Two Source TLV (<xref target="l2sa"/>).  The
 	source IP address of the message MUST be encoded in a IP Source Address TLV (<xref
 	target="srcaddr"/>).  The source port of the message MUST be encoded in an IP Source
 	port TLV (<xref target="srcpt"/>).  The multicast link on which the message was received MUST be
@@ -334,10 +333,8 @@
 	Discovery Relay is encapsulated in an mDNS Message TLV (<xref target="mDNSmessage"/>)
 	within a DSO message.  Each message MUST contain one or more Link
 	Identifier TLVs (<xref target="linkid"/>).  The Discovery Relay will transmit the
-	message to the mDNS port and multicast address on each link specified in the message.  The message MUST include
-	one or more IP address family TLVs (<xref target="ipfam"/>).  For each such TLVs that is
-	included, the message will be sent on each specified multicast link using the specified IP address family.
-	If no address family codes are recognized, no packets will be transmitted.
+	message to the mDNS port and multicast address on each link specified in the message
+	using the specified IP address family.
       </t>
     </section>
 
@@ -381,34 +378,22 @@
       </t>
       <section anchor="mDNSlinkrq" title="mDNS Link Request">
 	<t>
-	  The mDNS Link Request TLV conveys a 32-bit link identifier from which a Discovery
+	  The mDNS Link Request TLV conveys a link identifier from which a Discovery
 	  Proxy is requesting that a Discovery Relay forward mDNS traffic.  The link identifier
-	  comes from the provisioning configuration (see <xref target="prov"/>).  The SSOP-TYPE
-	  for this TLV is TBD1.  The SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit
-	  identifier in network byte order.
+	  comes from the provisioning configuration (see <xref target="prov"/>).
+	  The SSOP-TYPE for this TLV is TBD-R.  The SSOP-LENGTH is always 5.
+	  The SSOP-DATA is the 8-bit address family followed by the 32-bit link identifier, in network byte order.
+	  An address family value of 1 indicates IPv4 and 2 indicates IPv6,
+	  as recorded in the IANA Registry of Address Family Numbers <xref target="AdFam"/>.
 	</t>
       </section>
-      <section anchor="mDNSLinkInvalid" title="mDNS Link Invalid">
+      <section anchor="mDNSdis" title="mDNS Discontinue">
 	<t>
-	  The mDNS Link Invalid TLV is returned in response to a DSO message
-	  containing an mDNS Link Request, and returns the 32-bit identifier that was contained
-	  in that request.  The link identifier comes from an mDNS Link Request TLV in the
-	  message being responded to. The TLV indicates that the specified link identifier does
-	  not refer to a valid link, either because the link is not supported by the Discovery
-	  Relay, or because the identifier is not known.  The SSOP-TYPE for this TLV is TBD2.
-	  The SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit identifier in network byte
-	  order.
-	</t>
-      </section>
-      <section anchor="mDNSlsub" title="mDNS Link Subscribed">
-	<!-- XXX why do we need this if we don't need mDNS Link Unsubscribed? -->
-	<t>
-	  The mDNS Link Subscribed TLV is returned in response to a DSO message
-	  containing an mDNS Link Request, and returns the 32-bit identifier from an mDNS Link
-	  Request TLV that was contained in that request.  It indicates that mDNS messages for
-	  the specified link have been successfully subscribed.  The SSOP-TYPE for this TLV is
-	  TBD3.  The SSOP-LENGTH is always 4.  The SSOP-DATA is the 32-bit identifier in network
-	  byte order.
+	  This option is used by Discovery Proxies to unsubscribe to mDNS messages on the
+	  specified multicast link.  More than one may be present in a single DSO message.
+	  SSOP-TYPE is TBD-D.  SSOP-LENGTH is 5.
+	  SSOP-DATA is the 8-bit address family followed by the 32-bit link identifier, in network byte order, as
+	  described in <xref target="prov"/>.
 	</t>
       </section>
       <section anchor="mDNSmessage" title="mDNS Message">
@@ -417,17 +402,17 @@
 	  from a multicast link to a Discovery Proxy, or is being sent from a Discovery Proxy for transmission on a multicast link.
 	  Only the application layer payload of the mDNS message is carried in the DSO mDNS Message TLV,
 	  i.e., just the DNS message itself, beginning with the DNS Message ID, not the IP or UDP headers.
-	  The SSOP-TYPE for this TLV is TBD4.
+	  The SSOP-TYPE for this TLV is TBD-M.
 	  SSOP-LENGTH is the length of the encapsulated mDNS message.
 	  SSOP-DATA is the content of the encapsulated mDNS message.
 	</t>
       </section>
-      <section anchor="l2sa" title="Layer 2 Source Address">
+      <section anchor="l2sa" title="Layer Two Source Address">
 	<t>
-	  The Layer 2 Source Address TLV is used to report the link-layer address from which an
+	  The Layer Two Source Address TLV is used to report the link-layer address from which an
 	  mDNS message was received.  This TLV is optionally present in DSO
 	  messages from Discovery Relays to Discovery Proxies that contain mDNS messages when
-	  the source link-layer address is known.  The SSOP-TYPE is TBD5.  SSOP-LENGTH is
+	  the source link-layer address is known.  The SSOP-TYPE is TBD-2.  SSOP-LENGTH is
 	  variable, depending on the length of link-layer addresses on the link from which the
 	  message was received.  SSOP-data is the link-layer address as it was received on the
 	  link.
@@ -437,7 +422,7 @@
 	<t>
 	  The IP Source Address TLV is used to report the IP source address from which an mDNS
 	  message was received.  This TLV is present in DSO messages from
-	  Discovery Relays to Discovery Proxies that contain mDNS messages.  SSOP-TYPE is TBD6.
+	  Discovery Relays to Discovery Proxies that contain mDNS messages.  SSOP-TYPE is TBD-A.
 	  SSOP-LENGTH is either 4, for an IPv4 address, or 16, for an IPv6 address.  SSOP-DATA
 	  is the IP Address.
 	</t>
@@ -446,7 +431,7 @@
 	<t>
 	  The IP Source Port TLV is used to report the IP source port from which an mDNS message
 	  was received.  This TLV is present in DSO messages from Discovery Relays
-	  to Discovery Proxies.  SSOP-TYPE is TBD7.  SSOP-LENGTH is 2.  SSOP-DATA is the source
+	  to Discovery Proxies.  SSOP-TYPE is TBD-P.  SSOP-LENGTH is 2.  SSOP-DATA is the source
 	  port in network byte order.
 	</t>
       </section>
@@ -457,26 +442,9 @@
 	  from Discovery Proxies to Discovery Relays that contain mDNS messages to be transmitted on the multicast link.
 	  In the former case, it indicates the multicast link on which the message was received;
 	  in the latter case, it indicates the multicast link on which the message should be transmitted.
-	  SSOP-TYPE is TBD8.  SSOP-LENGTH is 4.
-	  SSOP-DATA is a 32-bit multicast link identifier as described in <xref target="prov"/>.
-	</t>
-      </section>
-      <section anchor="mDNSdis" title="mDNS Discontinue">
-	<t>
-	  This option is used by Discovery Proxies to unsubscribe to mDNS messages on the
-	  specified multicast link.  More than one may be present in a single DSO message.
-	  SSOP-TYPE is TBD9.  SSOP-LENGTH is 4.  SSOP-DATA is a 32-bit multicast link identifier as
+	  SSOP-TYPE is TBD-L.  SSOP-LENGTH is 5.
+	  SSOP-DATA is the 8-bit address family followed by the 32-bit link identifier, in network byte order, as
 	  described in <xref target="prov"/>.
-	</t>
-      </section>
-      <section anchor="ipfam" title="IP Address Family">
-	<t>
-	  This option is used in mDNS messages sent by Discovery Proxies to multicast links to indicate to
-	  the Discovery Relay which IP address family or families should be used when
-	  transmitting the message on the multicast link.  More than one may be present in a single
-	  DSO message.  SSOP-TYPE is TBD10.  SSOP-LENGTH is 1.  SSOP-DATA is a
-	  8-bit IP family identifier.  A value of 1 indicates IPv4.  A value of 2 indicates
-	  IPv6.  Other values are reserved, and MUST be ignored if not recognized.
 	</t>
       </section>
     </section>
@@ -722,16 +690,13 @@ Proxy
       </t>
       <texttable title="DSO Type Codes to be allocated">
 	<ttcol>Opcode</ttcol>	<ttcol>Status</ttcol>	<ttcol>Name</ttcol>
-	<c>TBD1</c>		<c>Standard</c>		<c>mDNS Link Request</c>
-	<c>TBD2</c>		<c>Standard</c>		<c>mDNS Link Invalid</c>
-	<c>TBD3</c>		<c>Standard</c>		<c>mDNS Link Subscribed</c>
-	<c>TBD4</c>		<c>Standard</c>		<c>mDNS Messsage</c>
-	<c>TBD5</c>		<c>Standard</c>		<c>Layer Two Source Address</c>
-	<c>TBD6</c>		<c>Standard</c>		<c>IP Source Address</c>
-	<c>TBD7</c>		<c>Standard</c>		<c>IP Destination Address</c>
-	<c>TBD8</c>		<c>Standard</c>		<c>Link Identifier</c>
-	<c>TBD9</c>		<c>Standard</c>		<c>mDNS Discontinue</c>
-	<c>TBD10</c>		<c>Standard</c>		<c>IP Address Family</c>
+	<c>TBD-R</c>		<c>Standard</c>		<c>mDNS Link Request</c>
+	<c>TBD-D</c>		<c>Standard</c>		<c>mDNS Discontinue</c>
+	<c>TBD-M</c>		<c>Standard</c>		<c>mDNS Messsage</c>
+	<c>TBD-2</c>		<c>Standard</c>		<c>Layer Two Source Address</c>
+	<c>TBD-A</c>		<c>Standard</c>		<c>IP Source Address</c>
+	<c>TBD-P</c>		<c>Standard</c>		<c>IP Source Port</c>
+	<c>TBD-L</c>		<c>Standard</c>		<c>Link Identifier</c>
       </texttable>
     </section>
 
@@ -781,6 +746,15 @@ Proxy
           <date month="January" year="2014"/>
         </front>
       </reference>
+
+     <reference anchor="AdFam"
+     target="https://www.iana.org/assignments/address-family-numbers/">
+       <front>
+         <title>IANA Address Family Numbers Registry</title>
+         <author/>
+         <date/>
+       </front>
+     </reference>
 
     </references>
   </back>
