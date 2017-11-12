@@ -632,7 +632,8 @@
 	<t>
 	  The master file contains a list of Discovery Relays, Discovery Proxies and Links.
 	  Each object has a name and all the other data associated with it.   We do not formally
-	  specify the format of the file, but it might look something like this:</t>
+	  specify the format of the file, but it might look something like this:
+	</t>
 	<artwork><![CDATA[
 	Relay upstairs
 	  public-key xxx
@@ -663,6 +664,7 @@
 	  hr-name "Downstairs Wired"
 	  ]]>
 	</artwork>
+      </section>
       <section title="Discovery Proxy Configuration">
 	<t>
 	  The Discovery Proxy configuration contains enough information to identify which
@@ -714,7 +716,6 @@
 
     <section title="Acknowledgments">
     </section>
-
   </middle>
 
   <back>
