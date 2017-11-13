@@ -5,8 +5,8 @@
 Network Working Group                                        S. Cheshire
 Internet-Draft                                                Apple Inc.
 Intended status: Standards Track                                T. Lemon
-Expires: May 3, 2018                                 Barefoot Consulting
-                                                        October 30, 2017
+Expires: May 16, 2018                                Barefoot Consulting
+                                                       November 12, 2017
 
 
                      Multicast DNS Discovery Relay
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 3, 2018.
+   This Internet-Draft will expire on May 16, 2018.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 1]
+Cheshire & Lemon          Expires May 16, 2018                  [Page 1]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
    the Trust Legal Provisions and are provided without warranty as
@@ -78,23 +78,22 @@ Table of Contents
      8.3.  mDNS Message  . . . . . . . . . . . . . . . . . . . . . .  10
      8.4.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  10
      8.5.  Layer Two Source Address  . . . . . . . . . . . . . . . .  11
-     8.6.  IP Source Address . . . . . . . . . . . . . . . . . . . .  11
-     8.7.  IP Source Port  . . . . . . . . . . . . . . . . . . . . .  11
-   9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  12
+     8.6.  IP Source . . . . . . . . . . . . . . . . . . . . . . . .  11
+   9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  11
      9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  12
-       9.1.1.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  13
-       9.1.2.  Multicast Link  . . . . . . . . . . . . . . . . . . .  14
-       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  14
-     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  15
-     9.3.  Discovery Proxy Configuration . . . . . . . . . . . . . .  16
-     9.4.  Discovery Relay Configuration . . . . . . . . . . . . . .  16
-   10. Security Considerations . . . . . . . . . . . . . . . . . . .  17
-   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
-   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  17
-   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  18
-     13.1.  Normative References . . . . . . . . . . . . . . . . . .  18
-     13.2.  Informative References . . . . . . . . . . . . . . . . .  19
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  19
+       9.1.1.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  12
+       9.1.2.  Multicast Link  . . . . . . . . . . . . . . . . . . .  13
+       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  13
+     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  14
+     9.3.  Discovery Proxy Configuration . . . . . . . . . . . . . .  15
+     9.4.  Discovery Relay Configuration . . . . . . . . . . . . . .  15
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .  16
+   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
+   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  16
+   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
+     13.1.  Normative References . . . . . . . . . . . . . . . . . .  17
+     13.2.  Informative References . . . . . . . . . . . . . . . . .  18
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
 
 
 
@@ -109,9 +108,10 @@ Table of Contents
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 2]
+
+Cheshire & Lemon          Expires May 16, 2018                  [Page 2]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 1.  Introduction
@@ -165,9 +165,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 3]
+Cheshire & Lemon          Expires May 16, 2018                  [Page 3]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 2.  Terminology
@@ -221,9 +221,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 4]
+Cheshire & Lemon          Expires May 16, 2018                  [Page 4]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 3.  Protocol Overview
@@ -277,9 +277,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 5]
+Cheshire & Lemon          Expires May 16, 2018                  [Page 5]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 3.2.  mDNS Messages On Multicast Links
@@ -333,9 +333,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 6]
+Cheshire & Lemon          Expires May 16, 2018                  [Page 6]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
    to send the post_handshake_auth extension ([I-D.ietf-tls-tls13]
@@ -389,9 +389,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 7]
+Cheshire & Lemon          Expires May 16, 2018                  [Page 7]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
    forwarding is enabled for that multicast link.  For each such message
@@ -415,14 +415,12 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    message is conveyed per DSO message.  Each forwarded mDNS message is
    contained in an mDNS Message TLV (Section 8.3).  The layer two source
    address of the message, if known, MAY be encoded in a Layer Two
-   Source TLV (Section 8.5).  The source IP address of the message MUST
-   be encoded in a IP Source Address TLV (Section 8.6).  The source port
-   of the message MUST be encoded in an IP Source port TLV
-   (Section 8.7).  The multicast link on which the message was received
-   MUST be encoded in a Link Identifier TLV (Section 8.4).  The
-   Discovery Proxy MUST silently ignore unrecognized TLVs in mDNS
-   messages, and MUST NOT discard mDNS messages that include
-   unrecognized TLVs.
+   Source TLV (Section 8.5).  The source IP address and port of the
+   message MUST be encoded in a IP Source (Section 8.6).  The multicast
+   link on which the message was received MUST be encoded in a Link
+   Identifier TLV (Section 8.4).  The Discovery Proxy MUST silently
+   ignore unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS
+   messages that include unrecognized TLVs.
 
    A Discovery Proxy may discontinue listening for mDNS messages on a
    particular multicast link by sending a DSO message containing an mDNS
@@ -445,9 +443,11 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 8]
+
+
+Cheshire & Lemon          Expires May 16, 2018                  [Page 8]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 7.  Discovery Proxy Behavior
@@ -501,9 +501,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                  [Page 9]
+Cheshire & Lemon          Expires May 16, 2018                  [Page 9]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 8.  DSO TLVs
@@ -557,9 +557,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                 [Page 10]
+Cheshire & Lemon          Expires May 16, 2018                 [Page 10]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 8.5.  Layer Two Source Address
@@ -573,50 +573,14 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    which the message was received.  SSOP-data is the link-layer address
    as it was received on the link.
 
-8.6.  IP Source Address
+8.6.  IP Source
 
-   The IP Source Address TLV is used to report the IP source address
+   The IP Source TLV is used to report the IP source address and port
    from which an mDNS message was received.  This TLV is present in DSO
    messages from Discovery Relays to Discovery Proxies that contain mDNS
-   messages.  SSOP-TYPE is TBD-A.  SSOP-LENGTH is either 4, for an IPv4
-   address, or 16, for an IPv6 address.  SSOP-DATA is the IP Address.
-
-8.7.  IP Source Port
-
-   The IP Source Port TLV is used to report the IP source port from
-   which an mDNS message was received.  This TLV is present in DSO
-   messages from Discovery Relays to Discovery Proxies.  SSOP-TYPE is
-   TBD-P.  SSOP-LENGTH is 2.  SSOP-DATA is the source port in network
-   byte order.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Cheshire & Lemon           Expires May 3, 2018                 [Page 11]
-
-Internet-Draft            mDNS Discovery Relay              October 2017
-
+   messages.  SSOP-TYPE is TBD-A.  SSOP-LENGTH is either 6, for an IPv4
+   address, or 18, for an IPv6 address.  SSOP-DATA is the source port,
+   followed by the IP Address, in network byte order.
 
 9.  Provisioning
 
@@ -646,6 +610,14 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    single entity or small set of cooperating entities, among which
    services present on each link should be available to users on that
    link and every other link.  This could be, for example, a home
+
+
+
+Cheshire & Lemon          Expires May 16, 2018                 [Page 11]
+
+Internet-Draft            mDNS Discovery Relay             November 2017
+
+
    network, a small office network, or even a network covering an entire
    building or small set of buildings.  The set of Discovery Proxies and
    Discovery Relays within such a network will be referred to in this
@@ -666,14 +638,6 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    actual words or proper names that will make sense to an untrained
    human being.  "Machine-readable" means a name that will be used by
    machines to identify the entity to which the name refers.  Each
-
-
-
-Cheshire & Lemon           Expires May 3, 2018                 [Page 12]
-
-Internet-Draft            mDNS Discovery Relay              October 2017
-
-
    entity must have a machine-readable name and may have a human-
    readable name.  Every name must be unique: no two entities can have
    the same human-readable name nor machine-readable name.
@@ -702,6 +666,14 @@ Internet-Draft            mDNS Discovery Relay              October 2017
       Proxy Host.  They should not be temporary addresses.  All such
       addresses must be reachable within the Discovery Domain.
 
+
+
+
+Cheshire & Lemon          Expires May 16, 2018                 [Page 12]
+
+Internet-Draft            mDNS Discovery Relay             November 2017
+
+
    public-ip-addresses  a list of IP addresses that may be used to
       submit DNS queries to the Discovery Proxy.  This is not used for
       interoperation with Discovery Relays, but is mentioned here for
@@ -716,19 +688,6 @@ Internet-Draft            mDNS Discovery Relay              October 2017
    The private key should never be distributed to other hosts; all of
    the other information describing a Discovery Proxy can be safely
    shared with Discovery Relays.
-
-
-
-
-
-
-
-
-
-Cheshire & Lemon           Expires May 3, 2018                 [Page 13]
-
-Internet-Draft            mDNS Discovery Relay              October 2017
-
 
 9.1.2.  Multicast Link
 
@@ -764,6 +723,13 @@ Internet-Draft            mDNS Discovery Relay              October 2017
       provisioning, monitoring and debugging systems.  Must be unique
       within a Discovery Domain.
 
+
+
+Cheshire & Lemon          Expires May 16, 2018                 [Page 13]
+
+Internet-Draft            mDNS Discovery Relay             November 2017
+
+
    public-key  a public key that identifies the Discovery Relay.  This
       key can be shared across services on the Discovery Relay Host.
       Indeed, if a Discovery Proxy and Discovery Relay are running on
@@ -778,13 +744,6 @@ Internet-Draft            mDNS Discovery Relay              October 2017
       connect to the Discovery Relay.  The relay may be configured to
       listen on all addresses on a single port, but this is not
       required, so the port as well as the address must be specified.
-
-
-
-Cheshire & Lemon           Expires May 3, 2018                 [Page 14]
-
-Internet-Draft            mDNS Discovery Relay              October 2017
-
 
    multicast links  a list of multicast links to which this relay is
       physically connected.
@@ -822,24 +781,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Cheshire & Lemon           Expires May 3, 2018                 [Page 15]
+Cheshire & Lemon          Expires May 16, 2018                 [Page 14]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
                      Relay upstairs
@@ -893,9 +837,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                 [Page 16]
+Cheshire & Lemon          Expires May 16, 2018                 [Page 15]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 10.  Security Considerations
@@ -915,8 +859,7 @@ Internet-Draft            mDNS Discovery Relay              October 2017
              | TBD-D  | Standard | mDNS Discontinue         |
              | TBD-M  | Standard | mDNS Messsage            |
              | TBD-2  | Standard | Layer Two Source Address |
-             | TBD-A  | Standard | IP Source Address        |
-             | TBD-P  | Standard | IP Source Port           |
+             | TBD-A  | Standard | IP Source                |
              | TBD-L  | Standard | Link Identifier          |
              +--------+----------+--------------------------+
 
@@ -949,9 +892,10 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                 [Page 17]
+
+Cheshire & Lemon          Expires May 16, 2018                 [Page 16]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 13.  References
@@ -1005,9 +949,9 @@ Internet-Draft            mDNS Discovery Relay              October 2017
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                 [Page 18]
+Cheshire & Lemon          Expires May 16, 2018                 [Page 17]
 
-Internet-Draft            mDNS Discovery Relay              October 2017
+Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 13.2.  Informative References
@@ -1061,4 +1005,4 @@ Authors' Addresses
 
 
 
-Cheshire & Lemon           Expires May 3, 2018                 [Page 19]
+Cheshire & Lemon          Expires May 16, 2018                 [Page 18]

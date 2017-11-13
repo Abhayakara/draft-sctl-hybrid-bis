@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date year='2017' month='October' day="30"/>
+    <date year='2017' month='November'/>
 
     <abstract>
       <t>
@@ -312,9 +312,8 @@
 	Each forwarded mDNS message is contained in
 	an mDNS Message TLV (<xref target="mDNSmessage"/>).  The layer two source address of the
 	message, if known, MAY be encoded in a Layer Two Source TLV (<xref target="l2sa"/>).  The
-	source IP address of the message MUST be encoded in a IP Source Address TLV (<xref
-	target="srcaddr"/>).  The source port of the message MUST be encoded in an IP Source
-	port TLV (<xref target="srcpt"/>).  The multicast link on which the message was received MUST be
+	source IP address and port of the message MUST be encoded in a IP Source (<xref
+	target="ipsrc"/>).  The multicast link on which the message was received MUST be
 	encoded in a Link Identifier TLV (<xref target="linkid"/>).  The Discovery Proxy MUST
 	silently ignore unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS messages
 	that include unrecognized TLVs.
@@ -434,23 +433,14 @@
 	  link.
 	</t>
       </section>
-      <section anchor="srcaddr" title="IP Source Address">
+      <section anchor="ipsrc" title="IP Source">
 	<t>
-	  The IP Source Address TLV is used to report the IP source address from which an mDNS
+	  The IP Source TLV is used to report the IP source address and port from which an mDNS
 	  message was received.  This TLV is present in DSO messages from
 	  Discovery Relays to Discovery Proxies that contain mDNS messages.  SSOP-TYPE is TBD-A.
-	  SSOP-LENGTH is either 4, for an IPv4 address, or 16, for an IPv6 address.  SSOP-DATA
-	  is the IP Address.
+	  SSOP-LENGTH is either 6, for an IPv4 address, or 18, for an IPv6 address.  SSOP-DATA
+	  is the source port, followed by the IP Address, in network byte order.
 	</t>
-      </section>
-      <section anchor="srcpt" title="IP Source Port">
-	<t>
-	  The IP Source Port TLV is used to report the IP source port from which an mDNS message
-	  was received.  This TLV is present in DSO messages from Discovery Relays
-	  to Discovery Proxies.  SSOP-TYPE is TBD-P.  SSOP-LENGTH is 2.  SSOP-DATA is the source
-	  port in network byte order.
-	</t>
-<?rfc needLines="30" ?>
       </section>
     </section>
 
@@ -542,7 +532,6 @@
 	    The private key should never be distributed to other hosts; all of the other
 	    information describing a Discovery Proxy can be safely shared with Discovery Relays.
 	  </t>
-<?rfc needLines="30" ?>
 	</section>
 	<section title="Multicast Link">
 	  <t>
@@ -702,8 +691,7 @@ Proxy
 	<c>TBD-D</c>		<c>Standard</c>		<c>mDNS Discontinue</c>
 	<c>TBD-M</c>		<c>Standard</c>		<c>mDNS Messsage</c>
 	<c>TBD-2</c>		<c>Standard</c>		<c>Layer Two Source Address</c>
-	<c>TBD-A</c>		<c>Standard</c>		<c>IP Source Address</c>
-	<c>TBD-P</c>		<c>Standard</c>		<c>IP Source Port</c>
+	<c>TBD-A</c>		<c>Standard</c>		<c>IP Source</c>
 	<c>TBD-L</c>		<c>Standard</c>		<c>Link Identifier</c>
       </texttable>
     </section>
