@@ -5,8 +5,8 @@
 Network Working Group                                        S. Cheshire
 Internet-Draft                                                Apple Inc.
 Intended status: Standards Track                                T. Lemon
-Expires: May 16, 2018                                Barefoot Consulting
-                                                       November 12, 2017
+Expires: May 17, 2018                                Barefoot Consulting
+                                                       November 13, 2017
 
 
                      Multicast DNS Discovery Relay
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 16, 2018.
+   This Internet-Draft will expire on May 17, 2018.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 1]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 1]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -83,17 +83,17 @@ Table of Contents
      9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  12
        9.1.1.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  12
        9.1.2.  Multicast Link  . . . . . . . . . . . . . . . . . . .  13
-       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  13
-     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  14
-     9.3.  Discovery Proxy Configuration . . . . . . . . . . . . . .  15
-     9.4.  Discovery Relay Configuration . . . . . . . . . . . . . .  15
-   10. Security Considerations . . . . . . . . . . . . . . . . . . .  16
-   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
-   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  16
-   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
-     13.1.  Normative References . . . . . . . . . . . . . . . . . .  17
-     13.2.  Informative References . . . . . . . . . . . . . . . . .  18
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
+       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  14
+     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  15
+     9.3.  Discovery Proxy Configuration . . . . . . . . . . . . . .  16
+     9.4.  Discovery Relay Configuration . . . . . . . . . . . . . .  16
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .  17
+   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
+   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  17
+   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  18
+     13.1.  Normative References . . . . . . . . . . . . . . . . . .  18
+     13.2.  Informative References . . . . . . . . . . . . . . . . .  19
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  19
 
 
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 2]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 2]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -165,7 +165,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 3]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 3]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -221,7 +221,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 4]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 4]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -277,7 +277,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 5]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 5]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -333,7 +333,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 6]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 6]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -389,7 +389,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 7]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 7]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -445,7 +445,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 8]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 8]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -501,7 +501,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                  [Page 9]
+Cheshire & Lemon          Expires May 17, 2018                  [Page 9]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -557,7 +557,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                 [Page 10]
+Cheshire & Lemon          Expires May 17, 2018                 [Page 10]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -613,7 +613,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                 [Page 11]
+Cheshire & Lemon          Expires May 17, 2018                 [Page 11]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -669,7 +669,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                 [Page 12]
+Cheshire & Lemon          Expires May 17, 2018                 [Page 12]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -706,11 +706,45 @@ Internet-Draft            mDNS Discovery Relay             November 2017
    hr-name  A human-readable user-friendly fully-qualified domain name
       for the multicast link.  This name MUST be unique within the
       Discovery Domain.  Each multicast link MUST have exactly one such
-      name.
+      name.  The hr-name MAY be the same as the ldh-name.  (The hr-name
+      is allowed to contain spaces, punctuation and rich text, but it is
+      not required to do so.)
 
-   The 'ldh-name' and 'hr-name' names can be used to form the LDH and
-   human-readable domain names as described in [I-D.ietf-dnssd-hybrid],
+   The ldh-name and hr-name can be used to form the LDH and human-
+   readable domain names as described in [I-D.ietf-dnssd-hybrid],
    section 5.3.
+
+   Note that the ldh-name and hr-name can be used in two different ways.
+
+   On a small home network with little or no human administrative
+   configuration, link names may be directly visible to the user.  For
+   example, a search in 'home.arpa' on a small home network may discover
+   services on both ethernet.home.arpa and wi-fi.home.arpa.  In the case
+   of a home user who has one Ethernet-connected printer and one Wi-Fi-
+   connected printer, discovering that they have one printer on
+
+
+
+Cheshire & Lemon          Expires May 17, 2018                 [Page 13]
+
+Internet-Draft            mDNS Discovery Relay             November 2017
+
+
+   ethernet.home.arpa and another on wi-fi.home.arpa is understandable
+   and meaningful.
+
+   On a large corporate network with hundreds of Wi-Fi Access Points,
+   the individual link names of the hundreds of multicast links are less
+   likely to be useful to end users.  In these cases, Discovery Broker
+   functionality [I-D.sctl-discovery-broker] is used to translate the
+   many link names to something more meaningful to users.  For example,
+   in a building with 50 Wi-Fi Access Points, each with their own link
+   names, services on all the different physical links may be presented
+   to the user as appearing in 'headquarters.example.com'.  In this
+   case, the individual link names can be thought of similar to MAC
+   addresses or IPv6 addresses.  They are used internally by the
+   software as unique identifiers, but generally are not exposed to end
+   users.
 
 9.1.3.  Discovery Relay
 
@@ -722,13 +756,6 @@ Internet-Draft            mDNS Discovery Relay             November 2017
    hr-name  an optional human-readable name which can appear in
       provisioning, monitoring and debugging systems.  Must be unique
       within a Discovery Domain.
-
-
-
-Cheshire & Lemon          Expires May 16, 2018                 [Page 13]
-
-Internet-Draft            mDNS Discovery Relay             November 2017
-
 
    public-key  a public key that identifies the Discovery Relay.  This
       key can be shared across services on the Discovery Relay Host.
@@ -751,6 +778,13 @@ Internet-Draft            mDNS Discovery Relay             November 2017
    The private key should never be distributed to other hosts; all of
    the other information describing a Discovery Relay can be safely
    shared with Discovery Proxies.
+
+
+
+Cheshire & Lemon          Expires May 17, 2018                 [Page 14]
+
+Internet-Draft            mDNS Discovery Relay             November 2017
+
 
 9.2.  Configuration Files
 
@@ -781,7 +815,29 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                 [Page 14]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon          Expires May 17, 2018                 [Page 15]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -837,7 +893,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                 [Page 15]
+Cheshire & Lemon          Expires May 17, 2018                 [Page 16]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -893,7 +949,7 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
 
 
-Cheshire & Lemon          Expires May 16, 2018                 [Page 16]
+Cheshire & Lemon          Expires May 17, 2018                 [Page 17]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
@@ -918,6 +974,11 @@ Internet-Draft            mDNS Discovery Relay             November 2017
               Version 1.3", draft-ietf-tls-tls13-21 (work in progress),
               July 2017.
 
+   [I-D.sctl-discovery-broker]
+              Cheshire, S. and T. Lemon, "Service Discovery Broker",
+              draft-sctl-discovery-broker-00 (work in progress), July
+              2017.
+
    [RFC1035]  Mockapetris, P., "Domain names - implementation and
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
               November 1987, <https://www.rfc-editor.org/info/rfc1035>.
@@ -939,20 +1000,19 @@ Internet-Draft            mDNS Discovery Relay             November 2017
               Discovery", RFC 6763, DOI 10.17487/RFC6763, February 2013,
               <https://www.rfc-editor.org/info/rfc6763>.
 
-   [RFC7788]  Stenberg, M., Barth, S., and P. Pfister, "Home Networking
-              Control Protocol", RFC 7788, DOI 10.17487/RFC7788, April
-              2016, <https://www.rfc-editor.org/info/rfc7788>.
 
 
 
 
 
-
-
-Cheshire & Lemon          Expires May 16, 2018                 [Page 17]
+Cheshire & Lemon          Expires May 17, 2018                 [Page 18]
 
 Internet-Draft            mDNS Discovery Relay             November 2017
 
+
+   [RFC7788]  Stenberg, M., Barth, S., and P. Pfister, "Home Networking
+              Control Protocol", RFC 7788, DOI 10.17487/RFC7788, April
+              2016, <https://www.rfc-editor.org/info/rfc7788>.
 
 13.2.  Informative References
 
@@ -1001,8 +1061,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-Cheshire & Lemon          Expires May 16, 2018                 [Page 18]
+Cheshire & Lemon          Expires May 17, 2018                 [Page 19]

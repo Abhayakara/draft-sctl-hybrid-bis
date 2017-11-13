@@ -551,12 +551,41 @@
 		A human-readable user-friendly fully-qualified domain name for the multicast link.
 		This name MUST be unique within the Discovery Domain.
 		Each multicast link MUST have exactly one such name.
+		The hr-name MAY be the same as the ldh-name.
+		(The hr-name is allowed to contain spaces, punctuation and rich text, but it is not required to do so.)
 	      </t>
 	    </list>
 	  </t>
 	  <t>
-	    The 'ldh-name' and 'hr-name' names can be used to form the LDH and human-readable
+	    The ldh-name and hr-name can be used to form the LDH and human-readable
 	    domain names as described in <xref target="I-D.ietf-dnssd-hybrid"/>, section 5.3.
+	  </t>
+	  <t>
+	    Note that the ldh-name and hr-name can be used in two different ways.
+	  </t>
+	  <t>
+	    On a small home network with little or no human administrative configuration,
+	    link names may be directly visible to the user.
+	    For example, a search in 'home.arpa' on a small home network may
+	    discover services on both ethernet.home.arpa and wi-fi.home.arpa.
+	    In the case of a home user who has
+	    one Ethernet-connected printer and one Wi-Fi-connected printer,
+	    discovering that they have one printer on
+	    ethernet.home.arpa and another on wi-fi.home.arpa
+	    is understandable and meaningful.
+	  </t>
+	  <t>
+	    On a large corporate network with hundreds of Wi-Fi Access Points,
+	    the individual link names of the hundreds of multicast links
+	    are less likely to be useful to end users.
+	    In these cases, Discovery Broker functionality <xref target="I-D.sctl-discovery-broker"/>
+	    is used to translate the many link names to something more meaningful to users.
+	    For example, in a building with 50 Wi-Fi Access Points, each with their
+	    own link names, services on all the different physical links may be
+	    presented to the user as appearing in 'headquarters.example.com'.
+	    In this case, the individual link names can be thought of similar to
+	    MAC addresses or IPv6 addresses. They are used internally by the software
+	    as unique identifiers, but generally are not exposed to end users.
 	  </t>
 	</section>
 	<section title="Discovery Relay">
@@ -711,6 +740,7 @@ Proxy
       <?rfc include="reference.RFC.6763"?>
       <?rfc include="reference.RFC.7788"?>
       <?rfc include="reference.I-D.ietf-dnssd-hybrid"?>
+      <?rfc include="reference.I-D.sctl-discovery-broker"?>
       <?rfc include="reference.I-D.ietf-dnsop-session-signal"?>
       <?rfc include="reference.I-D.ietf-tls-tls13"?>
     </references>
