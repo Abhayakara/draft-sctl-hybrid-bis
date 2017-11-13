@@ -75,8 +75,8 @@ Table of Contents
    8.  DSO TLVs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
      8.1.  mDNS Link Request . . . . . . . . . . . . . . . . . . . .  10
      8.2.  mDNS Discontinue  . . . . . . . . . . . . . . . . . . . .  10
-     8.3.  mDNS Message  . . . . . . . . . . . . . . . . . . . . . .  10
-     8.4.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  10
+     8.3.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  10
+     8.4.  mDNS Message  . . . . . . . . . . . . . . . . . . . . . .  10
      8.5.  Layer Two Source Address  . . . . . . . . . . . . . . . .  11
      8.6.  IP Source . . . . . . . . . . . . . . . . . . . . . . . .  11
    9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  11
@@ -413,12 +413,12 @@ Internet-Draft            mDNS Discovery Relay             November 2017
    mDNS messages from Relays to Proxies are framed within DSO messages.
    Each DSO message can contain multiple TLVs, but only a single mDNS
    message is conveyed per DSO message.  Each forwarded mDNS message is
-   contained in an mDNS Message TLV (Section 8.3).  The layer two source
+   contained in an mDNS Message TLV (Section 8.4).  The layer two source
    address of the message, if known, MAY be encoded in a Layer Two
    Source TLV (Section 8.5).  The source IP address and port of the
    message MUST be encoded in a IP Source (Section 8.6).  The multicast
    link on which the message was received MUST be encoded in a Link
-   Identifier TLV (Section 8.4).  The Discovery Proxy MUST silently
+   Identifier TLV (Section 8.3).  The Discovery Proxy MUST silently
    ignore unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS
    messages that include unrecognized TLVs.
 
@@ -436,8 +436,8 @@ Internet-Draft            mDNS Discovery Relay             November 2017
 
    Like mDNS traffic from relays, each mDNS message sent by a Discovery
    Proxy to a Discovery Relay is encapsulated in an mDNS Message TLV
-   (Section 8.3) within a DSO message.  Each message MUST contain one or
-   more Link Identifier TLVs (Section 8.4).  The Discovery Relay will
+   (Section 8.4) within a DSO message.  Each message MUST contain one or
+   more Link Identifier TLVs (Section 8.3).  The Discovery Relay will
    transmit the message to the mDNS port and multicast address on each
    link specified in the message using the specified IP address family.
 
@@ -516,20 +516,34 @@ Internet-Draft            mDNS Discovery Relay             November 2017
    Discovery Proxy is requesting that a Discovery Relay forward mDNS
    traffic.  The link identifier comes from the provisioning
    configuration (see Section 9).  The SSOP-TYPE for this TLV is TBD-R.
-   The SSOP-LENGTH is always 5.  The SSOP-DATA is the 8-bit address
-   family followed by the 32-bit link identifier, in network byte order.
-   An address family value of 1 indicates IPv4 and 2 indicates IPv6, as
-   recorded in the IANA Registry of Address Family Numbers [AdFam].
+   SSOP-LENGTH is always 5.  SSOP-DATA is the 8-bit address family
+   followed by the 32-bit link identifier, in network byte order, as
+   described in Section 9.  An address family value of 1 indicates IPv4
+   and 2 indicates IPv6, as recorded in the IANA Registry of Address
+   Family Numbers [AdFam].
 
 8.2.  mDNS Discontinue
 
    This option is used by Discovery Proxies to unsubscribe to mDNS
    messages on the specified multicast link.  More than one may be
    present in a single DSO message.  SSOP-TYPE is TBD-D.  SSOP-LENGTH is
-   5.  SSOP-DATA is the 8-bit address family followed by the 32-bit link
+   always 5.  SSOP-DATA is the 8-bit address family followed by the
+   32-bit link identifier, in network byte order, as described in
+   Section 9.
+
+8.3.  Link Identifier
+
+   This option is used both in DSO messages from Discovery Relays to
+   Discovery Proxies that contain received mDNS messages, and from
+   Discovery Proxies to Discovery Relays that contain mDNS messages to
+   be transmitted on the multicast link.  In the former case, it
+   indicates the multicast link on which the message was received; in
+   the latter case, it indicates the multicast link on which the message
+   should be transmitted.  SSOP-TYPE is TBD-L.  SSOP-LENGTH is always 5.
+   SSOP-DATA is the 8-bit address family followed by the 32-bit link
    identifier, in network byte order, as described in Section 9.
 
-8.3.  mDNS Message
+8.4.  mDNS Message
 
    The mDNS Message TLV is used to encapsulate an mDNS message that is
    being forwarded from a multicast link to a Discovery Proxy, or is
@@ -540,20 +554,6 @@ Internet-Draft            mDNS Discovery Relay             November 2017
    The SSOP-TYPE for this TLV is TBD-M.  SSOP-LENGTH is the length of
    the encapsulated mDNS message.  SSOP-DATA is the content of the
    encapsulated mDNS message.
-
-8.4.  Link Identifier
-
-   This option is used both in DSO messages from Discovery Relays to
-   Discovery Proxies that contain received mDNS messages, and from
-   Discovery Proxies to Discovery Relays that contain mDNS messages to
-   be transmitted on the multicast link.  In the former case, it
-   indicates the multicast link on which the message was received; in
-   the latter case, it indicates the multicast link on which the message
-   should be transmitted.  SSOP-TYPE is TBD-L.  SSOP-LENGTH is 5.  SSOP-
-   DATA is the 8-bit address family followed by the 32-bit link
-   identifier, in network byte order, as described in Section 9.
-
-
 
 
 
@@ -913,10 +913,10 @@ Internet-Draft            mDNS Discovery Relay             November 2017
              +--------+----------+--------------------------+
              | TBD-R  | Standard | mDNS Link Request        |
              | TBD-D  | Standard | mDNS Discontinue         |
+             | TBD-L  | Standard | Link Identifier          |
              | TBD-M  | Standard | mDNS Messsage            |
              | TBD-2  | Standard | Layer Two Source Address |
              | TBD-A  | Standard | IP Source                |
-             | TBD-L  | Standard | Link Identifier          |
              +--------+----------+--------------------------+
 
                       DSO Type Codes to be allocated
