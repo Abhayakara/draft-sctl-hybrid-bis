@@ -28,10 +28,10 @@
     </author>
 
     <author initials="T" surname="Lemon" fullname="Ted Lemon">
-      <organization>Barefoot Consulting</organization>
+      <organization>Nibbhaya Consulting</organization>
       <address>
 	<postal>
-	  <street></street>
+	  <street>P.O. Box 958</street>
 	  <city>Brattleboro</city>
 	  <region>Vermont</region>
 	  <country>United States of America</country>
@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date year='2017' month='November' day='20'/>
+    <date year='2018' month='March'/>
 
     <abstract>
       <t>
@@ -286,7 +286,7 @@
 	The mere act of connecting to a Discovery Relay does not result in any mDNS traffic
 	being forwarded.  In order to request that mDNS traffic from a particular multicast link be
 	forwarded on a particular connection, the Discovery Proxy must send one or more DSO
-	messages containing mDNS a Link Request TLV (<xref target="mDNSlinkrq"/>)
+	messages, each containing a single mDNS Link Request TLV (<xref target="mDNSlinkrq"/>)
 	indicating the multicast link from which traffic is requested.
       </t>
       <t>
@@ -312,7 +312,7 @@
 	Each forwarded mDNS message is contained in
 	an mDNS Message TLV (<xref target="mDNSmessage"/>).  The layer two source address of the
 	message, if known, MAY be encoded in a Layer Two Source TLV (<xref target="l2sa"/>).  The
-	source IP address and port of the message MUST be encoded in a IP Source (<xref
+	source IP address and port of the message MUST be encoded in an IP Source TLV (<xref
 	target="ipsrc"/>).  The multicast link on which the message was received MUST be
 	encoded in a Link Identifier TLV (<xref target="linkid"/>).  The Discovery Proxy MUST
 	silently ignore unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS messages
@@ -323,7 +323,7 @@
 	sending a DSO message containing an mDNS Link Discontinue TLV (<xref
 	target="mDNSdis"/>).  Subsequent messages from that link that had previously been queued
 	may arrive after listening has been discontinued.  The Discovery Proxy should silently
-	ignore such messages.  The Discovery Relay MUST discontinue generating such messages as
+	discard such messages.  The Discovery Relay MUST discontinue generating such messages as
 	soon as the request is received.  The Discovery Relay does not respond to this message
 	other than to discontinue forwarding mDNS messages from the specified links.
       </t>
@@ -359,7 +359,7 @@
 	Responses from devices on locally-connected links are processed normally.  Responses
 	from devices on relay-connected links are received by the Discovery Relay, encapsulated,
 	and forwarded to the Discovery Proxy; the discovery proxy then processes these messages
-	using the link-identifying information included in encapsulation.
+	using the link-identifying information included in the encapsulation.
       </t>
       <t>
 	Discovery Proxies do not respond to mDNS queries on relay-connected links.  If an mDNS
@@ -390,14 +390,21 @@
 	  An address family value of 1 indicates IPv4 and 2 indicates IPv6,
 	  as recorded in the IANA Registry of Address Family Numbers <xref target="AdFam"/>.
 	</t>
-      </section>
-      <section anchor="mDNSdis" title="mDNS Discontinue">
 	<t>
-	  This option is used by Discovery Proxies to unsubscribe to mDNS messages on the
+	  The mDNS Link Request TLV can only be used as a primary TLV, and requires an
+	  acknowledgement.
+	</t>
+      </section>
+      <section anchor="mDNSdis" title="mDNS Link Discontinue">
+	<t>
+	  The mDNS Link Discontinue TLV is used by Discovery Proxies to unsubscribe to mDNS messages on the
 	  specified multicast link.  More than one may be present in a single DSO message.
 	  SSOP-TYPE is TBD-D.  SSOP-LENGTH is always 5.
 	  SSOP-DATA is the 8-bit address family followed by the 32-bit link identifier,
 	  in network byte order, as described in <xref target="prov"/>.
+	</t>
+	<t>
+	  The mDNS Link Discontinue TLV can only be used as a primary TLV, and is not acknowledged.
 	</t>
       </section>
       <section anchor="linkid" title="Link Identifier">
@@ -411,6 +418,9 @@
 	  SSOP-DATA is the 8-bit address family followed by the 32-bit link identifier,
 	  in network byte order, as described in <xref target="prov"/>.
 	</t>
+	<t>
+	  The Link Identifier TLV can only be used as an additional TLV.
+	</t>
       </section>
       <section anchor="mDNSmessage" title="mDNS Message">
 	<t>
@@ -421,6 +431,9 @@
 	  The SSOP-TYPE for this TLV is TBD-M.
 	  SSOP-LENGTH is the length of the encapsulated mDNS message.
 	  SSOP-DATA is the content of the encapsulated mDNS message.
+	</t>
+	<t>
+	  The mDNS Message TLV can only be used as a primary TLV, and is not acknowledged.
 	</t>
       </section>
       <section anchor="l2sa" title="Layer Two Source Address">
@@ -433,6 +446,9 @@
 	  message was received.  SSOP-data is the link-layer address as it was received on the
 	  link.
 	</t>
+	<t>
+	  The Layer Two Source Address TLV can only be used as an additional TLV.
+	</t>
       </section>
       <section anchor="ipsrc" title="IP Source">
 	<t>
@@ -441,6 +457,9 @@
 	  Discovery Relays to Discovery Proxies that contain mDNS messages.  SSOP-TYPE is TBD-A.
 	  SSOP-LENGTH is either 6, for an IPv4 address, or 18, for an IPv6 address.  SSOP-DATA
 	  is the source port, followed by the IP Address, in network byte order.
+	</t>
+	<t>
+	  The IP Source TLV can only be used as an additional TLV.
 	</t>
       </section>
     </section>
@@ -658,13 +677,13 @@ Relay upstairs
   link upstairs-wifi
   link upstairs-wired
 Relay downstairs
-  public-key xxx
+  public-key yyy
   connect-tuple 192.51.100.1 2088
   connect-tuple fd00::2 2088
   link downstairs-wifi
   link downstairs-wired
 Proxy main
-  public-key xxx
+  public-key zzz
   address 203.1.113.1
 Link upstairs-wifi
   id 1
@@ -692,13 +711,29 @@ Link downstairs-wired
 	  something like this:
 	</t>
 	<figure><artwork align="center"><![CDATA[
-Proxy
-[placeholder, to be completed later]
+Proxy main
+  private-key zzz
+  subscribe upstairs-wifi
+  subscribe downstairs-wifi
+  subscribe upstairs-wired
+  subscribe downstairs-wired
 ]]></artwork></figure>
+	<t>
+	  When combined with the master file, this configuration is sufficient for the Discovery
+	  Proxy to identify and connect to the relay proxies that serve the links it is
+	  configured to support.
+	</t>
       </section>
       <section title="Discovery Relay Configuration">
 	<t>
+	  The discovery relay configuration just needs to tell the discovery relay what name to use
+	  to find its configuration in the master file, and what the private key is corresponding to
+	  its public key in the master file.   For example:
 	</t>
+	<figure><artwork align="center"><![CDATA[
+Relay Downstairs
+  private-key yyy
+]]></artwork></figure>
       </section>
     </section>
 
