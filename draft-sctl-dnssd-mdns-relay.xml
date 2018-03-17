@@ -361,9 +361,9 @@
 	Discovery Relay as relay-connected links.
       </t>
       <t>
-	What this means is that when a Discovery Proxy receives a DNSSD query from a client, it will generate
-	mDNS messages on the relevant multicast link for which it is acting as a proxy.  For locally-connected
-	links, those messages will be sent directly.  For relay-connected links, the messages
+	What this means is that when a Discovery Proxy receives a DNSSD query from a client via unicast, it will generate
+	mDNS query messages on the relevant multicast link(s) for which it is acting as a proxy.  For locally-connected
+	link(s), those query messages will be sent directly.  For relay-connected link(s), the query messages
 	will be sent through the Discovery Relay that is being used to serve that multicast link.
       </t>
       <t>
@@ -537,7 +537,7 @@
 	    The description of a multicast link consists of:
 	    <list style="hanging">
 	      <t hangText="link-identifier">
-		An 32-bit identifier that uniquely identifies that link within the Discovery
+		A 32-bit identifier that uniquely identifies that link within the Discovery
 		Domain.  Each link MUST have exactly one such identifier.  Link Identifiers do
 		not have any special semantics, and are not intended to be human-readable.
 	      </t>
@@ -720,6 +720,7 @@ Link downstairs-wifi
 Link downstairs-wired
   id 4
   hr-name Downstairs Wired]]></artwork></figure>
+<?rfc needLines="20" ?>
       </section>
       <section title="Discovery Proxy Configuration">
 	<t>
@@ -757,6 +758,7 @@ Proxy main
 Relay Downstairs
   private-key yyy
 ]]></artwork></figure>
+<?rfc needLines="20" ?>
       </section>
     </section>
 
