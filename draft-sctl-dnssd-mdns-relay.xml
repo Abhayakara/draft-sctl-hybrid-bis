@@ -532,49 +532,6 @@
 	  No two entities can have the same human-readable name.
 	  Similarly, no two entities can have the same machine-readable name.
 	</t>
-	<section title="Discovery Proxy">
-	  <t>
-	    The description of a Discovery Proxy consists of:
-	    <list style="hanging">
-	      <t hangText="name">
-		a machine-readable name used to reference this Discovery Proxy in provisioning.
-	      </t>
-	      <t hangText="hr-name">
-		an optional human-readable name which can appear in provisioning, monitoring and
-		debugging systems.  Must be unique within a Discovery Domain.
-	      </t>
-	      <t hangText="public-key">
-		a public key that identifies the Discovery Proxy. This key can be shared across
-		services on the Discovery Proxy Host.  The public key is used both to uniquely
-		identify the Discovery Proxy and to authenticate connections from it.
-	      </t>
-	      <t hangText="private-key">
-		the private key corresponding to the public key.
-	      </t>
-	      <t hangText="source-ip-addresses">
-		a list of IP addresses that may be used by the Discovery Proxy when connecting
-		to Discovery Relays.  These addresses should be addresses that are configured
-		on the Discovery Proxy Host.  They should not be temporary addresses.  All
-		such addresses must be reachable within the Discovery Domain.
-	      </t>
-	      <t hangText="public-ip-addresses">
-		a list of IP addresses that may be used to submit DNS queries to the Discovery
-		Proxy.  This is not used for interoperation with Discovery Relays, but is
-		mentioned here for completeness: this list of addresses may differ from the
-		'source-ip-addresses' list.  If any of these addresses are reachable from outside
-		of the Discovery Domain, services in that domain will be discoverable outside of
-		the domain.
-	      </t>
-	      <t hangText="multicast links">
-		a list of multicast links on which this Discovery Proxy is expected to provide service
-	      </t>
-	    </list>
-	  </t>
-	  <t>
-	    The private key should never be distributed to other hosts; all of the other
-	    information describing a Discovery Proxy can be safely shared with Discovery Relays.
-	  </t>
-	</section>
 	<section title="Multicast Link">
 	  <t>
 	    The description of a multicast link consists of:
@@ -628,6 +585,49 @@
 	    In this case, the individual link names can be thought of similar to
 	    MAC addresses or IPv6 addresses. They are used internally by the software
 	    as unique identifiers, but generally are not exposed to end users.
+	  </t>
+	</section>
+	<section title="Discovery Proxy">
+	  <t>
+	    The description of a Discovery Proxy consists of:
+	    <list style="hanging">
+	      <t hangText="name">
+		a machine-readable name used to reference this Discovery Proxy in provisioning.
+	      </t>
+	      <t hangText="hr-name">
+		an optional human-readable name which can appear in provisioning, monitoring and
+		debugging systems.  Must be unique within a Discovery Domain.
+	      </t>
+	      <t hangText="public-key">
+		a public key that identifies the Discovery Proxy. This key can be shared across
+		services on the Discovery Proxy Host.  The public key is used both to uniquely
+		identify the Discovery Proxy and to authenticate connections from it.
+	      </t>
+	      <t hangText="private-key">
+		the private key corresponding to the public key.
+	      </t>
+	      <t hangText="source-ip-addresses">
+		a list of IP addresses that may be used by the Discovery Proxy when connecting
+		to Discovery Relays.  These addresses should be addresses that are configured
+		on the Discovery Proxy Host.  They should not be temporary addresses.  All
+		such addresses must be reachable within the Discovery Domain.
+	      </t>
+	      <t hangText="public-ip-addresses">
+		a list of IP addresses that may be used to submit DNS queries to the Discovery
+		Proxy.  This is not used for interoperation with Discovery Relays, but is
+		mentioned here for completeness: this list of addresses may differ from the
+		'source-ip-addresses' list.  If any of these addresses are reachable from outside
+		of the Discovery Domain, services in that domain will be discoverable outside of
+		the domain.
+	      </t>
+	      <t hangText="multicast links">
+		a list of multicast links on which this Discovery Proxy is expected to provide service
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    The private key should never be distributed to other hosts; all of the other
+	    information describing a Discovery Proxy can be safely shared with Discovery Relays.
 	  </t>
 	</section>
 	<section title="Discovery Relay">
