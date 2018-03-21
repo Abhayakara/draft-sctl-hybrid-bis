@@ -373,15 +373,19 @@
 	using the link-identifying information included in the encapsulation.
       </t>
       <t>
-	Discovery Proxies do not respond to mDNS queries on relay-connected links.  If an mDNS
-	query is received from a Discovery Relay, the Discovery Proxy silently discards it.
+	Discovery Proxies do not generally respond to mDNS queries on relay-connected links.
+	The one exception is responding to the Domain Enumeration queries used to
+	bootstrap unicast service discovery ("lb._dns-sd._udp.local", etc.) <xref target="RFC6763"/>.
+	Apart from these Domain Enumeration queries,
+	if any other mDNS query is received from a Discovery Relay, the Discovery Proxy silently discards it.
       </t>
       <t>
 	In principle it could be the case that some device is capable of performing service
-	discovery using Multicast DNS, but not using traditional unicast DNS.  Responding to mDNS queries received
-	from the Discovery Relay could address this use case.  However, it is believed that no
-	such devices exist, and therefore the preferred behavior is that all queries be resolved
-	with unicast rather than multicast.
+	discovery using Multicast DNS, but not using traditional unicast DNS.
+	Responding to mDNS queries received from the Discovery Relay could address this use case.
+	However, continued reliance on multicast is counter to the goals of the
+	current work in service discovery, and to benefit from wide-area service discovery
+	such client devices should be updated to support service discovery using unicast queries.
       </t>
 <?rfc needLines="30" ?>
     </section>
