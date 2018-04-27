@@ -5,12 +5,12 @@
 Network Working Group                                        S. Cheshire
 Internet-Draft                                                Apple Inc.
 Intended status: Standards Track                                T. Lemon
-Expires: September 19, 2018                          Nibbhaya Consulting
-                                                          March 18, 2018
+Expires: October 28, 2018                            Nibbhaya Consulting
+                                                          April 26, 2018
 
 
                      Multicast DNS Discovery Relay
-                     draft-sctl-dnssd-mdns-relay-04
+                     draft-sctl-dnssd-mdns-relay-05
 
 Abstract
 
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 19, 2018.
+   This Internet-Draft will expire on October 28, 2018.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 1]
+Cheshire & Lemon        Expires October 28, 2018                [Page 1]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
    the Trust Legal Provisions and are provided without warranty as
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 2]
+Cheshire & Lemon        Expires October 28, 2018                [Page 2]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 1.  Introduction
@@ -165,9 +165,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 3]
+Cheshire & Lemon        Expires October 28, 2018                [Page 3]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 2.  Terminology
@@ -221,9 +221,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 4]
+Cheshire & Lemon        Expires October 28, 2018                [Page 4]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 3.  Protocol Overview
@@ -277,9 +277,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 5]
+Cheshire & Lemon        Expires October 28, 2018                [Page 5]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 3.2.  mDNS Messages On Multicast Links
@@ -333,9 +333,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 6]
+Cheshire & Lemon        Expires October 28, 2018                [Page 6]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
    Otherwise, the Discovery Relay will attempt to complete a TLS
@@ -389,9 +389,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 7]
+Cheshire & Lemon        Expires October 28, 2018                [Page 7]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
    When such a message is received, the Discovery Relay validates that
@@ -445,9 +445,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 8]
+Cheshire & Lemon        Expires October 28, 2018                [Page 8]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 7.  Discovery Proxy Behavior
@@ -501,9 +501,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018               [Page 9]
+Cheshire & Lemon        Expires October 28, 2018                [Page 9]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 8.  DSO TLVs
@@ -557,9 +557,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 10]
+Cheshire & Lemon        Expires October 28, 2018               [Page 10]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
    DSO-DATA is the 8-bit address family followed by the 32-bit link
@@ -613,9 +613,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 11]
+Cheshire & Lemon        Expires October 28, 2018               [Page 11]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 9.  Provisioning
@@ -669,9 +669,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 12]
+Cheshire & Lemon        Expires October 28, 2018               [Page 12]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
    entity must have a machine-readable name and may have a human-
@@ -725,9 +725,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 13]
+Cheshire & Lemon        Expires October 28, 2018               [Page 13]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
    names, services on all the different physical links may be presented
@@ -781,9 +781,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 14]
+Cheshire & Lemon        Expires October 28, 2018               [Page 14]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 9.1.3.  Discovery Relay
@@ -837,9 +837,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 15]
+Cheshire & Lemon        Expires October 28, 2018               [Page 15]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
    by name.  This approach is not required, but is simply shown as an
@@ -893,9 +893,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 16]
+Cheshire & Lemon        Expires October 28, 2018               [Page 16]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 9.3.  Discovery Proxy Configuration
@@ -949,9 +949,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 17]
+Cheshire & Lemon        Expires October 28, 2018               [Page 17]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 10.  Security Considerations
@@ -1005,9 +1005,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 18]
+Cheshire & Lemon        Expires October 28, 2018               [Page 18]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 13.  References
@@ -1017,17 +1017,17 @@ Internet-Draft            mDNS Discovery Relay                March 2018
    [I-D.ietf-dnsop-session-signal]
               Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
               Lemon, T., and T. Pusateri, "DNS Stateful Operations",
-              draft-ietf-dnsop-session-signal-06 (work in progress),
+              draft-ietf-dnsop-session-signal-07 (work in progress),
               March 2018.
 
    [I-D.ietf-dnssd-hybrid]
               Cheshire, S., "Discovery Proxy for Multicast DNS-Based
-              Service Discovery", draft-ietf-dnssd-hybrid-07 (work in
-              progress), September 2017.
+              Service Discovery", draft-ietf-dnssd-hybrid-08 (work in
+              progress), March 2018.
 
    [I-D.ietf-tls-tls13]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", draft-ietf-tls-tls13-26 (work in progress),
+              Version 1.3", draft-ietf-tls-tls13-28 (work in progress),
               March 2018.
 
    [I-D.sctl-discovery-broker]
@@ -1061,9 +1061,9 @@ Internet-Draft            mDNS Discovery Relay                March 2018
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 19]
+Cheshire & Lemon        Expires October 28, 2018               [Page 19]
 
-Internet-Draft            mDNS Discovery Relay                March 2018
+Internet-Draft            mDNS Discovery Relay                April 2018
 
 
    [RFC7788]  Stenberg, M., Barth, S., and P. Pfister, "Home Networking
@@ -1117,4 +1117,4 @@ Authors' Addresses
 
 
 
-Cheshire & Lemon       Expires September 19, 2018              [Page 20]
+Cheshire & Lemon        Expires October 28, 2018               [Page 20]
