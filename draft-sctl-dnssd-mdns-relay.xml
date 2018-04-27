@@ -768,6 +768,30 @@ Relay Downstairs
 
     <section anchor="security" title="Security Considerations">
 	<t>
+	  Part of the purpose of the Multicast DNS Discovery Relay protocol is to place a simple relay,
+	  analogous to a BOOTP relay, into routers and similar devices that may not be updated frequently.
+	  The <xref target="RFC0951">BOOTP</xref> protocol has been around since 1985, and continues to be useful today.
+	  The BOOTP protocol uses no encryption, and in many enterprise networks this is considered acceptable.
+	  In contrast, the relay protocol requires TLS 1.3.
+	  A concern is that after 20 or 30 years TLS 1.3, or some of the encryption algorithms it uses,
+	  may become obsolete, rendering devices that require it unusable.
+	  Our assessment is that TLS 1.3 probably will be around for many years to come.
+	  <xref target="RFC2246">TLS 1.0</xref> was used for about a decade, and similarly
+	  <xref target="RFC5246">TLS 1.2</xref> was also used for about a decade.
+	  We expect <xref target="I-D.ietf-tls-tls13">TLS 1.3</xref> to have at least that lifespan.
+	  In addition, recent IETF efforts are pushing for better software update practices
+	  for devices like routers, for other security reasons, making less likely that in ten years
+	  time it will be less common to be using routers that haven't had a software update for ten years.
+	  However, authors of encryption specifications and libraries should be aware of the
+	  potential backwards compatibility issues if an encryption algorithm becomes deprecated.
+	  This specification RECOMMENDS that if an encryption algorithm becomes deprecated,
+	  then rather than remove that encryption algorithm entirely, encryption libraries
+	  should disable that encryption algorithm by default, but leave the code present
+	  with an option for client software to enable it in special cases, such as a
+	  Multicast DNS Discovery Relay client talking to an ancient Multicast DNS Discovery Relay server.
+	  Using no encryption like BOOTP would eliminate this backwards compatibility concern, but
+	  we feel that in such a future hypothetical scenario, using even a weak encryption algorithm
+	  still makes passive eavesdropping and tampering harder, and is preferable to using no encryption at all.
 	</t>
     </section>
 
@@ -812,6 +836,9 @@ Relay Downstairs
 
     <references title="Informative References">
 
+      <?rfc include="reference.RFC.0951.xml"?>
+      <?rfc include="reference.RFC.2246.xml"?>
+      <?rfc include="reference.RFC.5246.xml"?>
       <reference anchor="TR-069"
                  target="https://www.broadband-forum.org/technical/download/TR-069_Amendment-5.pdf">
         <front>
