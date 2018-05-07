@@ -5,20 +5,20 @@
 Network Working Group                                        S. Cheshire
 Internet-Draft                                                Apple Inc.
 Intended status: Standards Track                                T. Lemon
-Expires: October 28, 2018                            Nibbhaya Consulting
-                                                          April 26, 2018
+Expires: November 7, 2018                            Nibbhaya Consulting
+                                                             May 6, 2018
 
 
                      Multicast DNS Discovery Relay
-                     draft-sctl-dnssd-mdns-relay-05
+                     draft-ietf-dnssd-mdns-relay-00
 
 Abstract
 
    This document extends the specification of the Discovery Proxy for
    Multicast DNS-Based Service Discovery.  It describes a lightweight
-   relay mechanism, a Discovery Relay, which allows Discovery Proxies to
-   provide service on multicast links to which they are not directly
-   attached.
+   relay mechanism, a Discovery Relay, which, when present on a link,
+   allows Discovery Proxies not attached to that link to provide mDNS
+   proxy service on that link.
 
 Status of This Memo
 
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on October 28, 2018.
+   This Internet-Draft will expire on November 7, 2018.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Cheshire & Lemon        Expires October 28, 2018                [Page 1]
+Cheshire & Lemon        Expires November 7, 2018                [Page 1]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
    the Trust Legal Provisions and are provided without warranty as
@@ -69,31 +69,35 @@ Table of Contents
      3.1.  Connections between Proxies and Relays (overview) . . . .   5
      3.2.  mDNS Messages On Multicast Links  . . . . . . . . . . . .   6
    4.  Connections between Proxies and Relays (details)  . . . . . .   6
-   5.  Traffic from Relays to Proxies  . . . . . . . . . . . . . . .   7
-   6.  Traffic from Proxies to Relays  . . . . . . . . . . . . . . .   8
+   5.  Traffic from Relays to Clients  . . . . . . . . . . . . . . .   8
+   6.  Traffic from Clients to Relays  . . . . . . . . . . . . . . .   9
    7.  Discovery Proxy Behavior  . . . . . . . . . . . . . . . . . .   9
-   8.  DSO TLVs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
-     8.1.  mDNS Link Request . . . . . . . . . . . . . . . . . . . .  10
-     8.2.  mDNS Link Discontinue . . . . . . . . . . . . . . . . . .  10
-     8.3.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  10
-     8.4.  mDNS Message  . . . . . . . . . . . . . . . . . . . . . .  11
-     8.5.  Layer Two Source Address  . . . . . . . . . . . . . . . .  11
-     8.6.  IP Source . . . . . . . . . . . . . . . . . . . . . . . .  11
-   9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  12
-     9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  12
-       9.1.1.  Multicast Link  . . . . . . . . . . . . . . . . . . .  13
-       9.1.2.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  14
-       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  15
-     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  15
-     9.3.  Discovery Proxy Configuration . . . . . . . . . . . . . .  17
-     9.4.  Discovery Relay Configuration . . . . . . . . . . . . . .  17
-   10. Security Considerations . . . . . . . . . . . . . . . . . . .  18
-   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  18
-   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  19
-   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  19
-     13.1.  Normative References . . . . . . . . . . . . . . . . . .  19
-     13.2.  Informative References . . . . . . . . . . . . . . . . .  20
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  21
+   8.  DSO TLVs  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     8.1.  mDNS Link Request . . . . . . . . . . . . . . . . . . . .  11
+     8.2.  mDNS Link Discontinue . . . . . . . . . . . . . . . . . .  11
+     8.3.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  11
+     8.4.  mDNS Message  . . . . . . . . . . . . . . . . . . . . . .  12
+     8.5.  Layer Two Source Address  . . . . . . . . . . . . . . . .  12
+     8.6.  IP Source . . . . . . . . . . . . . . . . . . . . . . . .  12
+     8.7.  Report Link Changes . . . . . . . . . . . . . . . . . . .  13
+     8.8.  Stop Reporting Link Changes . . . . . . . . . . . . . . .  13
+     8.9.  Link Available  . . . . . . . . . . . . . . . . . . . . .  13
+     8.10. Link Unavailable  . . . . . . . . . . . . . . . . . . . .  13
+   9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  14
+     9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  14
+       9.1.1.  Multicast Link  . . . . . . . . . . . . . . . . . . .  15
+       9.1.2.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  16
+       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  17
+     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  18
+     9.3.  Discovery Proxy Configuration . . . . . . . . . . . . . .  20
+     9.4.  Discovery Relay Configuration . . . . . . . . . . . . . .  20
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .  21
+   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  21
+   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  22
+   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  22
+     13.1.  Normative References . . . . . . . . . . . . . . . . . .  22
+     13.2.  Informative References . . . . . . . . . . . . . . . . .  23
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  24
 
 
 
@@ -105,13 +109,9 @@ Table of Contents
 
 
 
-
-
-
-
-Cheshire & Lemon        Expires October 28, 2018                [Page 2]
+Cheshire & Lemon        Expires November 7, 2018                [Page 2]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 1.  Introduction
@@ -126,64 +126,68 @@ Internet-Draft            mDNS Discovery Relay                April 2018
    In the original Discovery Proxy specification, it is imagined that
    for every multicast link on which services will be discovered, a host
    will be present running a full Discovery Proxy.  This document
-   introduces a lightweight Discovery Relay which can be used to provide
+   introduces a lightweight Discovery Relay that can be used to provide
    discovery services on a multicast link without requiring a full
    Discovery Proxy on every multicast link.
 
+   Since the primary purpose of a Discovery Relay is providing remote
+   virtual interface functionality to Discovery Proxies, this document
+   is written with that in mind.  However, in principle, a Discovery
+   Relay could be used by any properly authorized client.  In the
+   context of this specification, a Discovery Proxy is a client to the
+   Discovery Relay.  This document uses the terms "Discovery Proxy" and
+   "Client" to mean the same thing; the term "Client" is used when we
+   are talking about the communication between the client and the Relay,
+   and the term "Discovery Proxy" when we are referring specifically to
+   something that is acting as a Discovery Proxy.
+
    The Discovery Relay operates by listening for TCP connections from
-   Discovery Proxies.  When a Discovery Proxy connects, the connection
-   is authenticated and secured using TLS.  The Discovery Proxy can then
-   specify one or more multicast links from which it wishes to receive
-   mDNS traffic.  The Discovery Proxy can also send messages to be
-   transmitted on its behalf on one or more of those multicast links.
-   DNS Stateful Operations (DSO) [I-D.ietf-dnsop-session-signal] is used
-   as a framework for conveying interface and IP header information
-   associated with each message.
+   Clients.  When a Client connects, the connection is authenticated and
+   secured using TLS.  The Client can then specify one or more multicast
+   links from which it wishes to receive mDNS traffic.  The Client can
+   also send messages to be transmitted on its behalf on one or more of
+   those multicast links.  DNS Stateful Operations (DSO)
+   [I-D.ietf-dnsop-session-signal] is used as a framework for conveying
+   interface and IP header information associated with each message.
 
    The Discovery Relay functions essentially as a set of one or more
-   remote virtual interfaces for the Discovery Proxy, one on each
-   multicast link to which the Discovery Relay is connected.  In a
-   complex network, it is possible that more than one Discovery Relay
-   will be connected to the same multicast link; in this case, the
-   Discovery Proxy ideally should only be using one such Relay Proxy per
-   multicast link, since using more than one will generate duplicate
-   traffic.
+   remote virtual interfaces for the Client, one on each multicast link
+   to which the Discovery Relay is connected.  In a complex network, it
+   is possible that more than one Discovery Relay will be connected to
+   the same multicast link; in this case, the Client ideally should only
+   be using one such Relay Proxy per multicast link, since using more
+   than one will generate duplicate traffic.
 
    How such duplication is detected and avoided is out of scope for this
    document; in principle it could be detected using HNCP [RFC7788] or
    configured using some sort of orchestration software in conjunction
    with NETCONF [RFC6241] or CPE WAN Management Protocol [TR-069].
 
-   Since the primary purpose of a Discovery Relay is providing remote
-   virtual interface functionality to Discovery Proxies, this document
-   is written with that usage in mind, and this document talks about
-   Discovery Relays receiving requests from Discovery Proxies.  However,
-   in principle, a Discovery Relay could be used by any properly
-   authorized client, so it should be understood that in this document
-   the term, "Discovery Proxy," potentially means, "any properly
-   authorized client."
 
 
-
-Cheshire & Lemon        Expires October 28, 2018                [Page 3]
+Cheshire & Lemon        Expires November 7, 2018                [Page 3]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 2.  Terminology
 
    The following definitions may be of use:
 
+   Client  A network service that uses a Discovery Relay to receive mDNS
+      multicast traffic and/or communicate with mDNS Agents.
+
    mDNS Agent  A host which sends and/or responds to mDNS queries.
 
    Discovery Proxy  A network service which receives well-formed
       questions using the DNS protocol, performs multicast DNS queries
       to answer those questions, and responds with those answers using
-      the DNS protocol.
+      the DNS protocol.  A Discovery Proxy that can communicate with
+      mDNS Agents using a Discovery Relay is also a Client.
 
    Discovery Relay  A network service which relays received mDNS
-      messages to a Discovery Proxy, and can transmit mDNS messages on
-      behalf of that Discovery Proxy.
+      messages to a Client, and can transmit mDNS messages on behalf of
+      that Client.
 
    multicast link  A maximal set of network connection points, such that
       any host connected to any connection point in the set may send a
@@ -213,18 +217,17 @@ Internet-Draft            mDNS Discovery Relay                April 2018
       is to "silently discard" it, that means that no response is sent
       by the service that is discarding the message to the service that
       sent it.  The service receiving the message may log the event, and
+
+
+
+
+Cheshire & Lemon        Expires November 7, 2018                [Page 4]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
       may also count such events: "silently" does not preclude such
       behavior.
-
-
-
-
-
-
-Cheshire & Lemon        Expires October 28, 2018                [Page 4]
-
-Internet-Draft            mDNS Discovery Relay                April 2018
-
 
 3.  Protocol Overview
 
@@ -238,28 +241,46 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 3.1.  Connections between Proxies and Relays (overview)
 
    Discovery Relays listen for incoming connection requests.
-   Connections between Discovery Proxies and Discovery Relays are
-   established by Discovery Proxies.  Connections are authenticated and
-   encrypted using TLS, with both client and server certificates.
-   Connections are long-lived: a Discovery Proxy is expected to send
-   many queries over a single connection, and Discovery Relays will
-   forward all mDNS traffic from subscribed interfaces over the
-   connection.
+   Connections between Clients and Discovery Relays are established by
+   Clients.  Connections are authenticated and encrypted using TLS, with
+   both client and server certificates.  Connections are long-lived: a
+   Client is expected to send many queries over a single connection, and
+   Discovery Relays will forward all mDNS traffic from subscribed
+   interfaces over the connection.
 
    The stream encapsulated in TLS will carry DNS frames as in the DNS
    TCP protocol [RFC1035] Section 4.2.2.  However, all messages will be
-   DSO messages [I-D.ietf-dnsop-session-signal].  There will be three
-   types of such messages between Discovery Proxy and Discovery Relay:
+   DSO messages [I-D.ietf-dnsop-session-signal].  There will be four
+   types of such messages between Discovery Relays and Clients:
 
-   o  Control messages from Proxy to Relay
+   o  Control messages from Client to Relay
 
-   o  mDNS messages from Proxy to Relay
+   o  Link status messages from Relay to Client
 
-   o  mDNS messages from Relay to Proxy
+   o  mDNS messages from Client to Relay
 
-   Subscribe messages from the Discovery Proxy to the Discovery Relay
+   o  mDNS messages from Relay to Client
+
+   Clients can send four different control messages to Relays: the Link
+   Request, Link Discontinue, Report Link Changes and Stop Reporting
+   Link Changes messages.  The first two are used by the Client to
    indicate to the Discovery Relay that mDNS messages from one or more
-   specified multicast links are to be relayed to the Discovery Proxy.
+   specified multicast links are to be relayed to the Discovery Proxy,
+   and to subsequently stop such relaying.  The second two are used by
+   the Client to request that the Relay report on the set of links that
+   can be requested, and to request that it discontinue such reporting.
+
+   Link Status messages from the Relay to the Client inform the client
+   that a link has become available, or that a formerly-available link
+   is no longer available.
+
+
+
+
+Cheshire & Lemon        Expires November 7, 2018                [Page 5]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
 
    mDNS messages from a Discovery Proxy to a Discovery Relay cause the
    Discovery Relay to transmit the mDNS message on one or more multicast
@@ -269,55 +290,54 @@ Internet-Draft            mDNS Discovery Relay                April 2018
    whenever an mDNS message is received on a multicast link to which the
    Discovery Relay has subscribed.
 
-   During periods with no traffic flowing, Discovery Proxies are
-   responsible for generating any necessary keepalive traffic, as stated
-   in the DSO specification [I-D.ietf-dnsop-session-signal].
-
-
-
-
-
-Cheshire & Lemon        Expires October 28, 2018                [Page 5]
-
-Internet-Draft            mDNS Discovery Relay                April 2018
-
+   During periods with no traffic flowing, Clients are responsible for
+   generating any necessary keepalive traffic, as stated in the DSO
+   specification [I-D.ietf-dnsop-session-signal].
 
 3.2.  mDNS Messages On Multicast Links
 
    Discovery Relays listen for mDNS traffic on all configured multicast
    links that have at least one active subscription from a Discovery
    Proxy.  When an mDNS message is received on a multicast link, it is
-   forwarded on every open Discovery Proxy connection that is subscribed
-   to mDNS traffic on that multicast link.  In the event of congestion,
-   where a particular Discovery Proxy connection has no buffer space for
-   an mDNS message that would otherwise be forwarded to it, the mDNS
-   message is not forwarded to it.  Normal mDNS retry behavior is used
-   to recover from this sort of packet loss.  Discovery Relays are not
-   expected to buffer more than a few mDNS packets.  Excess mDNS packets
-   are silently discarded.  In reality this is expected to be a
-   nonissue.  Particularly on networks like Wi-Fi, multicast packets are
+   forwarded on every open Client connection that is subscribed to mDNS
+   traffic on that multicast link.  In the event of congestion, where a
+   particular Client connection has no buffer space for an mDNS message
+   that would otherwise be forwarded to it, the mDNS message is not
+   forwarded to it.  Normal mDNS retry behavior is used to recover from
+   this sort of packet loss.  Discovery Relays are not expected to
+   buffer more than a few mDNS packets.  Excess mDNS packets are
+   silently discarded.  In practice this is not expected to be a issue.
+   Particularly on networks like Wi-Fi, multicast packets are
    transmitted at rates ten or even a hundred times slower than unicast
    packets.  This means that even at peak multicast packets rates, it is
    likely that a unicast TCP connection will able to carry those packets
    with ease.
 
-   Discovery Proxies send mDNS messages they wish to have sent on their
-   behalf on remote multicast link(s) on which the Discovery Proxy has
-   an active subscription.  A Discovery Relay will not transmit mDNS
-   packets on any multicast link on which the remote Discovery Proxy
-   does not have an active subscription, since it makes no sense for a
-   Discovery Proxy to ask to have a query sent on its behalf if it's not
-   able to receive the responses to that query.
+   Clients send mDNS messages they wish to have sent on their behalf on
+   remote multicast link(s) on which the Client has an active
+   subscription.  A Discovery Relay will not transmit mDNS packets on
+   any multicast link on which the Client does not have an active
+   subscription, since it makes no sense for a Client to ask to have a
+   query sent on its behalf if it's not able to receive the responses to
+   that query.
 
 4.  Connections between Proxies and Relays (details)
 
    When a Discovery Relay starts, it opens a passive TCP listener to
-   receive incoming connection requests from Discovery Proxies.  This
-   listener may be bound to one or more source IP addresses, or to the
-   wildcard address, depending on the implementation.  When a connection
-   is received, the relay must first validate that it is a connection to
-   an IP address to which connections are allowed.  For example, it may
-   be that only connections to ULAs are allowed, or to the IP addresses
+   receive incoming connection requests from Clients.  This listener may
+   be bound to one or more source IP addresses, or to the wildcard
+   address, depending on the implementation.  When a connection is
+   received, the relay must first validate that it is a connection to an
+   IP address to which connections are allowed.  For example, it may be
+   that only connections to ULAs are allowed, or to the IP addresses
+
+
+
+Cheshire & Lemon        Expires November 7, 2018                [Page 6]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    configured on certain interfaces.  If the listener is bound to a
    specific IP address, this check is unnecessary.
 
@@ -326,129 +346,142 @@ Internet-Draft            mDNS Discovery Relay                April 2018
    is on its whitelist.  If the connection is not permitted either
    because of the source address or the destination address, the
    Discovery Relay responds to the TLS Client Hello message from the
-   Discovery Proxy with a TLS user_canceled alert ([I-D.ietf-tls-tls13]
+   Client with a TLS user_canceled alert ([I-D.ietf-tls-tls13]
    Section 6.1).
 
-
-
-
-
-Cheshire & Lemon        Expires October 28, 2018                [Page 6]
-
-Internet-Draft            mDNS Discovery Relay                April 2018
-
-
    Otherwise, the Discovery Relay will attempt to complete a TLS
-   handshake with the Discovery Proxy.  Discovery Proxies are required
-   to send the post_handshake_auth extension ([I-D.ietf-tls-tls13]
-   Section 4.2.5).  If a Discovery Relay receives a ClientHello message
-   with no post_handshake_auth extension, the Discovery Relay rejects
-   the connection with a certificate_required alert
-   ([I-D.ietf-tls-tls13] Section 6.2).
+   handshake with the Client.  Clients are required to send the
+   post_handshake_auth extension ([I-D.ietf-tls-tls13] Section 4.2.5).
+   If a Discovery Relay receives a ClientHello message with no
+   post_handshake_auth extension, the Discovery Relay rejects the
+   connection with a certificate_required alert ([I-D.ietf-tls-tls13]
+   Section 6.2).
 
    Once the TLS handshake is complete, the Discovery Relay MUST request
    post-handshake authentication as described in ([I-D.ietf-tls-tls13]
-   Section 4.6.2).  If the Discovery Proxy refuses to send a
-   certificate, or the key presented does not match the key associated
-   with the IP address from which the connection originated, or the
-   CertificateVerify does not validate, the connection is dropped with
-   the TLS access_denied alert ([I-D.ietf-tls-tls13] Section 6.2).
+   Section 4.6.2).  If the Client refuses to send a certificate, or the
+   key presented does not match the key associated with the IP address
+   from which the connection originated, or the CertificateVerify does
+   not validate, the connection is dropped with the TLS access_denied
+   alert ([I-D.ietf-tls-tls13] Section 6.2).
 
    Once the connection is established and authenticated, it is treated
    as a DNS TCP connection [RFC1035].
 
-   Aliveness of connections between Discovery Proxies and Relays is
-   maintained as described in Section 4 of
-   [I-D.ietf-dnsop-session-signal].  Discovery Proxies must also honor
-   the 'Retry Delay' TLV (section 5 of [I-D.ietf-dnsop-session-signal])
-   if sent by the Discovery Relay.
+   Aliveness of connections between Clients and Relays is maintained as
+   described in Section 4 of [I-D.ietf-dnsop-session-signal].  Clients
+   must also honor the 'Retry Delay' TLV (section 5 of
+   [I-D.ietf-dnsop-session-signal]) if sent by the Discovery Relay.
 
-   Discovery Proxies may establish more than one connection to a
-   specific Discovery Relay.  This would happen in the case that a TCP
-   connection stalls, and the Discovery Proxy is able to reconnect
-   before the previous connection has timed out.  It could also happen
-   as a result of a server restart.  It is not likely that two active
-   connections from the same Discovery Proxy would be present at the
-   same time, but it must be possible for additional connections to be
-   established.  The Discovery Relay may drop the old connection when
-   the new one has been fully established, including a successful TLS
-   handshake.  What it means for two connections to be from the same
-   Discovery Proxy is that the connections both have source addresses
-   that belong to the same Discovery Proxy, and that they were
-   authenticated using the same client certificate.
+   Clients may establish more than one connection to a specific
+   Discovery Relay.  This would happen in the case that a TCP connection
+   stalls, and the Client is able to reconnect before the previous
+   connection has timed out.  It could also happen as a result of a
+   server restart.  It is not likely that two active connections from
+   the same Client would be present at the same time, but it must be
+   possible for additional connections to be established.  The Discovery
+   Relay may drop the old connection when the new one has been fully
+   established, including a successful TLS handshake.  What it means for
+   two connections to be from the same Client is that the connections
+   both have source addresses that belong to the same Client, and that
+   they were authenticated using the same client certificate.
 
-5.  Traffic from Relays to Proxies
+
+
+
+Cheshire & Lemon        Expires November 7, 2018                [Page 7]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
+   In order to know what links to request, the Client can be configured
+   with a list of links supported by the Relay.  However, in some
+   networking contexts, dynamic changes in the availability of links are
+   likely; therefore Clients may also use the Report Link Changes TLV to
+   request that the Relay report on the availability of its links.  In
+   some contexts, for example when debugging, a Client may operate with
+   no information about the set of links supported by a relay, simply
+   relying on the relay to provide one.
+
+5.  Traffic from Relays to Clients
 
    The mere act of connecting to a Discovery Relay does not result in
    any mDNS traffic being forwarded.  In order to request that mDNS
    traffic from a particular multicast link be forwarded on a particular
-   connection, the Discovery Proxy must send one or more DSO messages,
-   each containing a single mDNS Link Request TLV (Section 8.1)
-   indicating the multicast link from which traffic is requested.
+   connection, the Client must send one or more DSO messages, each
+   containing a single mDNS Link Request TLV (Section 8.1) indicating
+   the multicast link from which traffic is requested.
 
+   When an mDNS Link Request message is received, the Discovery Relay
+   validates that it is connected to the specified multicast link, and
+   that forwarding is enabled for that link.  If both checks are
+   successful, it MUST send a response with RCODE=0 (NOERROR).  If the
+   Relay is not connected to the specified link, or forwarding from that
+   link to the Client is not enabled, it sends a response with RCODE=3
+   (NXDOMAIN/Name Error).  It is not an error to request the same link
+   more than once; the Relay MUST NOT reject an mDNS Link Request on
+   that basis.  If the relay cannot satisfy the request for some reason
+   other than that the link is invalid, for example resource exhaustion,
+   it sends a response with RCODE=2 (SERVFAIL).
 
+   If the requested link is valid, the Relay begins forwarding all mDNS
+   traffic from that link to the Client.  Delivery is not guaranteed: if
+   there is no buffer space, packets will be dropped.  It is expected
+   that regular mDNS retry processing will take care of retransmission
+   of lost packets.  The amount of buffer space is implementation
+   dependent, but generally should not be more than the bandwidth delay
+   product of the TCP connection [RFC1323].  The Discovery Relay should
+   use the TCP_NOTSENT_LOWAT mechanism [NOTSENT][PRIO] or equivalent, to
+   avoid building up a backlog of data in excess of the amount necessary
+   to have in flight to fill the bandwidth delay product of the TCP
+   connection.
 
-
-Cheshire & Lemon        Expires October 28, 2018                [Page 7]
-
-Internet-Draft            mDNS Discovery Relay                April 2018
-
-
-   When such a message is received, the Discovery Relay validates that
-   the specified multicast link is available for forwarding, and that
-   forwarding is enabled for that multicast link.  For each such message
-   the Discovery Relay validates the multicast link specified and
-   includes, in a single response, RCODE 0 if the multicast link
-   specified is valid, or RCODE 3 (NXDOMAIN / Name Error -- Named entity
-   does not exist) otherwise.  For each valid multicast link, it begins
-   forwarding all mDNS traffic from that link to the Discovery Proxy.
-   Delivery is not guaranteed: if there is no buffer space, packets will
-   be dropped.  It is expected that regular mDNS retry processing will
-   take care of retransmission of lost packets.  The amount of buffer
-   space is implementation dependent, but generally should not be more
-   than the bandwidth delay product of the TCP connection [RFC1323].
-   The Discovery Relay should use the TCP_NOTSENT_LOWAT mechanism
-   [NOTSENT][PRIO] or equivalent, to avoid building up a backlog of data
-   in excess of the amount necessary to have in flight to fill the
-   bandwidth delay product of the TCP connection.
-
-   mDNS messages from Relays to Proxies are framed within DSO messages.
+   mDNS messages from Relays to Clients are framed within DSO messages.
    Each DSO message can contain multiple TLVs, but only a single mDNS
    message is conveyed per DSO message.  Each forwarded mDNS message is
    contained in an mDNS Message TLV (Section 8.4).  The layer two source
    address of the message, if known, MAY be encoded in a Layer Two
    Source TLV (Section 8.5).  The source IP address and port of the
+
+
+
+Cheshire & Lemon        Expires November 7, 2018                [Page 8]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    message MUST be encoded in an IP Source TLV (Section 8.6).  The
    multicast link on which the message was received MUST be encoded in a
-   Link Identifier TLV (Section 8.3).  The Discovery Proxy MUST silently
-   ignore unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS
+   Link Identifier TLV (Section 8.3).  The Client MUST silently ignore
+   unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS
    messages that include unrecognized TLVs.
 
-   A Discovery Proxy may discontinue listening for mDNS messages on a
-   particular multicast link by sending a DSO message containing an mDNS
-   Link Discontinue TLV (Section 8.2).  Subsequent messages from that
-   link that had previously been queued may arrive after listening has
-   been discontinued.  The Discovery Proxy should silently discard such
-   messages.  The Discovery Relay MUST discontinue generating such
-   messages as soon as the request is received.  The Discovery Relay
-   does not respond to this message other than to discontinue forwarding
-   mDNS messages from the specified links.
+   A Client may discontinue listening for mDNS messages on a particular
+   multicast link by sending a DSO message containing an mDNS Link
+   Discontinue TLV (Section 8.2).  Subsequent messages from that link
+   that had previously been queued may arrive after listening has been
+   discontinued.  The Client should silently discard such messages.  The
+   Discovery Relay MUST discontinue generating such messages as soon as
+   the request is received.  The Discovery Relay does not respond to
+   this message other than to discontinue forwarding mDNS messages from
+   the specified links.
 
-6.  Traffic from Proxies to Relays
+6.  Traffic from Clients to Relays
 
-   Like mDNS traffic from relays, each mDNS message sent by a Discovery
-   Proxy to a Discovery Relay is encapsulated in an mDNS Message TLV
+   Like mDNS traffic from relays, each mDNS message sent by a Client to
+   a Discovery Relay is encapsulated in an mDNS Message TLV
    (Section 8.4) within a DSO message.  Each message MUST contain one or
    more Link Identifier TLVs (Section 8.3).  The Discovery Relay will
    transmit the message to the mDNS port and multicast address on each
    link specified in the message using the specified IP address family.
 
-
-
-Cheshire & Lemon        Expires October 28, 2018                [Page 8]
-
-Internet-Draft            mDNS Discovery Relay                April 2018
-
+   Although the communication between Clients and Relays uses the DNS
+   stream protocol and DNS Stateless Operations, there is no case in
+   which a Client would legitimately send a DNS query (something other
+   than a DSO message) to a Relay.  Therefore, if a Relay receives a
+   message other than a DSO message, it MUST respond with a REFUSED
+   result code.  The reason not to simply drop the connection is that it
+   might result in a continual reconnection loop.
 
 7.  Discovery Proxy Behavior
 
@@ -465,6 +498,14 @@ Internet-Draft            mDNS Discovery Relay                April 2018
    What this means is that when a Discovery Proxy receives a DNSSD query
    from a client via unicast, it will generate mDNS query messages on
    the relevant multicast link(s) for which it is acting as a proxy.
+
+
+
+Cheshire & Lemon        Expires November 7, 2018                [Page 9]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    For locally-connected link(s), those query messages will be sent
    directly.  For relay-connected link(s), the query messages will be
    sent through the Discovery Relay that is being used to serve that
@@ -501,9 +542,24 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 
-Cheshire & Lemon        Expires October 28, 2018                [Page 9]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon        Expires November 7, 2018               [Page 10]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 8.  DSO TLVs
@@ -513,14 +569,14 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 8.1.  mDNS Link Request
 
    The mDNS Link Request TLV conveys a link identifier from which a
-   Discovery Proxy is requesting that a Discovery Relay forward mDNS
-   traffic.  The link identifier comes from the provisioning
-   configuration (see Section 9).  The DSO-TYPE for this TLV is TBD-R.
-   DSO-LENGTH is always 5.  DSO-DATA is the 8-bit address family
-   followed by the 32-bit link identifier, in network byte order, as
-   described in Section 9.  An address family value of 1 indicates IPv4
-   and 2 indicates IPv6, as recorded in the IANA Registry of Address
-   Family Numbers [AdFam].
+   Client is requesting that a Discovery Relay forward mDNS traffic.
+   The link identifier comes from the provisioning configuration (see
+   Section 9).  The DSO-TYPE for this TLV is TBD-R.  DSO-LENGTH is
+   always 5.  DSO-DATA is the 8-bit address family followed by the
+   32-bit link identifier, in network byte order, as described in
+   Section 9.  An address family value of 1 indicates IPv4 and 2
+   indicates IPv6, as recorded in the IANA Registry of Address Family
+   Numbers [AdFam].
 
    The mDNS Link Request TLV can only be used as a primary TLV, and
    requires an acknowledgement.
@@ -531,11 +587,11 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 8.2.  mDNS Link Discontinue
 
-   The mDNS Link Discontinue TLV is used by Discovery Proxies to
-   unsubscribe to mDNS messages on the specified multicast link.  DSO-
-   TYPE is TBD-D.  DSO-LENGTH is always 5.  DSO-DATA is the 8-bit
-   address family followed by the 32-bit link identifier, in network
-   byte order, as described in Section 9.
+   The mDNS Link Discontinue TLV is used by Clients to unsubscribe to
+   mDNS messages on the specified multicast link.  DSO-TYPE is TBD-D.
+   DSO-LENGTH is always 5.  DSO-DATA is the 8-bit address family
+   followed by the 32-bit link identifier, in network byte order, as
+   described in Section 9.
 
    The mDNS Link Discontinue TLV can only be used as a primary TLV, and
    is not acknowledged.
@@ -547,35 +603,35 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 8.3.  Link Identifier
 
    This option is used both in DSO messages from Discovery Relays to
-   Discovery Proxies that contain received mDNS messages, and from
-   Discovery Proxies to Discovery Relays that contain mDNS messages to
-   be transmitted on the multicast link.  In the former case, it
-   indicates the multicast link on which the message was received; in
-   the latter case, it indicates the multicast link on which the message
-   should be transmitted.  DSO-TYPE is TBD-L.  DSO-LENGTH is always 5.
+   Clients that contain received mDNS messages, and from Clients to
+   Discovery Relays that contain mDNS messages to be transmitted on the
+   multicast link.  In the former case, it indicates the multicast link
+   on which the message was received; in the latter case, it indicates
+   the multicast link on which the message should be transmitted.  DSO-
+   TYPE is TBD-L.  DSO-LENGTH is always 5.  DSO-DATA is the 8-bit
 
 
 
 
-Cheshire & Lemon        Expires October 28, 2018               [Page 10]
+Cheshire & Lemon        Expires November 7, 2018               [Page 11]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
-   DSO-DATA is the 8-bit address family followed by the 32-bit link
-   identifier, in network byte order, as described in Section 9.
+   address family followed by the 32-bit link identifier, in network
+   byte order, as described in Section 9.
 
    The Link Identifier TLV can only be used as an additional TLV.
 
 8.4.  mDNS Message
 
-   The mDNS Message TLV is used to encapsulate an mDNS message that is
-   being forwarded from a multicast link to a Discovery Proxy, or is
-   being sent from a Discovery Proxy for transmission on a multicast
-   link.  Only the application layer payload of the mDNS message is
-   carried in the DSO mDNS Message TLV, i.e., just the DNS message
-   itself, beginning with the DNS Message ID, not the IP or UDP headers.
-   The DSO-TYPE for this TLV is TBD-M.  DSO-LENGTH is the length of the
+   The mDNS Message TLV is used to encapsulate an mDNS message that a
+   Relay is forwarding from a multicast link to a Client, or that a
+   Client is sending to a Relay for transmission on a multicast link.
+   Only the application layer payload of the mDNS message is carried in
+   the DSO mDNS Message TLV, i.e., just the DNS message itself,
+   beginning with the DNS Message ID, not the IP or UDP headers.  The
+   DSO-TYPE for this TLV is TBD-M.  DSO-LENGTH is the length of the
    encapsulated mDNS message.  DSO-DATA is the content of the
    encapsulated mDNS message.
 
@@ -586,12 +642,12 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
    The Layer Two Source Address TLV is used to report the link-layer
    address from which an mDNS message was received.  This TLV is
-   optionally present in DSO messages from Discovery Relays to Discovery
-   Proxies that contain mDNS messages when the source link-layer address
-   is known.  The DSO-TYPE is TBD-2.  DSO-LENGTH is variable, depending
-   on the length of link-layer addresses on the link from which the
-   message was received.  DSO-DATA is the link-layer address as it was
-   received on the link.
+   optionally present in DSO messages from Discovery Relays to Clients
+   that contain mDNS messages when the source link-layer address is
+   known.  The DSO-TYPE is TBD-2.  DSO-LENGTH is variable, depending on
+   the length of link-layer addresses on the link from which the message
+   was received.  DSO-DATA is the link-layer address as it was received
+   on the link.
 
    The Layer Two Source Address TLV can only be used as an additional
    TLV.
@@ -600,10 +656,10 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
    The IP Source TLV is used to report the IP source address and port
    from which an mDNS message was received.  This TLV is present in DSO
-   messages from Discovery Relays to Discovery Proxies that contain mDNS
-   messages.  DSO-TYPE is TBD-A.  DSO-LENGTH is either 6, for an IPv4
-   address, or 18, for an IPv6 address.  DSO-DATA is the source port,
-   followed by the IP Address, in network byte order.
+   messages from Discovery Relays to Clients that contain mDNS messages.
+   DSO-TYPE is TBD-A.  DSO-LENGTH is either 6, for an IPv4 address, or
+   18, for an IPv6 address.  DSO-DATA is the two-byte source port,
+   followed by the 4- or 16-byte IP Address, in network byte order.
 
    The IP Source TLV can only be used as an additional TLV.
 
@@ -613,9 +669,65 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 
-Cheshire & Lemon        Expires October 28, 2018               [Page 11]
+Cheshire & Lemon        Expires November 7, 2018               [Page 12]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
+8.7.  Report Link Changes
+
+   The Report Link Changes TLV requests that the Discovery Relay report
+   link changes: whenever a new link becomes available or an existing
+   link is no longer available, the Relay sends a notification to the
+   requesting client describing the event: either a Link Available or a
+   Link Unavailable TLV.  If there are links available when the request
+   is received, then for each such link the relay immediately sends a
+   DSO message with a "Link Available" TLV.  DSO-TYPE is TBD-P.  DSO-
+   LENGTH is 0.
+
+   The mDNS Report Link Changes TLV can only be used as a primary TLV,
+   and requires an acknowledgement.  The acknowledgment does not contain
+   a Link Added TLV: it is just a response to the Link Request message.
+
+8.8.  Stop Reporting Link Changes
+
+   The Stop Reporting Link Changes TLV requests that the Discovery Relay
+   stop reporting on the availability of links supported by the relay.
+   This cancels the effect of a Report Link Changes TLV.  DSO-TYPE is
+   TBD-S.  DSO-LENGTH is 0.
+
+   The mDNS Stop Reporting Link Changes TLV can only be used as a
+   primary TLV, and is not acknowledged.
+
+8.9.  Link Available
+
+   The Link Available TLV is used by Discovery Relays to indicate to
+   clients that a new link has become available.  The format is the same
+   as the Link Identifier TLV.  DSO-TYPE is DSO-V.  The Link Available
+   TLV may be accompanied by one or more IP Source Address TLVs to
+   indicate IP addresses the Relay has configured to any interfaces it
+   has attached to the link being reported as available.
+
+   The mDNS Link Available TLV can only be used as a primary TLV, and is
+   not acknowledged.
+
+8.10.  Link Unavailable
+
+   The Link Unavailable TLV is used by Discovery Relays to indicate to
+   clients that an existing link has become un available.  The format is
+   the same as the Link Identifier TLV.  DSO-TYPE is DSO-U.
+
+   The mDNS Link Unavailable TLV can only be used as a primary TLV, and
+   is not acknowledged.
+
+
+
+
+
+
+Cheshire & Lemon        Expires November 7, 2018               [Page 13]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 9.  Provisioning
@@ -629,7 +741,7 @@ Internet-Draft            mDNS Discovery Relay                April 2018
    A Discovery Relay must be configured both with a set of multicast
    links to which the host on which it is running is connected, on which
    mDNS relay service is to be provided, and also with a list of one or
-   more Discovery Proxies authorized to use it.
+   more Clients authorized to use it.
 
    On a network supporting DNS Service Discovery using Discovery Relays,
    more than one different Discovery Relay implementation is likely be
@@ -669,9 +781,9 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 
-Cheshire & Lemon        Expires October 28, 2018               [Page 12]
+Cheshire & Lemon        Expires November 7, 2018               [Page 14]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
    entity must have a machine-readable name and may have a human-
@@ -725,9 +837,9 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 
-Cheshire & Lemon        Expires October 28, 2018               [Page 13]
+Cheshire & Lemon        Expires November 7, 2018               [Page 15]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
    names, services on all the different physical links may be presented
@@ -781,10 +893,14 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 
-Cheshire & Lemon        Expires October 28, 2018               [Page 14]
+Cheshire & Lemon        Expires November 7, 2018               [Page 16]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
+
+   In some configurations it may make sense for the Discovery Relay not
+   to have a list of links, but simply to support the set of all links
+   available on relays to which the Proxy is configured to communicate.
 
 9.1.3.  Discovery Relay
 
@@ -819,6 +935,25 @@ Internet-Draft            mDNS Discovery Relay                April 2018
    the other information describing a Discovery Relay can be safely
    shared with Discovery Proxies.
 
+   In some cases a Relay may not be configured with a static list of
+   links, but may simply discover links by monitoring the set of
+   available interfaces on the host on which the Relay is running.  In
+   that case, the relay could be configured to identify links based on
+   the names of network interfaces, or based on the set of available
+   prefixes seen on those interfaces.  This sort of configuration is out
+   of scope for this discussion and is left as an exercise for the
+   reader.
+
+
+
+
+
+
+Cheshire & Lemon        Expires November 7, 2018               [Page 17]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
 9.2.  Configuration Files
 
    For this discussion, we assume the simplest possible means of
@@ -834,17 +969,46 @@ Internet-Draft            mDNS Discovery Relay                April 2018
    specified as objects, as described above, perhaps in a master file,
    and then the specific configuration of each proxy or relay will
    reference the set of objects in the master file, referencing objects
-
-
-
-Cheshire & Lemon        Expires October 28, 2018               [Page 15]
-
-Internet-Draft            mDNS Discovery Relay                April 2018
-
-
    by name.  This approach is not required, but is simply shown as an
    example.  In addition, the private keys for each proxy or relay must
    appear only in that proxy or relay's configuration file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon        Expires November 7, 2018               [Page 18]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
 
    The master file contains a list of Discovery Relays, Discovery
    Proxies and Multicast Links.  Each object has a name and all the
@@ -893,9 +1057,13 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 
-Cheshire & Lemon        Expires October 28, 2018               [Page 16]
+
+
+
+
+Cheshire & Lemon        Expires November 7, 2018               [Page 19]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 9.3.  Discovery Proxy Configuration
@@ -949,9 +1117,9 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 
-Cheshire & Lemon        Expires October 28, 2018               [Page 17]
+Cheshire & Lemon        Expires November 7, 2018               [Page 20]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 10.  Security Considerations
@@ -1005,21 +1173,25 @@ Internet-Draft            mDNS Discovery Relay                April 2018
 
 
 
-Cheshire & Lemon        Expires October 28, 2018               [Page 18]
+Cheshire & Lemon        Expires November 7, 2018               [Page 21]
 
-Internet-Draft            mDNS Discovery Relay                April 2018
+Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
-             +--------+----------+--------------------------+
-             | Opcode | Status   | Name                     |
-             +--------+----------+--------------------------+
-             | TBD-R  | Standard | mDNS Link Request        |
-             | TBD-D  | Standard | mDNS Discontinue         |
-             | TBD-L  | Standard | Link Identifier          |
-             | TBD-M  | Standard | mDNS Messsage            |
-             | TBD-2  | Standard | Layer Two Source Address |
-             | TBD-A  | Standard | IP Source                |
-             +--------+----------+--------------------------+
+            +--------+----------+-----------------------------+
+            | Opcode | Status   | Name                        |
+            +--------+----------+-----------------------------+
+            | TBD-R  | Standard | mDNS Link Request           |
+            | TBD-D  | Standard | mDNS Discontinue            |
+            | TBD-L  | Standard | Link Identifier             |
+            | TBD-M  | Standard | mDNS Messsage               |
+            | TBD-2  | Standard | Layer Two Source Address    |
+            | TBD-A  | Standard | IP Source                   |
+            | TBD-P  | Standard | Report Link Changes         |
+            | TBD-S  | Standard | Stop Reporting Link Changes |
+            | TBD-V  | Standard | Link Available              |
+            | TBD-U  | Standard | Link Unavailable            |
+            +--------+----------+-----------------------------+
 
                       DSO Type Codes to be allocated
 
@@ -1054,17 +1226,17 @@ Internet-Draft            mDNS Discovery Relay                April 2018
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
               November 1987, <https://www.rfc-editor.org/info/rfc1035>.
 
+
+
+
+Cheshire & Lemon        Expires November 7, 2018               [Page 22]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    [RFC1323]  Jacobson, V., Braden, R., and D. Borman, "TCP Extensions
               for High Performance", RFC 1323, DOI 10.17487/RFC1323, May
               1992, <https://www.rfc-editor.org/info/rfc1323>.
-
-
-
-
-Cheshire & Lemon        Expires October 28, 2018               [Page 19]
-
-Internet-Draft            mDNS Discovery Relay                April 2018
-
 
    [RFC6241]  Enns, R., Ed., Bjorklund, M., Ed., Schoenwaelder, J., Ed.,
               and A. Bierman, Ed., "Network Configuration Protocol
@@ -1110,17 +1282,17 @@ Internet-Draft            mDNS Discovery Relay                April 2018
               DOI 10.17487/RFC5246, August 2008,
               <https://www.rfc-editor.org/info/rfc5246>.
 
+
+
+
+Cheshire & Lemon        Expires November 7, 2018               [Page 23]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    [TR-069]   Broadband Forum, "CPE WAN Management Protocol", November
               2013, <https://www.broadband-forum.org/technical/download/
               TR-069_Amendment-5.pdf>.
-
-
-
-
-Cheshire & Lemon        Expires October 28, 2018               [Page 20]
-
-Internet-Draft            mDNS Discovery Relay                April 2018
-
 
 Authors' Addresses
 
@@ -1169,8 +1341,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-Cheshire & Lemon        Expires October 28, 2018               [Page 21]
+Cheshire & Lemon        Expires November 7, 2018               [Page 24]
