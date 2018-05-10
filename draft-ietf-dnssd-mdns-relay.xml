@@ -12,6 +12,20 @@
   <front>
     <title abbrev="mDNS Discovery Relay">Multicast DNS Discovery Relay</title>
 
+    <author initials="T" surname="Lemon" fullname="Ted Lemon">
+      <organization>Nibbhaya Consulting</organization>
+      <address>
+	<postal>
+	  <street>P.O. Box 958</street>
+	  <city>Brattleboro</city>
+	  <region>Vermont</region>
+	  <country>United States of America</country>
+	  <code>05301</code>
+	</postal>
+	<email>mellon@fugue.com</email>
+      </address>
+    </author>
+
     <author initials='S.' surname='Cheshire' fullname='Stuart Cheshire'>
       <organization>Apple Inc.</organization>
       <address>
@@ -27,21 +41,7 @@
       </address>
     </author>
 
-    <author initials="T" surname="Lemon" fullname="Ted Lemon">
-      <organization>Nibbhaya Consulting</organization>
-      <address>
-	<postal>
-	  <street>P.O. Box 958</street>
-	  <city>Brattleboro</city>
-	  <region>Vermont</region>
-	  <country>United States of America</country>
-	  <code>05301</code>
-	</postal>
-	<email>mellon@fugue.com</email>
-      </address>
-    </author>
-
-    <date year='2018' month='May' day='6'/>
+    <date year='2018' month='May' day='10'/>
 
     <abstract>
       <t>
@@ -526,17 +526,17 @@
       </section>
       <section anchor="reporch" title="Report Link Changes">
 	<t>
-	  The Report Link Changes TLV requests that the Discovery Relay report link changes:
-	  whenever a new link becomes available or an existing link is no longer available, the
-	  Relay sends a notification to the requesting client describing the event: either a
-	  Link Available or a Link Unavailable TLV.  If there are links available when the
-	  request is received, then for each such link the relay immediately sends a DSO message
-	  with a "Link Available" TLV.  DSO-TYPE is TBD-P.  DSO-LENGTH is 0.
+	  The Report Link Changes TLV requests that the Discovery Relay report link changes.
+	  When the relay is reporting link changes and a new link becomes available, it sends a
+	  Link Available message to the Client.  When a link becomes unavailable, it sends a
+	  Link Unavailable message to the Client.  If there are links available when the request
+	  is received, then for each such link the relay immediately sends a Link Available
+	  Message to the Client.  DSO-TYPE is TBD-P.  DSO-LENGTH is 0.
 	</t>
 	<t>
 	  The mDNS Report Link Changes TLV can only be used as a primary TLV, and requires an
-	  acknowledgement.  The acknowledgment does not contain a Link Added TLV: it is just a
-	  response to the Link Request message.
+	  acknowledgement.  The acknowledgment does not contain a Link Available TLV: it is just a
+	  response to the Report Link Changes message.
 	</t>
       </section>
       <section anchor="streporch" title="Stop Reporting Link Changes">
@@ -554,9 +554,8 @@
 	<t>
 	  The Link Available TLV is used by Discovery Relays to indicate to clients that a new
 	  link has become available.  The format is the same as the Link Identifier TLV.
-	  DSO-TYPE is DSO-V.  The Link Available TLV may be accompanied by one or more IP Source
-	  Address TLVs to indicate IP addresses the Relay has configured to any interfaces it
-	  has attached to the link being reported as available.
+	  DSO-TYPE is TBD-V.  The Link Available TLV may be accompanied by one or more Link
+	  Prefix TLVs which indicate IP prefixes the Relay knows to be present on the link.
 	</t>
 	<t>
 	  The mDNS Link Available TLV can only be used as a primary TLV, and is not
@@ -566,14 +565,26 @@
       <section anchor="luna" title="Link Unavailable">
 	<t>
 	  The Link Unavailable TLV is used by Discovery Relays to indicate to clients that an
-	  existing link has become un available.  The format is the same as the Link Identifier
-	  TLV.  DSO-TYPE is DSO-U.
+	  existing link has become unavailable.  The format is the same as the Link Identifier
+	  TLV.  DSO-TYPE is TBD-U.
 	</t>
 	<t>
 	  The mDNS Link Unavailable TLV can only be used as a primary TLV, and is not
 	  acknowledged.
 	</t>
       </section>	  
+      <section anchor="linkpre" title="Link Prefix">
+	<t>
+	  The Link Prefix TLV represents an IP address or prefix configured on a link.  The
+	  length is 17 for an IPv6 address or prefix, and 5 for an IPv4 address or prefix.  The
+	  TLV consists of a prefix length, between 0 and 32 for IPv4 or between 0 and 128 for
+	  IPv6, represented as a single byte.  This is followed by the IP address, either four
+	  or sixteen bytes.   DSO-TYPE is TBD-K.
+	</t>
+	<t>
+	  The Link Prefix TLV can only be used as a secondary TLV.
+	</t>
+      </section>
     </section>
 
     <section anchor="prov" title="Provisioning">
@@ -916,6 +927,7 @@ Relay Downstairs
 	<c>TBD-S</c>		<c>Standard</c>		<c>Stop Reporting Link Changes</c>
 	<c>TBD-V</c>		<c>Standard</c>		<c>Link Available</c>
 	<c>TBD-U</c>		<c>Standard</c>		<c>Link Unavailable</c>
+	<c>TBD-K</c>		<c>Standard</c>		<c>Link Prefix</c>
       </texttable>
     </section>
 

@@ -2,11 +2,11 @@
 
 
 
-Network Working Group                                        S. Cheshire
-Internet-Draft                                                Apple Inc.
-Intended status: Standards Track                                T. Lemon
-Expires: November 7, 2018                            Nibbhaya Consulting
-                                                             May 6, 2018
+Network Working Group                                           T. Lemon
+Internet-Draft                                       Nibbhaya Consulting
+Intended status: Standards Track                             S. Cheshire
+Expires: November 11, 2018                                    Apple Inc.
+                                                            May 10, 2018
 
 
                      Multicast DNS Discovery Relay
@@ -28,14 +28,14 @@ Status of This Memo
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
-   Drafts is at https://datatracker.ietf.org/drafts/current/.
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 7, 2018.
+   This Internet-Draft will expire on November 11, 2018.
 
 Copyright Notice
 
@@ -44,7 +44,7 @@ Copyright Notice
 
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
-   (https://trustee.ietf.org/license-info) in effect on the date of
+   (http://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Cheshire & Lemon        Expires November 7, 2018                [Page 1]
+Lemon & Cheshire        Expires November 11, 2018               [Page 1]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -83,8 +83,9 @@ Table of Contents
      8.8.  Stop Reporting Link Changes . . . . . . . . . . . . . . .  13
      8.9.  Link Available  . . . . . . . . . . . . . . . . . . . . .  13
      8.10. Link Unavailable  . . . . . . . . . . . . . . . . . . . .  13
+     8.11. Link Prefix . . . . . . . . . . . . . . . . . . . . . . .  14
    9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  14
-     9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  14
+     9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  15
        9.1.1.  Multicast Link  . . . . . . . . . . . . . . . . . . .  15
        9.1.2.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  16
        9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  17
@@ -94,9 +95,9 @@ Table of Contents
    10. Security Considerations . . . . . . . . . . . . . . . . . . .  21
    11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  21
    12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  22
-   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  22
-     13.1.  Normative References . . . . . . . . . . . . . . . . . .  22
-     13.2.  Informative References . . . . . . . . . . . . . . . . .  23
+   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  23
+     13.1.  Normative References . . . . . . . . . . . . . . . . . .  23
+     13.2.  Informative References . . . . . . . . . . . . . . . . .  24
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  24
 
 
@@ -108,8 +109,7 @@ Table of Contents
 
 
 
-
-Cheshire & Lemon        Expires November 7, 2018                [Page 2]
+Lemon & Cheshire        Expires November 11, 2018               [Page 2]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -165,7 +165,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018                [Page 3]
+Lemon & Cheshire        Expires November 11, 2018               [Page 3]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -221,7 +221,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018                [Page 4]
+Lemon & Cheshire        Expires November 11, 2018               [Page 4]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -277,7 +277,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018                [Page 5]
+Lemon & Cheshire        Expires November 11, 2018               [Page 5]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -333,7 +333,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018                [Page 6]
+Lemon & Cheshire        Expires November 11, 2018               [Page 6]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -389,7 +389,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018                [Page 7]
+Lemon & Cheshire        Expires November 11, 2018               [Page 7]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -445,7 +445,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018                [Page 8]
+Lemon & Cheshire        Expires November 11, 2018               [Page 8]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -501,7 +501,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018                [Page 9]
+Lemon & Cheshire        Expires November 11, 2018               [Page 9]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -557,7 +557,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018               [Page 10]
+Lemon & Cheshire        Expires November 11, 2018              [Page 10]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -613,7 +613,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018               [Page 11]
+Lemon & Cheshire        Expires November 11, 2018              [Page 11]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -669,7 +669,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018               [Page 12]
+Lemon & Cheshire        Expires November 11, 2018              [Page 12]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -677,17 +677,18 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 8.7.  Report Link Changes
 
    The Report Link Changes TLV requests that the Discovery Relay report
-   link changes: whenever a new link becomes available or an existing
-   link is no longer available, the Relay sends a notification to the
-   requesting client describing the event: either a Link Available or a
-   Link Unavailable TLV.  If there are links available when the request
+   link changes.  When the relay is reporting link changes and a new
+   link becomes available, it sends a Link Available message to the
+   Client.  When a link becomes unavailable, it sends a Link Unavailable
+   message to the Client.  If there are links available when the request
    is received, then for each such link the relay immediately sends a
-   DSO message with a "Link Available" TLV.  DSO-TYPE is TBD-P.  DSO-
-   LENGTH is 0.
+   Link Available Message to the Client.  DSO-TYPE is TBD-P.  DSO-LENGTH
+   is 0.
 
    The mDNS Report Link Changes TLV can only be used as a primary TLV,
    and requires an acknowledgement.  The acknowledgment does not contain
-   a Link Added TLV: it is just a response to the Link Request message.
+   a Link Available TLV: it is just a response to the Report Link
+   Changes message.
 
 8.8.  Stop Reporting Link Changes
 
@@ -703,10 +704,9 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
    The Link Available TLV is used by Discovery Relays to indicate to
    clients that a new link has become available.  The format is the same
-   as the Link Identifier TLV.  DSO-TYPE is DSO-V.  The Link Available
-   TLV may be accompanied by one or more IP Source Address TLVs to
-   indicate IP addresses the Relay has configured to any interfaces it
-   has attached to the link being reported as available.
+   as the Link Identifier TLV.  DSO-TYPE is TBD-V.  The Link Available
+   TLV may be accompanied by one or more Link Prefix TLVs which indicate
+   IP prefixes the Relay knows to be present on the link.
 
    The mDNS Link Available TLV can only be used as a primary TLV, and is
    not acknowledged.
@@ -714,8 +714,8 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 8.10.  Link Unavailable
 
    The Link Unavailable TLV is used by Discovery Relays to indicate to
-   clients that an existing link has become un available.  The format is
-   the same as the Link Identifier TLV.  DSO-TYPE is DSO-U.
+   clients that an existing link has become unavailable.  The format is
+   the same as the Link Identifier TLV.  DSO-TYPE is TBD-U.
 
    The mDNS Link Unavailable TLV can only be used as a primary TLV, and
    is not acknowledged.
@@ -725,10 +725,21 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018               [Page 13]
+Lemon & Cheshire        Expires November 11, 2018              [Page 13]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
+
+8.11.  Link Prefix
+
+   The Link Prefix TLV represents an IP address or prefix configured on
+   a link.  The length is 17 for an IPv6 address or prefix, and 5 for an
+   IPv4 address or prefix.  The TLV consists of a prefix length, between
+   0 and 32 for IPv4 or between 0 and 128 for IPv6, represented as a
+   single byte.  This is followed by the IP address, either four or
+   sixteen bytes.  DSO-TYPE is TBD-K.
+
+   The Link Prefix TLV can only be used as a secondary TLV.
 
 9.  Provisioning
 
@@ -767,6 +778,14 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    configuration of Discovery Proxies and Discovery relays may be
    applicable.  The simplest such mechanism is a manual configuration
    file, but regardless of provisioning mechanism, certain configuration
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 14]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    information needs to be communicated to the devices, as outlined
    below.
 
@@ -778,14 +797,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    actual words or proper names that will make sense to an untrained
    human being.  "Machine-readable" means a name that will be used by
    machines to identify the entity to which the name refers.  Each
-
-
-
-Cheshire & Lemon        Expires November 7, 2018               [Page 14]
-
-Internet-Draft            mDNS Discovery Relay                  May 2018
-
-
    entity must have a machine-readable name and may have a human-
    readable name.  No two entities can have the same human-readable
    name.  Similarly, no two entities can have the same machine-readable
@@ -823,6 +834,14 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    configuration, link names may be directly visible to the user.  For
    example, a search in 'home.arpa' on a small home network may discover
    services on both ethernet.home.arpa and wi-fi.home.arpa.  In the case
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 15]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    of a home user who has one Ethernet-connected printer and one Wi-Fi-
    connected printer, discovering that they have one printer on
    ethernet.home.arpa and another on wi-fi.home.arpa is understandable
@@ -834,14 +853,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    functionality [I-D.sctl-discovery-broker] is used to translate the
    many link names to something more meaningful to users.  For example,
    in a building with 50 Wi-Fi Access Points, each with their own link
-
-
-
-Cheshire & Lemon        Expires November 7, 2018               [Page 15]
-
-Internet-Draft            mDNS Discovery Relay                  May 2018
-
-
    names, services on all the different physical links may be presented
    to the user as appearing in 'headquarters.example.com'.  In this
    case, the individual link names can be thought of similar to MAC
@@ -878,6 +889,15 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
       interoperation with Discovery Relays, but is mentioned here for
       completeness: this list of addresses may differ from the 'source-
       ip-addresses' list.  If any of these addresses are reachable from
+
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 16]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
       outside of the Discovery Domain, services in that domain will be
       discoverable outside of the domain.
 
@@ -887,16 +907,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    The private key should never be distributed to other hosts; all of
    the other information describing a Discovery Proxy can be safely
    shared with Discovery Relays.
-
-
-
-
-
-
-Cheshire & Lemon        Expires November 7, 2018               [Page 16]
-
-Internet-Draft            mDNS Discovery Relay                  May 2018
-
 
    In some configurations it may make sense for the Discovery Relay not
    to have a list of links, but simply to support the set of all links
@@ -935,6 +945,15 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    the other information describing a Discovery Relay can be safely
    shared with Discovery Proxies.
 
+
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 17]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    In some cases a Relay may not be configured with a static list of
    links, but may simply discover links by monitoring the set of
    available interfaces on the host on which the Relay is running.  In
@@ -943,16 +962,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    prefixes seen on those interfaces.  This sort of configuration is out
    of scope for this discussion and is left as an exercise for the
    reader.
-
-
-
-
-
-
-Cheshire & Lemon        Expires November 7, 2018               [Page 17]
-
-Internet-Draft            mDNS Discovery Relay                  May 2018
-
 
 9.2.  Configuration Files
 
@@ -996,16 +1005,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-
-
-
-
-
-
-
-
-
-Cheshire & Lemon        Expires November 7, 2018               [Page 18]
+Lemon & Cheshire        Expires November 11, 2018              [Page 18]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -1061,7 +1061,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018               [Page 19]
+Lemon & Cheshire        Expires November 11, 2018              [Page 19]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -1117,7 +1117,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018               [Page 20]
+Lemon & Cheshire        Expires November 11, 2018              [Page 20]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -1173,7 +1173,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
 
-Cheshire & Lemon        Expires November 7, 2018               [Page 21]
+Lemon & Cheshire        Expires November 11, 2018              [Page 21]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
@@ -1191,48 +1191,56 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
             | TBD-S  | Standard | Stop Reporting Link Changes |
             | TBD-V  | Standard | Link Available              |
             | TBD-U  | Standard | Link Unavailable            |
+            | TBD-K  | Standard | Link Prefix                 |
             +--------+----------+-----------------------------+
 
                       DSO Type Codes to be allocated
 
 12.  Acknowledgments
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 22]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
 13.  References
 
 13.1.  Normative References
 
-   [I-D.ietf-dnsop-session-signal]
-              Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
-              Lemon, T., and T. Pusateri, "DNS Stateful Operations",
-              draft-ietf-dnsop-session-signal-07 (work in progress),
-              March 2018.
-
-   [I-D.ietf-dnssd-hybrid]
-              Cheshire, S., "Discovery Proxy for Multicast DNS-Based
-              Service Discovery", draft-ietf-dnssd-hybrid-08 (work in
-              progress), March 2018.
-
-   [I-D.ietf-tls-tls13]
-              Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", draft-ietf-tls-tls13-28 (work in progress),
-              March 2018.
-
-   [I-D.sctl-discovery-broker]
-              Cheshire, S. and T. Lemon, "Service Discovery Broker",
-              draft-sctl-discovery-broker-00 (work in progress), July
-              2017.
-
    [RFC1035]  Mockapetris, P., "Domain names - implementation and
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
               November 1987, <https://www.rfc-editor.org/info/rfc1035>.
-
-
-
-
-Cheshire & Lemon        Expires November 7, 2018               [Page 22]
-
-Internet-Draft            mDNS Discovery Relay                  May 2018
-
 
    [RFC1323]  Jacobson, V., Braden, R., and D. Borman, "TCP Extensions
               for High Performance", RFC 1323, DOI 10.17487/RFC1323, May
@@ -1244,8 +1252,8 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
               <https://www.rfc-editor.org/info/rfc6241>.
 
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
-              DOI 10.17487/RFC6762, February 2013,
-              <https://www.rfc-editor.org/info/rfc6762>.
+              DOI 10.17487/RFC6762, February 2013, <https://www.rfc-
+              editor.org/info/rfc6762>.
 
    [RFC6763]  Cheshire, S. and M. Krochmal, "DNS-Based Service
               Discovery", RFC 6763, DOI 10.17487/RFC6763, February 2013,
@@ -1255,11 +1263,56 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
               Control Protocol", RFC 7788, DOI 10.17487/RFC7788, April
               2016, <https://www.rfc-editor.org/info/rfc7788>.
 
+   [I-D.ietf-dnssd-hybrid]
+              Cheshire, S., "Discovery Proxy for Multicast DNS-Based
+              Service Discovery", draft-ietf-dnssd-hybrid-08 (work in
+              progress), March 2018.
+
+   [I-D.sctl-discovery-broker]
+              Cheshire, S. and T. Lemon, "Service Discovery Broker",
+              draft-sctl-discovery-broker-00 (work in progress), July
+              2017.
+
+   [I-D.ietf-dnsop-session-signal]
+              Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
+              Lemon, T., and T. Pusateri, "DNS Stateful Operations",
+              draft-ietf-dnsop-session-signal-07 (work in progress),
+              March 2018.
+
+
+
+
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 23]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
+   [I-D.ietf-tls-tls13]
+              Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", draft-ietf-tls-tls13-28 (work in progress),
+              March 2018.
+
 13.2.  Informative References
 
-   [AdFam]    "IANA Address Family Numbers Registry",
-              <https://www.iana.org/assignments/
-              address-family-numbers/>.
+   [RFC0951]  Croft, W. and J. Gilmore, "Bootstrap Protocol", RFC 951,
+              DOI 10.17487/RFC0951, September 1985, <https://www.rfc-
+              editor.org/info/rfc951>.
+
+   [RFC2246]  Dierks, T. and C. Allen, "The TLS Protocol Version 1.0",
+              RFC 2246, DOI 10.17487/RFC2246, January 1999,
+              <https://www.rfc-editor.org/info/rfc2246>.
+
+   [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
+              (TLS) Protocol Version 1.2", RFC 5246,
+              DOI 10.17487/RFC5246, August 2008, <https://www.rfc-
+              editor.org/info/rfc5246>.
+
+   [TR-069]   Broadband Forum, "CPE WAN Management Protocol", November
+              2013, <https://www.broadband-forum.org/technical/download/
+              TR-069_Amendment-5.pdf>.
 
    [NOTSENT]  "TCP_NOTSENT_LOWAT socket option", July 2013,
               <https://lwn.net/Articles/560082/>.
@@ -1269,42 +1322,11 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
               prioritization-only-works-when-theres-pending-data-to-
               prioritize/>.
 
-   [RFC0951]  Croft, W. and J. Gilmore, "Bootstrap Protocol", RFC 951,
-              DOI 10.17487/RFC0951, September 1985,
-              <https://www.rfc-editor.org/info/rfc951>.
-
-   [RFC2246]  Dierks, T. and C. Allen, "The TLS Protocol Version 1.0",
-              RFC 2246, DOI 10.17487/RFC2246, January 1999,
-              <https://www.rfc-editor.org/info/rfc2246>.
-
-   [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
-              (TLS) Protocol Version 1.2", RFC 5246,
-              DOI 10.17487/RFC5246, August 2008,
-              <https://www.rfc-editor.org/info/rfc5246>.
-
-
-
-
-Cheshire & Lemon        Expires November 7, 2018               [Page 23]
-
-Internet-Draft            mDNS Discovery Relay                  May 2018
-
-
-   [TR-069]   Broadband Forum, "CPE WAN Management Protocol", November
-              2013, <https://www.broadband-forum.org/technical/download/
-              TR-069_Amendment-5.pdf>.
+   [AdFam]    "IANA Address Family Numbers Registry",
+              <https://www.iana.org/assignments/address-family-
+              numbers/>.
 
 Authors' Addresses
-
-   Stuart Cheshire
-   Apple Inc.
-   1 Infinite Loop
-   Cupertino, California  95014
-   USA
-
-   Phone: +1 408 974 3207
-   Email: cheshire@apple.com
-
 
    Ted Lemon
    Nibbhaya Consulting
@@ -1319,6 +1341,19 @@ Authors' Addresses
 
 
 
+Lemon & Cheshire        Expires November 11, 2018              [Page 24]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
+   Stuart Cheshire
+   Apple Inc.
+   1 Infinite Loop
+   Cupertino, California  95014
+   USA
+
+   Phone: +1 408 974 3207
+   Email: cheshire@apple.com
 
 
 
@@ -1341,4 +1376,25 @@ Authors' Addresses
 
 
 
-Cheshire & Lemon        Expires November 7, 2018               [Page 24]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 25]
