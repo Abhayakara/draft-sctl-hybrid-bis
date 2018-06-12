@@ -392,7 +392,7 @@
 	often be issued to all links.   However, because of the way mDNS handles retries, it will
 	almost never be the case that the exact same message will be sent on more than one link.
 	Therefore, the complexity that this optimization adds is in no way justified by the
-	potential benefit and this idea has been abandoned.
+	potential benefit, and this idea has been abandoned.
       </t>
     </section>
 
