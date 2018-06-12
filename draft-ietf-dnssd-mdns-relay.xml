@@ -372,9 +372,9 @@
       <t>
 	Like mDNS traffic from relays, each mDNS message sent by a Client to a
 	Discovery Relay is encapsulated in an mDNS Message TLV (<xref target="mDNSmessage"/>)
-	within a DSO message.  Each message MUST contain one or more Link
-	Identifier TLVs (<xref target="linkid"/>).  The Discovery Relay will transmit the
-	message to the mDNS port and multicast address on each link specified in the message
+	within a DSO message.  Each message MUST contain exactly one Link
+	Identifier TLV (<xref target="linkid"/>).  The Discovery Relay will transmit the
+	message to the mDNS port and multicast address on the link specified in the message
 	using the specified IP address family.
       </t>
       <t>
@@ -384,6 +384,15 @@
 	Relay.   Therefore, if a Relay receives a message other than a DSO message,
 	it MUST respond with a REFUSED result code.   The reason not to simply drop the
 	connection is that it might result in a continual reconnection loop.
+      </t>
+      <t>
+	When defining this behavior, the working group considered making it possible to specify
+	more than one link identifier in an mDNSMessage TLV.   A superficial evaluation of this
+	suggests that this would be a useful optimization, since when a query is issued, it will
+	often be issued to all links.   However, because of the way mDNS handles retries, it will
+	almost never be the case that the exact same message will be sent on more than one link.
+	Therefore, the complexity that this optimization adds is in no way justified by the
+	potential benefit and this idea has been abandoned.
       </t>
     </section>
 
