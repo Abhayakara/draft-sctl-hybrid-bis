@@ -91,6 +91,8 @@
 	its behalf on one or more of those multicast links.  DNS Stateful Operations (DSO) <xref
 	target="I-D.ietf-dnsop-session-signal"/> is used as a framework for conveying interface
 	and IP header information associated with each message.
+	DSO formats its messages using type-length-value (TLV) data structures.
+	This document defines additional DSO TLV types, used to implement the Discovery Relay functionality.
       </t>
       <t>
 	The Discovery Relay functions essentially as a set of one or more remote virtual interfaces for the

@@ -149,6 +149,9 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    those multicast links.  DNS Stateful Operations (DSO)
    [I-D.ietf-dnsop-session-signal] is used as a framework for conveying
    interface and IP header information associated with each message.
+   DSO formats its messages using type-length-value (TLV) data
+   structures.  This document defines additional DSO TLV types, used to
+   implement the Discovery Relay functionality.
 
    The Discovery Relay functions essentially as a set of one or more
    remote virtual interfaces for the Client, one on each multicast link
@@ -158,10 +161,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    be using one such Relay Proxy per multicast link, since using more
    than one will generate duplicate traffic.
 
-   How such duplication is detected and avoided is out of scope for this
-   document; in principle it could be detected using HNCP [RFC7788] or
-   configured using some sort of orchestration software in conjunction
-   with NETCONF [RFC6241] or CPE WAN Management Protocol [TR-069].
+
 
 
 
@@ -169,6 +169,11 @@ Lemon & Cheshire        Expires November 11, 2018               [Page 3]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
+
+   How such duplication is detected and avoided is out of scope for this
+   document; in principle it could be detected using HNCP [RFC7788] or
+   configured using some sort of orchestration software in conjunction
+   with NETCONF [RFC6241] or CPE WAN Management Protocol [TR-069].
 
 2.  Terminology
 
@@ -212,11 +217,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    whitelist  A list of one or more IP addresses from which a Discovery
       Relay may accept connections.
 
-   silently discard  When a message that is not supported or not
-      permitted is received, and the required response to that message
-      is to "silently discard" it, that means that no response is sent
-      by the service that is discarding the message to the service that
-      sent it.  The service receiving the message may log the event, and
 
 
 
@@ -226,6 +226,11 @@ Lemon & Cheshire        Expires November 11, 2018               [Page 4]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
+   silently discard  When a message that is not supported or not
+      permitted is received, and the required response to that message
+      is to "silently discard" it, that means that no response is sent
+      by the service that is discarding the message to the service that
+      sent it.  The service receiving the message may log the event, and
       may also count such events: "silently" does not preclude such
       behavior.
 
@@ -270,17 +275,16 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    the Client to request that the Relay report on the set of links that
    can be requested, and to request that it discontinue such reporting.
 
-   Link Status messages from the Relay to the Client inform the client
-   that a link has become available, or that a formerly-available link
-   is no longer available.
-
-
 
 
 Lemon & Cheshire        Expires November 11, 2018               [Page 5]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
+
+   Link Status messages from the Relay to the Client inform the client
+   that a link has become available, or that a formerly-available link
+   is no longer available.
 
    mDNS messages from a Discovery Proxy to a Discovery Relay cause the
    Discovery Relay to transmit the mDNS message on one or more multicast
@@ -326,10 +330,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    When a Discovery Relay starts, it opens a passive TCP listener to
    receive incoming connection requests from Clients.  This listener may
    be bound to one or more source IP addresses, or to the wildcard
-   address, depending on the implementation.  When a connection is
-   received, the relay must first validate that it is a connection to an
-   IP address to which connections are allowed.  For example, it may be
-   that only connections to ULAs are allowed, or to the IP addresses
 
 
 
@@ -338,6 +338,10 @@ Lemon & Cheshire        Expires November 11, 2018               [Page 6]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
+   address, depending on the implementation.  When a connection is
+   received, the relay must first validate that it is a connection to an
+   IP address to which connections are allowed.  For example, it may be
+   that only connections to ULAs are allowed, or to the IP addresses
    configured on certain interfaces.  If the listener is bound to a
    specific IP address, this check is unnecessary.
 
@@ -382,10 +386,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    possible for additional connections to be established.  The Discovery
    Relay may drop the old connection when the new one has been fully
    established, including a successful TLS handshake.  What it means for
-   two connections to be from the same Client is that the connections
-   both have source addresses that belong to the same Client, and that
-   they were authenticated using the same client certificate.
-
 
 
 
@@ -393,6 +393,10 @@ Lemon & Cheshire        Expires November 11, 2018               [Page 7]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
+
+   two connections to be from the same Client is that the connections
+   both have source addresses that belong to the same Client, and that
+   they were authenticated using the same client certificate.
 
    In order to know what links to request, the Client can be configured
    with a list of links supported by the Relay.  However, in some
@@ -438,10 +442,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
    mDNS messages from Relays to Clients are framed within DSO messages.
    Each DSO message can contain multiple TLVs, but only a single mDNS
-   message is conveyed per DSO message.  Each forwarded mDNS message is
-   contained in an mDNS Message TLV (Section 8.4).  The source IP
-   address and port of the message MUST be encoded in an IP Source TLV
-   (Section 8.5).  The multicast link on which the message was received
 
 
 
@@ -450,6 +450,10 @@ Lemon & Cheshire        Expires November 11, 2018               [Page 8]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
+   message is conveyed per DSO message.  Each forwarded mDNS message is
+   contained in an mDNS Message TLV (Section 8.4).  The source IP
+   address and port of the message MUST be encoded in an IP Source TLV
+   (Section 8.5).  The multicast link on which the message was received
    MUST be encoded in a Link Identifier TLV (Section 8.3).  As described
    in the DSO specification [I-D.ietf-dnsop-session-signal], a Client
    MUST silently ignore unrecognized Additional TLVs in mDNS messages,
@@ -493,10 +497,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    will be sent on more than one link.  Therefore, the complexity that
    this optimization adds is in no way justified by the potential
    benefit, and this idea has been abandoned.
-
-
-
-
 
 
 
