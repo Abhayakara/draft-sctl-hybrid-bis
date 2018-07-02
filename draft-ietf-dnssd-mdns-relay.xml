@@ -107,9 +107,9 @@
 	some sort of orchestration software in conjunction with NETCONF <xref target="RFC6241"/>
 	or CPE WAN Management Protocol <xref target="TR-069"/>.
       </t>
-<?rfc needLines="30" ?>
     </section>
 
+<?rfc needLines="48" ?>
     <section anchor="terms" title="Terminology">
       <t>
 	The following definitions may be of use:
@@ -169,6 +169,7 @@
 	  </t>
 	</list>
       </t>
+<?rfc needLines="40" ?>
     </section>
 
     <section anchor="overview" title="Protocol Overview">
@@ -189,6 +190,7 @@
 	  connection, and Discovery Relays will forward all mDNS traffic from subscribed
 	  interfaces over the connection.
 	</t>
+<?rfc needLines="13" ?>
 	<t>
 	  The stream encapsulated in TLS will carry DNS frames as in the DNS TCP protocol
 	  <xref target="RFC1035"/> Section 4.2.2.  However, all messages will be DSO
@@ -256,6 +258,7 @@
 	  since it makes no sense for a Client to ask to have a query
 	  sent on its behalf if it's not able to receive the responses to that query.
 	</t>
+<?rfc needLines="40" ?>
       </section>
     </section>
 
@@ -316,6 +319,7 @@
 	contexts, for example when debugging, a Client may operate with no information about the
 	set of links supported by a relay, simply relying on the relay to provide one.
       </t>
+<?rfc needLines="40" ?>
     </section>
 
     <section title="Traffic from Relays to Clients">
@@ -370,6 +374,7 @@
 	soon as the request is received.  The Discovery Relay does not respond to this message
 	other than to discontinue forwarding mDNS messages from the specified links.
       </t>
+<?rfc needLines="48" ?>
     </section>
 
     <section title="Traffic from Clients to Relays">
@@ -398,6 +403,7 @@
 	Therefore, the complexity that this optimization adds is in no way justified by the
 	potential benefit, and this idea has been abandoned.
       </t>
+<?rfc needLines="40" ?>
     </section>
 
     <section title="Discovery Proxy Behavior">
@@ -592,6 +598,7 @@
 	<t>
 	  The Link Prefix TLV can only be used as a secondary TLV.
 	</t>
+<?rfc needLines="48" ?>
       </section>
     </section>
 
@@ -924,6 +931,7 @@ Relay Downstairs
 	  we feel that in such a future hypothetical scenario, using even a weak encryption algorithm
 	  still makes passive eavesdropping and tampering harder, and is preferable to using no encryption at all.
 	</t>
+<?rfc needLines="48" ?>
     </section>
 
     <section title="IANA Considerations">
@@ -950,10 +958,10 @@ Relay Downstairs
     </section>
 
     <section title="Acknowledgments">
-<?rfc needLines="30" ?>
       <t>
         To be completed...
       </t>
+<?rfc needLines="48" ?>
     </section>
   </middle>
 
