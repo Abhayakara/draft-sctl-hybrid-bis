@@ -3,7 +3,7 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd">
 
 <rfc ipr="trust200902"
-     docName="draft-ietf-dnssd-mdns-relay-00"
+     docName="draft-ietf-dnssd-mdns-relay-01"
      category="std">
 
   <?rfc toc="yes"?> <?rfc symrefs="yes"?> <?rfc autobreaks="yes"?>
@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date year='2018' month='May' day='10'/>
+    <date year='2018' month='July' day='2'/>
 
     <abstract>
       <t>
