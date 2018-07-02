@@ -73,18 +73,18 @@ Table of Contents
    6.  Traffic from Clients to Relays  . . . . . . . . . . . . . . .   9
    7.  Discovery Proxy Behavior  . . . . . . . . . . . . . . . . . .  10
    8.  DSO TLVs  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
-     8.1.  mDNS Link Request . . . . . . . . . . . . . . . . . . . .  11
-     8.2.  mDNS Link Discontinue . . . . . . . . . . . . . . . . . .  11
-     8.3.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  11
+     8.1.  mDNS Link Data Request  . . . . . . . . . . . . . . . . .  11
+     8.2.  mDNS Link Data Discontinue  . . . . . . . . . . . . . . .  11
+     8.3.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  12
      8.4.  Encapsulated mDNS Message . . . . . . . . . . . . . . . .  12
      8.5.  IP Source . . . . . . . . . . . . . . . . . . . . . . . .  12
-     8.6.  Report Link Changes . . . . . . . . . . . . . . . . . . .  12
-     8.7.  Stop Reporting Link Changes . . . . . . . . . . . . . . .  13
+     8.6.  Link State Request  . . . . . . . . . . . . . . . . . . .  12
+     8.7.  Link State Discontinue  . . . . . . . . . . . . . . . . .  13
      8.8.  Link Available  . . . . . . . . . . . . . . . . . . . . .  13
      8.9.  Link Unavailable  . . . . . . . . . . . . . . . . . . . .  13
      8.10. Link Prefix . . . . . . . . . . . . . . . . . . . . . . .  13
    9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  14
-     9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  14
+     9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  15
        9.1.1.  Multicast Link  . . . . . . . . . . . . . . . . . . .  15
        9.1.2.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  16
        9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  17
@@ -282,14 +282,14 @@ Lemon & Cheshire        Expires November 11, 2018               [Page 5]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
-   Clients can send four different control messages to Relays: the Link
-   Request, Link Discontinue, Report Link Changes and Stop Reporting
-   Link Changes messages.  The first two are used by the Client to
-   indicate to the Discovery Relay that mDNS messages from one or more
-   specified multicast links are to be relayed to the Discovery Proxy,
-   and to subsequently stop such relaying.  The second two are used by
-   the Client to request that the Relay report on the set of links that
-   can be requested, and to request that it discontinue such reporting.
+   Clients can send four different control messages to Relays: Link
+   State Request, Link State Discontinue, Link Data Request and Link
+   Data Discontinue.  The first two are used by the Client to request
+   that the Relay report on the set of links that can be requested, and
+   to request that it discontinue such reporting.  The second two are
+   used by the Client to indicate to the Discovery Relay that mDNS
+   messages from one or more specified multicast links are to be relayed
+   to the Client, and to subsequently stop such relaying.
 
    Link Status messages from a Discovery Relay to the Client inform the
    Client that a link has become available, or that a formerly-available
@@ -415,20 +415,21 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    any mDNS traffic being forwarded.  In order to request that mDNS
    traffic from a particular multicast link be forwarded on a particular
    connection, the Client must send one or more DSO messages, each
-   containing a single mDNS Link Request TLV (Section 8.1) indicating
-   the multicast link from which traffic is requested.
+   containing a single mDNS Link Data Request TLV (Section 8.1)
+   indicating the multicast link from which traffic is requested.
 
-   When an mDNS Link Request message is received, the Discovery Relay
-   validates that it is connected to the specified multicast link, and
-   that forwarding is enabled for that link.  If both checks are
-   successful, it MUST send a response with RCODE=0 (NOERROR).  If the
-   Relay is not connected to the specified link, or forwarding from that
-   link to the Client is not enabled, it sends a response with RCODE=3
-   (NXDOMAIN/Name Error).  It is not an error to request the same link
-   more than once; the Relay MUST NOT reject an mDNS Link Request on
-   that basis.  If the relay cannot satisfy the request for some reason
-   other than that the link is invalid, for example resource exhaustion,
-   it sends a response with RCODE=2 (SERVFAIL).
+   When an mDNS Link Data Request message is received, the Discovery
+   Relay validates that it recognizes the link identifier, and that
+   forwarding is enabled for that link.  If both checks are successful,
+   it MUST send a response with RCODE=0 (NOERROR).  If the link
+   identifier is not recognized, it sends a response with RCODE=3
+   (NXDOMAIN/Name Error).  If forwarding from that link to the Client is
+   not enabled, it sends a response with RCODE=5 (REFUSED).  If the
+   relay cannot satisfy the request for some other reason, for example
+   resource exhaustion, it sends a response with RCODE=2 (SERVFAIL).  It
+   is not an error to request a recognized link identifier which is not
+   yet available; the Discovery Relay accepts the request, and begins
+   forwarding packets when the link becomes available.
 
    If the requested link is valid, the Relay begins forwarding all mDNS
    traffic from that link to the Client.  Delivery is not guaranteed: if
@@ -441,7 +442,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    avoid building up a backlog of data in excess of the amount necessary
    to have in flight to fill the bandwidth delay product of the TCP
    connection.
-
 
 
 
@@ -463,7 +463,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    mDNS messages that include unrecognized Additional TLVs.
 
    A Client may discontinue listening for mDNS messages on a particular
-   multicast link by sending a DSO message containing an mDNS Link
+   multicast link by sending a DSO message containing an mDNS Link Data
    Discontinue TLV (Section 8.2).  Subsequent messages from that link
    that had previously been queued may arrive after listening has been
    discontinued.  The Client should silently discard such messages.  The
@@ -566,9 +566,9 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
    This document defines a modest number of new DSO TLVs.
 
-8.1.  mDNS Link Request
+8.1.  mDNS Link Data Request
 
-   The mDNS Link Request TLV conveys a link identifier from which a
+   The mDNS Link Data Request TLV conveys a link identifier from which a
    Client is requesting that a Discovery Relay forward mDNS traffic.
    The link identifier comes from the provisioning configuration (see
    Section 9).  The DSO-TYPE for this TLV is TBD-R.  DSO-LENGTH is
@@ -578,38 +578,38 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    indicates IPv4 and 2 indicates IPv6, as recorded in the IANA Registry
    of Address Family Numbers [AdFam].
 
-   The mDNS Link Request TLV can only be used as a primary TLV, and
+   The mDNS Link Data Request TLV can only be used as a primary TLV, and
    requires an acknowledgement.
 
-   At most one mDNS Link Request TLV may appear in a DSO message.  To
-   request multiple link subscriptions, multiple separate DSO messages
-   are sent, each containing a single mDNS Link Request TLV.
+   At most one mDNS Link Data Request TLV may appear in a DSO message.
+   To request multiple link subscriptions, multiple separate DSO
+   messages are sent, each containing a single mDNS Link Data Request
+   TLV.
 
    A Client MUST NOT request a link if it already has an active
    subscription to that link on the same DSO connection.  If a Discovery
    Relay receives a duplicate link subscription request, it SHOULD
    immediately abort that DSO session.
 
-8.2.  mDNS Link Discontinue
+8.2.  mDNS Link Data Discontinue
 
-   The mDNS Link Discontinue TLV is used by Clients to unsubscribe to
-   mDNS messages on the specified multicast link.  DSO-TYPE is TBD-D.
+   The mDNS Link Data Discontinue TLV is used by Clients to unsubscribe
+   to mDNS messages on the specified multicast link.  DSO-TYPE is TBD-D.
    DSO-LENGTH is always 5.  DSO-DATA is the 8-bit address family
    followed by the 32-bit link identifier, a 32-bit unsigned integer in
    network (big endian) byte order, as described in Section 9.
 
-   The mDNS Link Discontinue TLV can only be used as a primary TLV, and
-   is not acknowledged.
+   The mDNS Link Data Discontinue TLV can only be used as a primary TLV,
+   and is not acknowledged.
 
-   At most one mDNS Link Discontinue TLV may appear in a DSO message.
-   To unsubscribe from multiple links, multiple separate DSO messages
-   are sent, each containing a single mDNS Link Discontinue TLV.
+   At most one mDNS Link Data Discontinue TLV may appear in a DSO
+   message.  To unsubscribe from multiple links, multiple separate DSO
+   messages are sent, each containing a single mDNS Link Data
+   Discontinue TLV.
 
-8.3.  Link Identifier
 
-   This option is used both in DSO messages from Discovery Relays to
-   Clients that contain received mDNS messages, and from Clients to
-   Discovery Relays that contain mDNS messages to be transmitted on the
+
+
 
 
 
@@ -618,6 +618,11 @@ Lemon & Cheshire        Expires November 11, 2018              [Page 11]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
+8.3.  Link Identifier
+
+   This option is used both in DSO messages from Discovery Relays to
+   Clients that contain received mDNS messages, and from Clients to
+   Discovery Relays that contain mDNS messages to be transmitted on the
    multicast link.  In the former case, it indicates the multicast link
    on which the message was received; in the latter case, it indicates
    the multicast link on which the message should be transmitted.  DSO-
@@ -656,16 +661,11 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
    The IP Source TLV can only be used as an additional TLV.
 
-8.6.  Report Link Changes
+8.6.  Link State Request
 
-   The Report Link Changes TLV requests that the Discovery Relay report
+   The Link State Request TLV requests that the Discovery Relay report
    link changes.  When the relay is reporting link changes and a new
    link becomes available, it sends a Link Available message to the
-   Client.  When a link becomes unavailable, it sends a Link Unavailable
-   message to the Client.  If there are links available when the request
-   is received, then for each such link the relay immediately sends a
-   Link Available Message to the Client.  DSO-TYPE is TBD-P.  DSO-LENGTH
-   is 0.
 
 
 
@@ -674,20 +674,26 @@ Lemon & Cheshire        Expires November 11, 2018              [Page 12]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
-   The mDNS Report Link Changes TLV can only be used as a primary TLV,
+   Client.  When a link becomes unavailable, it sends a Link Unavailable
+   message to the Client.  If there are links available when the request
+   is received, then for each such link the relay immediately sends a
+   Link Available Message to the Client.  DSO-TYPE is TBD-P.  DSO-LENGTH
+   is 0.
+
+   The mDNS Link State Request TLV can only be used as a primary TLV,
    and requires an acknowledgement.  The acknowledgment does not contain
-   a Link Available TLV: it is just a response to the Report Link
-   Changes message.
+   a Link Available TLV: it is just a response to the Link State Request
+   message.
 
-8.7.  Stop Reporting Link Changes
+8.7.  Link State Discontinue
 
-   The Stop Reporting Link Changes TLV requests that the Discovery Relay
-   stop reporting on the availability of links supported by the relay.
-   This cancels the effect of a Report Link Changes TLV.  DSO-TYPE is
-   TBD-S.  DSO-LENGTH is 0.
+   The Link State Discontinue TLV requests that the Discovery Relay stop
+   reporting on the availability of links supported by the relay.  This
+   cancels the effect of a Link State Request TLV.  DSO-TYPE is TBD-S.
+   DSO-LENGTH is 0.
 
-   The mDNS Stop Reporting Link Changes TLV can only be used as a
-   primary TLV, and is not acknowledged.
+   The mDNS Link State Discontinue TLV can only be used as a primary
+   TLV, and is not acknowledged.
 
 8.8.  Link Available
 
@@ -715,12 +721,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    a link.  The length is 17 for an IPv6 address or prefix, and 5 for an
    IPv4 address or prefix.  The TLV consists of a prefix length, between
    0 and 32 for IPv4 or between 0 and 128 for IPv6, represented as a
-   single byte.  This is followed by the IP address, either four or
-   sixteen bytes.  DSO-TYPE is TBD-K.
-
-   The Link Prefix TLV can only be used as a secondary TLV.
-
-
 
 
 
@@ -729,6 +729,11 @@ Lemon & Cheshire        Expires November 11, 2018              [Page 13]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
+
+   single byte.  This is followed by the IP address, either four or
+   sixteen bytes.  DSO-TYPE is TBD-K.
+
+   The Link Prefix TLV can only be used as a secondary TLV.
 
 9.  Provisioning
 
@@ -770,14 +775,9 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    information needs to be communicated to the devices, as outlined
    below.
 
-9.1.  Provisioned Objects
 
-   Three types of objects must be described in order for Discovery
-   Proxies and Discovery Relays to be provisioned: Discovery Proxies,
-   Multicast Links, and Discovery Relays.  "Human-readable" below means
-   actual words or proper names that will make sense to an untrained
-   human being.  "Machine-readable" means a name that will be used by
-   machines to identify the entity to which the name refers.  Each
+
+
 
 
 
@@ -786,6 +786,14 @@ Lemon & Cheshire        Expires November 11, 2018              [Page 14]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
+9.1.  Provisioned Objects
+
+   Three types of objects must be described in order for Discovery
+   Proxies and Discovery Relays to be provisioned: Discovery Proxies,
+   Multicast Links, and Discovery Relays.  "Human-readable" below means
+   actual words or proper names that will make sense to an untrained
+   human being.  "Machine-readable" means a name that will be used by
+   machines to identify the entity to which the name refers.  Each
    entity must have a machine-readable name and may have a human-
    readable name.  No two entities can have the same human-readable
    name.  Similarly, no two entities can have the same machine-readable
@@ -825,6 +833,15 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    services on both ethernet.home.arpa and wi-fi.home.arpa.  In the case
    of a home user who has one Ethernet-connected printer and one Wi-Fi-
    connected printer, discovering that they have one printer on
+
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 15]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
    ethernet.home.arpa and another on wi-fi.home.arpa is understandable
    and meaningful.
 
@@ -834,14 +851,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    functionality [I-D.sctl-discovery-broker] is used to translate the
    many link names to something more meaningful to users.  For example,
    in a building with 50 Wi-Fi access points, each with their own link
-
-
-
-Lemon & Cheshire        Expires November 11, 2018              [Page 15]
-
-Internet-Draft            mDNS Discovery Relay                  May 2018
-
-
    names, services on all the different physical links may be presented
    to the user as appearing in 'headquarters.example.com'.  In this
    case, the individual link names can be thought of similar to MAC
@@ -880,6 +889,15 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
       client requests may differ from the 'source-ip-addresses' list of
       addresses used for issuing outbound connection requests to
       Discovery Relays.  If any of these addresses are reachable from
+
+
+
+
+Lemon & Cheshire        Expires November 11, 2018              [Page 16]
+
+Internet-Draft            mDNS Discovery Relay                  May 2018
+
+
       outside of the Discovery Domain, services in that domain will be
       discoverable outside of the domain.
 
@@ -889,14 +907,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    The private key should never be distributed to other hosts; all of
    the other information describing a Discovery Proxy can be safely
    shared with Discovery Relays.
-
-
-
-
-Lemon & Cheshire        Expires November 11, 2018              [Page 16]
-
-Internet-Draft            mDNS Discovery Relay                  May 2018
-
 
    In some configurations it may make sense for the Discovery Relay not
    to have a list of links, but simply to support the set of all links
@@ -936,16 +946,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    the other information describing a Discovery Relay can be safely
    shared with Discovery Proxies.
 
-   In some cases a Relay may not be configured with a static list of
-   links, but may simply discover links by monitoring the set of
-   available interfaces on the host on which the Relay is running.  In
-   that case, the relay could be configured to identify links based on
-   the names of network interfaces, or based on the set of available
-   prefixes seen on those interfaces.  The details of this sort of
-   configuration are not specified in this document.
-
-
-
 
 
 
@@ -953,6 +953,14 @@ Lemon & Cheshire        Expires November 11, 2018              [Page 17]
 
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
+
+   In some cases a Relay may not be configured with a static list of
+   links, but may simply discover links by monitoring the set of
+   available interfaces on the host on which the Relay is running.  In
+   that case, the relay could be configured to identify links based on
+   the names of network interfaces, or based on the set of available
+   prefixes seen on those interfaces.  The details of this sort of
+   configuration are not specified in this document.
 
 9.2.  Configuration Files
 
@@ -972,14 +980,6 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    by name.  This approach is not required, but is simply shown as an
    example.  In addition, the private keys for each proxy or relay must
    appear only in that proxy or relay's configuration file.
-
-
-
-
-
-
-
-
 
 
 
@@ -1178,20 +1178,20 @@ Lemon & Cheshire        Expires November 11, 2018              [Page 21]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
-            +--------+----------+-----------------------------+
-            | Opcode | Status   | Name                        |
-            +--------+----------+-----------------------------+
-            | TBD-R  | Standard | mDNS Link Request           |
-            | TBD-D  | Standard | mDNS Discontinue            |
-            | TBD-L  | Standard | Link Identifier             |
-            | TBD-M  | Standard | mDNS Messsage               |
-            | TBD-A  | Standard | IP Source                   |
-            | TBD-P  | Standard | Report Link Changes         |
-            | TBD-S  | Standard | Stop Reporting Link Changes |
-            | TBD-V  | Standard | Link Available              |
-            | TBD-U  | Standard | Link Unavailable            |
-            | TBD-K  | Standard | Link Prefix                 |
-            +--------+----------+-----------------------------+
+             +--------+----------+---------------------------+
+             | Opcode | Status   | Name                      |
+             +--------+----------+---------------------------+
+             | TBD-R  | Standard | Link Data Request         |
+             | TBD-D  | Standard | Link Data Discontinue     |
+             | TBD-L  | Standard | Link Identifier           |
+             | TBD-M  | Standard | Encapsulated mDNS Message |
+             | TBD-A  | Standard | IP Source                 |
+             | TBD-P  | Standard | Link State Request        |
+             | TBD-S  | Standard | Link State Discontinue    |
+             | TBD-V  | Standard | Link Available            |
+             | TBD-U  | Standard | Link Unavailable          |
+             | TBD-K  | Standard | Link Prefix               |
+             +--------+----------+---------------------------+
 
                       DSO Type Codes to be allocated
 

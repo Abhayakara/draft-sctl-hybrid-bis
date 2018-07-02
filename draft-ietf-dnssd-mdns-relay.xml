@@ -202,13 +202,14 @@
 	  </list>
 	</t>
 	<t>
-	  Clients can send four different control messages to Relays: the Link Request, Link
-	  Discontinue, Report Link Changes and Stop Reporting Link Changes messages.  The first
-	  two are used by the Client to indicate to the Discovery Relay that mDNS messages from
-	  one or more specified multicast links are to be relayed to the Discovery Proxy, and to
-	  subsequently stop such relaying.   The second two are used by the Client to request
-	  that the Relay report on the set of links that can be requested, and to request that
-	  it discontinue such reporting.
+	  Clients can send four different control messages to Relays:
+	  Link State Request, Link State Discontinue,
+	  Link Data Request and Link Data Discontinue.
+	  The first two are used by the Client to request that the Relay report on the set of
+	  links that can be requested, and to request that it discontinue such reporting.
+	  The second two are used by the Client to indicate to the Discovery Relay that mDNS
+	  messages from one or more specified multicast links are to be relayed to the Client,
+	  and to subsequently stop such relaying.
 	</t>
 	<t>
 	  Link Status messages from a Discovery Relay to the Client inform the Client that a link has
@@ -322,19 +323,19 @@
 	The mere act of connecting to a Discovery Relay does not result in any mDNS traffic
 	being forwarded.  In order to request that mDNS traffic from a particular multicast link be
 	forwarded on a particular connection, the Client must send one or more DSO
-	messages, each containing a single mDNS Link Request TLV (<xref target="mDNSlinkrq"/>)
+	messages, each containing a single mDNS Link Data Request TLV (<xref target="mDNSlinkrq"/>)
 	indicating the multicast link from which traffic is requested.
       </t>
       <t>
-	When an mDNS Link Request message is received, the Discovery Relay validates that it is
-	connected to the specified multicast link, and that forwarding is enabled for that link.
-	If both checks are successful, it MUST send a response with RCODE=0 (NOERROR).  If the
-	Relay is not connected to the specified link, or forwarding from that link to the
-	Client is not enabled, it sends a response with RCODE=3 (NXDOMAIN/Name Error).
-	It is not an error to request the same link more than once; the Relay MUST NOT reject an
-	mDNS Link Request on that basis.  If the relay cannot satisfy the request for some
-	reason other than that the link is invalid, for example resource exhaustion, it sends a
-	response with RCODE=2 (SERVFAIL).
+	When an mDNS Link Data Request message is received, the Discovery Relay validates that it
+	recognizes the link identifier, and that forwarding is enabled for that link.
+	If both checks are successful, it MUST send a response with RCODE=0 (NOERROR).
+	If the link identifier is not recognized, it sends a response with RCODE=3 (NXDOMAIN/Name Error).
+	If forwarding from that link to the Client is not enabled, it sends a response with RCODE=5 (REFUSED).
+	If the relay cannot satisfy the request for some other reason, for example resource
+	exhaustion, it sends a response with RCODE=2 (SERVFAIL).
+	It is not an error to request a recognized link identifier which is not yet available; the
+	Discovery Relay accepts the request, and begins forwarding packets when the link becomes available.
       </t>
       <t>
 	If the requested link is valid, the Relay begins forwarding all mDNS traffic from that
@@ -362,7 +363,7 @@
       </t>
       <t>
 	A Client may discontinue listening for mDNS messages on a particular multicast link by
-	sending a DSO message containing an mDNS Link Discontinue TLV (<xref
+	sending a DSO message containing an mDNS Link Data Discontinue TLV (<xref
 	target="mDNSdis"/>).  Subsequent messages from that link that had previously been queued
 	may arrive after listening has been discontinued.  The Client should silently
 	discard such messages.  The Discovery Relay MUST discontinue generating such messages as
@@ -443,9 +444,9 @@
       <t>
 	This document defines a modest number of new DSO TLVs.
       </t>
-      <section anchor="mDNSlinkrq" title="mDNS Link Request">
+      <section anchor="mDNSlinkrq" title="mDNS Link Data Request">
 	<t>
-	  The mDNS Link Request TLV conveys a link identifier from which a Client
+	  The mDNS Link Data Request TLV conveys a link identifier from which a Client
 	  is requesting that a Discovery Relay forward mDNS traffic.  The link identifier
 	  comes from the provisioning configuration (see <xref target="prov"/>).
 	  The DSO-TYPE for this TLV is TBD-R.  DSO-LENGTH is always 5.
@@ -455,13 +456,13 @@
 	  as recorded in the IANA Registry of Address Family Numbers <xref target="AdFam"/>.
 	</t>
 	<t>
-	  The mDNS Link Request TLV can only be used as a primary TLV, and requires an
+	  The mDNS Link Data Request TLV can only be used as a primary TLV, and requires an
 	  acknowledgement.
 	</t>
 	<t>
-	  At most one mDNS Link Request TLV may appear in a DSO message.
+	  At most one mDNS Link Data Request TLV may appear in a DSO message.
 	  To request multiple link subscriptions, multiple separate DSO messages are sent,
-	  each containing a single mDNS Link Request TLV.
+	  each containing a single mDNS Link Data Request TLV.
 	</t>
 	<t>
 	  A Client MUST NOT request a link if it already has an active subscription to that link
@@ -470,21 +471,21 @@
 	  abort that DSO session.
 	</t>
       </section>
-      <section anchor="mDNSdis" title="mDNS Link Discontinue">
+      <section anchor="mDNSdis" title="mDNS Link Data Discontinue">
 	<t>
-	  The mDNS Link Discontinue TLV is used by Clients to unsubscribe to mDNS messages on the
+	  The mDNS Link Data Discontinue TLV is used by Clients to unsubscribe to mDNS messages on the
 	  specified multicast link.
 	  DSO-TYPE is TBD-D.  DSO-LENGTH is always 5.
 	  DSO-DATA is the 8-bit address family followed by the 32-bit link identifier,
 	  a 32-bit unsigned integer in network (big endian) byte order, as described in <xref target="prov"/>.
 	</t>
 	<t>
-	  The mDNS Link Discontinue TLV can only be used as a primary TLV, and is not acknowledged.
+	  The mDNS Link Data Discontinue TLV can only be used as a primary TLV, and is not acknowledged.
 	</t>
 	<t>
-	  At most one mDNS Link Discontinue TLV may appear in a DSO message.
+	  At most one mDNS Link Data Discontinue TLV may appear in a DSO message.
 	  To unsubscribe from multiple links, multiple separate DSO messages are sent,
-	  each containing a single mDNS Link Discontinue TLV.
+	  each containing a single mDNS Link Data Discontinue TLV.
 	</t>
       </section>
       <section anchor="linkid" title="Link Identifier">
@@ -530,9 +531,9 @@
 	  The IP Source TLV can only be used as an additional TLV.
 	</t>
       </section>
-      <section anchor="reporch" title="Report Link Changes">
+      <section anchor="reporch" title="Link State Request">
 	<t>
-	  The Report Link Changes TLV requests that the Discovery Relay report link changes.
+	  The Link State Request TLV requests that the Discovery Relay report link changes.
 	  When the relay is reporting link changes and a new link becomes available, it sends a
 	  Link Available message to the Client.  When a link becomes unavailable, it sends a
 	  Link Unavailable message to the Client.  If there are links available when the request
@@ -540,19 +541,19 @@
 	  Message to the Client.  DSO-TYPE is TBD-P.  DSO-LENGTH is 0.
 	</t>
 	<t>
-	  The mDNS Report Link Changes TLV can only be used as a primary TLV, and requires an
+	  The mDNS Link State Request TLV can only be used as a primary TLV, and requires an
 	  acknowledgement.  The acknowledgment does not contain a Link Available TLV: it is just a
-	  response to the Report Link Changes message.
+	  response to the Link State Request message.
 	</t>
       </section>
-      <section anchor="streporch" title="Stop Reporting Link Changes">
+      <section anchor="streporch" title="Link State Discontinue">
 	<t>
-	  The Stop Reporting Link Changes TLV requests that the Discovery Relay stop reporting
+	  The Link State Discontinue TLV requests that the Discovery Relay stop reporting
 	  on the availability of links supported by the relay.  This cancels the effect of a
-	  Report Link Changes TLV.  DSO-TYPE is TBD-S.   DSO-LENGTH is 0.
+	  Link State Request TLV.  DSO-TYPE is TBD-S.   DSO-LENGTH is 0.
 	</t>
 	<t>
-	  The mDNS Stop Reporting Link Changes TLV can only be used as a primary TLV, and is not
+	  The mDNS Link State Discontinue TLV can only be used as a primary TLV, and is not
 	  acknowledged.
 	</t>
       </section>
@@ -934,13 +935,13 @@ Relay Downstairs
       </t>
       <texttable title="DSO Type Codes to be allocated">
 	<ttcol>Opcode</ttcol>	<ttcol>Status</ttcol>	<ttcol>Name</ttcol>
-	<c>TBD-R</c>		<c>Standard</c>		<c>mDNS Link Request</c>
-	<c>TBD-D</c>		<c>Standard</c>		<c>mDNS Discontinue</c>
+	<c>TBD-R</c>		<c>Standard</c>		<c>Link Data Request</c>
+	<c>TBD-D</c>		<c>Standard</c>		<c>Link Data Discontinue</c>
 	<c>TBD-L</c>		<c>Standard</c>		<c>Link Identifier</c>
-	<c>TBD-M</c>		<c>Standard</c>		<c>mDNS Messsage</c>
+	<c>TBD-M</c>		<c>Standard</c>		<c>Encapsulated mDNS Message</c>
 	<c>TBD-A</c>		<c>Standard</c>		<c>IP Source</c>
-	<c>TBD-P</c>		<c>Standard</c>		<c>Report Link Changes</c>
-	<c>TBD-S</c>		<c>Standard</c>		<c>Stop Reporting Link Changes</c>
+	<c>TBD-P</c>		<c>Standard</c>		<c>Link State Request</c>
+	<c>TBD-S</c>		<c>Standard</c>		<c>Link State Discontinue</c>
 	<c>TBD-V</c>		<c>Standard</c>		<c>Link Available</c>
 	<c>TBD-U</c>		<c>Standard</c>		<c>Link Unavailable</c>
 	<c>TBD-K</c>		<c>Standard</c>		<c>Link Prefix</c>
