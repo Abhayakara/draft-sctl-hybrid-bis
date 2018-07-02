@@ -115,11 +115,12 @@
 	The following definitions may be of use:
 	<list style="hanging">
 	  <t hangText="Client">
-	    A network service that uses a Discovery Relay to receive mDNS multicast traffic
-	    and/or communicate with mDNS Agents.
+	    A network service that uses a Discovery Relay to send and receive mDNS multicast traffic on a remote link,
+	    to enable it to communicate with mDNS Agents on that remote link.
 	  </t>
 	  <t hangText="mDNS Agent">
-	    A host which sends and/or responds to mDNS queries.
+	    A host which sends and/or responds to mDNS queries directly on its local link(s).
+	    Examples include network cameras, networked printers, networked home electronics, etc.
 	  </t>
 	  <t hangText="Discovery Proxy">
 	    A network service which receives well-formed questions using the DNS protocol,
@@ -128,8 +129,8 @@
 	    remote mDNS Agents, using the services of a Discovery Relay, is a Client of the Discovery Relay.
 	  </t>
 	  <t hangText="Discovery Relay">
-	    A network service which relays received mDNS messages to a Client, and can transmit
-	    mDNS messages on behalf of that Client.
+	    A network service which relays mDNS messages received on a local link to a Client,
+	    and on behalf of that Client can transmit mDNS messages on a local link.
 	  </t>
 	  <t hangText="multicast link">
 	    A maximal set of network connection points, such that any host connected to any
@@ -142,10 +143,17 @@
 	    multiple Wi-Fi access points on a shared Ethernet backbone, where the
 	    multiple Wi-Fi access points and their shared Ethernet backbone form a single unicast link
 	    (a single IPv4 subnet, or single IPv6 prefix) but not a single multicast link.
-	    Unicast packets between two hosts on that IPv4 subnet or IPv6 prefix are correctly delivered,
-	    but multicast packets are not forwarded between the various Wi-Fi Access Points.
-	    Given the slowness of Wi-Fi multicast, the decision to not forward multicast packets
-	    between Wi-Fi Access Points is reasonable, and that further supports the need for technologies
+	    Unicast packets sent directly between two hosts on that IPv4 subnet or IPv6 prefix,
+	    without passing through an intervening IP-layer router, are correctly delivered,
+	    but multicast packets are not forwarded between the various Wi-Fi access points.
+	    Given the slowness of Wi-Fi multicast
+	    <xref target="I-D.ietf-mboned-ieee802-mcast-problems"/>,
+	    having a packet that may be of interest to only one or two end systems
+	    transmitted to hundreds of devices, across multiple Wi-Fi access points,
+	    is especially wasteful.
+	    Hence the common configuration decision to not forward multicast packets between
+	    Wi-Fi access points is very reasonable.
+	    This further motivates the need for technologies
 	    like Discovery Proxy and Discovery Relay to facilitate discovery on these networks.
 	  </t>
 	  <t hangText="whitelist">
@@ -971,6 +979,7 @@ Relay Downstairs
 
     <references title="Informative References">
 
+      <?rfc include="reference.I-D.ietf-mboned-ieee802-mcast-problems"?>
       <?rfc include="reference.RFC.0951.xml"?>
       <?rfc include="reference.RFC.2246.xml"?>
       <?rfc include="reference.RFC.5246.xml"?>
