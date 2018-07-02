@@ -47,8 +47,8 @@
       <t>
 	This document complements the specification of the Discovery Proxy for Multicast DNS-Based
 	Service Discovery.  It describes a lightweight relay mechanism, a Discovery Relay,
-	which, when present on a link, allows Discovery Proxies not attached to that link to
-	provide mDNS proxy service on that link.
+	which, when present on a link, allows remote clients, not attached to that link, to
+	perform mDNS discovery operations on that link.
       </t>
     </abstract>
   </front>
@@ -75,13 +75,13 @@
       </t>
       <t>
 	Since the primary purpose of a Discovery Relay is providing remote virtual interface
-	functionality to Discovery Proxies, this document is written with that in mind.
-	However, in principle, a Discovery Relay could be used by any properly authorized
-	client.  In the context of this specification, a Discovery Proxy is a client to the
-	Discovery Relay.  This document uses the terms "Discovery Proxy" and "Client" to mean
-	the same thing; the term "Client" is used when we are talking about the communication
-	between the client and the Relay, and the term "Discovery Proxy" when we are referring
-	specifically to something that is acting as a Discovery Proxy.
+	functionality to Discovery Proxies, this document is written with that usage in mind.
+	However, in principle, a Discovery Relay could be used by any properly authorized client.
+	In the context of this specification, a Discovery Proxy is a client to the Discovery Relay.
+	This document uses the terms "Discovery Proxy" and "Client" somewhat interchangably;
+	the term "Client" is used when we are talking about the communication
+	between the Client and the Relay, and the term "Discovery Proxy" when we are referring
+	specifically to a Discovery Relay Client that also happens to be acting as a Discovery Proxy.
       </t>
       <t>
 	The Discovery Relay operates by listening for TCP connections from Clients.
@@ -124,8 +124,8 @@
 	  <t hangText="Discovery Proxy">
 	    A network service which receives well-formed questions using the DNS protocol,
 	    performs multicast DNS queries to answer those questions, and responds with those
-	    answers using the DNS protocol.  A Discovery Proxy that can communicate with mDNS
-	    Agents using a Discovery Relay is also a Client.
+	    answers using the DNS protocol.  A Discovery Proxy that can communicate with
+	    remote mDNS Agents, using the services of a Discovery Relay, is a Client of the Discovery Relay.
 	  </t>
 	  <t hangText="Discovery Relay">
 	    A network service which relays received mDNS messages to a Client, and can transmit
@@ -165,14 +165,14 @@
 
     <section anchor="overview" title="Protocol Overview">
       <t>
-	This document describes a way for Discovery Proxies to communicate with mDNS agents on
+	This document describes a way for Clients to communicate with mDNS agents on
 	remote multicast links to which they are not directly connected, using a Discovery Relay.
 	As such, there are two parts to the protocol:
-	connections between Discovery Proxies and Discovery Relays,
+	connections between Clients and Discovery Relays,
 	and communications between Discovery Relays and mDNS agents.
       </t>
 
-      <section anchor="tcpov" title="Connections between Proxies and Relays (overview)">
+      <section anchor="tcpov" title="Connections between Clients and Relays (overview)">
 	<t>
 	  Discovery Relays listen for incoming connection requests.  Connections between Clients and
 	  Discovery Relays are established by Clients. Connections are authenticated
@@ -203,7 +203,7 @@
 	  it discontinue such reporting.
 	</t>
 	<t>
-	  Link Status messages from the Relay to the Client inform the client that a link has
+	  Link Status messages from a Discovery Relay to the Client inform the Client that a link has
 	  become available, or that a formerly-available link is no longer available.
 	</t>
 	<t>
@@ -225,7 +225,7 @@
       <section anchor="mdnsov" title="mDNS Messages On Multicast Links">
 	<t>
 	  Discovery Relays listen for mDNS traffic on all configured multicast links that have at least
-	  one active subscription from a Discovery Proxy. When an mDNS message
+	  one active subscription from a Client. When an mDNS message
 	  is received on a multicast link, it is forwarded on every open Client connection that
 	  is subscribed to mDNS traffic on that multicast link.  In the event of congestion, where a
 	  particular Client connection has no buffer space for an mDNS message that
@@ -250,7 +250,7 @@
       </section>
     </section>
 
-    <section anchor="tlsconn" title="Connections between Proxies and Relays (details)">
+    <section anchor="tlsconn" title="Connections between Clients and Relays (details)">
       <t>
 	When a Discovery Relay starts, it opens a passive TCP listener to receive incoming connection requests
 	from Clients.  This listener may be bound to one or more source IP addresses,
@@ -417,7 +417,7 @@
       <t>
 	Responses from devices on locally-connected links are processed normally.  Responses
 	from devices on relay-connected links are received by the Discovery Relay, encapsulated,
-	and forwarded to the Discovery Proxy; the Discovery Proxy then processes these messages
+	and forwarded to the Client; the Client then processes these messages
 	using the link-identifying information included in the encapsulation.
       </t>
       <t>
@@ -557,7 +557,7 @@
       </section>
       <section anchor="lava" title="Link Available">
 	<t>
-	  The Link Available TLV is used by Discovery Relays to indicate to clients that a new
+	  The Link Available TLV is used by Discovery Relays to indicate to Clients that a new
 	  link has become available.  The format is the same as the Link Identifier TLV.
 	  DSO-TYPE is TBD-V.  The Link Available TLV may be accompanied by one or more Link
 	  Prefix TLVs which indicate IP prefixes the Relay knows to be present on the link.
@@ -569,7 +569,7 @@
       </section>
       <section anchor="luna" title="Link Unavailable">
 	<t>
-	  The Link Unavailable TLV is used by Discovery Relays to indicate to clients that an
+	  The Link Unavailable TLV is used by Discovery Relays to indicate to Clients that an
 	  existing link has become unavailable.  The format is the same as the Link Identifier
 	  TLV.  DSO-TYPE is TBD-U.
 	</t>
@@ -596,8 +596,8 @@
       <t>
 	In order for a Discovery Proxy to use Discovery Relays, it must be configured with
 	sufficient information to identify multicast links on which service discovery is to be
-	supported and connect to discovery relays supporting those multicast links, if it is not
-	running on a host that is directly connected to those multicast links.
+	supported and, if it is not running on a host that is directly connected to those
+	multicast links, connect to Discovery Relays supporting those multicast links.
       </t>
       <t>
 	A Discovery Relay must be configured both with a set of multicast links to which the host on which
@@ -624,7 +624,7 @@
       </t>
       <t>
 	Depending on the context, several different candidates for configuration of Discovery
-	Proxies and Discovery relays may be applicable.  The simplest such mechanism is a manual
+	Proxies and Discovery Relays may be applicable.  The simplest such mechanism is a manual
 	configuration file, but regardless of provisioning mechanism, certain configuration
 	information needs to be communicated to the devices, as outlined below.
       </t>
@@ -743,7 +743,7 @@
 	  <t>
 	    In some configurations it may make sense for the Discovery Relay not to have a list
 	    of links, but simply to support the set of all links available on relays to which the
-	    Proxy is configured to communicate.
+	    Discovery Proxy is configured to communicate.
 	  </t>
 	</section>
 	<section title="Discovery Relay">
@@ -876,13 +876,13 @@ Proxy main
 ]]></artwork></figure>
 	<t>
 	  When combined with the master file, this configuration is sufficient for the Discovery
-	  Proxy to identify and connect to the relay proxies that serve the links it is
+	  Proxy to identify and connect to the Discovery Relays that serve the links it is
 	  configured to support.
 	</t>
       </section>
       <section title="Discovery Relay Private Configuration">
 	<t>
-	  The discovery relay configuration just needs to tell the discovery relay what name to use
+	  The Discovery Relay configuration just needs to tell the Discovery Relay what name to use
 	  to find its configuration in the master file, and what the private key is corresponding to
 	  its public key in the master file.   For example:
 	</t>
@@ -900,8 +900,8 @@ Relay Downstairs
 	  analogous to a BOOTP relay, into routers and similar devices that may not be updated frequently.
 	  The <xref target="RFC0951">BOOTP</xref> protocol has been around since 1985, and continues to be useful today.
 	  The BOOTP protocol uses no encryption, and in many enterprise networks this is considered acceptable.
-	  In contrast, the relay protocol requires TLS 1.3.
-	  A concern is that after 20 or 30 years TLS 1.3, or some of the encryption algorithms it uses,
+	  In contrast, the Discovery Relay protocol requires TLS 1.3.
+	  A concern is that after 20 or 30 years, TLS 1.3, or some of the encryption algorithms it uses,
 	  may become obsolete, rendering devices that require it unusable.
 	  Our assessment is that TLS 1.3 probably will be around for many years to come.
 	  <xref target="RFC2246">TLS 1.0</xref> was used for about a decade, and similarly
