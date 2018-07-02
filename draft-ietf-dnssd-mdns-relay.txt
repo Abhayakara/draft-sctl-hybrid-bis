@@ -309,9 +309,9 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
    o  Link status messages from Relay to Client
 
-   o  Encapsulated mDNS messages from Client to Relay
+   o  Encapsulated mDNS query messages from Client to Relay
 
-   o  Encapsulated mDNS messages from Relay to Client
+   o  Encapsulated mDNS response messages from Relay to Client
 
    Clients can send four different control messages to Relays: Link
    State Request, Link State Discontinue, Link Data Request and Link
@@ -326,9 +326,9 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    Client that a link has become available, or that a formerly-available
    link is no longer available.
 
-   Encapsulated mDNS messages from a Discovery Relay to a Client are
-   sent whenever an mDNS message is received on a multicast link to
-   which the Discovery Relay has subscribed.
+   Encapsulated mDNS response messages from a Discovery Relay to a
+   Client are sent whenever an mDNS response message is received on a
+   multicast link to which the Discovery Relay has subscribed.
 
 
 
@@ -338,10 +338,10 @@ Lemon & Cheshire        Expires November 11, 2018               [Page 6]
 Internet-Draft            mDNS Discovery Relay                  May 2018
 
 
-   Encapsulated mDNS messages from a Client to a Discovery Relay cause
-   the Discovery Relay to transmit the mDNS message on the specified
-   multicast link to which the Discovery Relay host is directly
-   attached.
+   Encapsulated query mDNS messages from a Client to a Discovery Relay
+   cause the Discovery Relay to transmit the mDNS query message on the
+   specified multicast link to which the Discovery Relay host is
+   directly attached.
 
    During periods with no traffic flowing, Clients are responsible for
    generating any necessary keepalive traffic, as stated in the DSO
@@ -351,28 +351,28 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
    Discovery Relays listen for mDNS traffic on all configured multicast
    links that have at least one active subscription from a Client.  When
-   an mDNS message is received on a multicast link, it is forwarded on
-   every open Client connection that is subscribed to mDNS traffic on
-   that multicast link.  In the event of congestion, where a particular
-   Client connection has no buffer space for an mDNS message that would
-   otherwise be forwarded to it, the mDNS message is not forwarded to
-   it.  Normal mDNS retry behavior is used to recover from this sort of
-   packet loss.  Discovery Relays are not expected to buffer more than a
-   few mDNS packets.  Excess mDNS packets are silently discarded.  In
-   practice this is not expected to be a issue.  Particularly on
-   networks like Wi-Fi, multicast packets are transmitted at rates ten
-   or even a hundred times slower than unicast packets.  This means that
-   even at peak multicast packets rates, it is likely that a unicast TCP
-   connection will able to carry those packets with ease.
+   an mDNS response message is received on a multicast link, it is
+   forwarded on every open Client connection that is subscribed to mDNS
+   traffic on that multicast link.  In the event of congestion, where a
+   particular Client connection has no buffer space for an mDNS message
+   that would otherwise be forwarded to it, the mDNS message is not
+   forwarded to it.  Normal mDNS retry behavior is used to recover from
+   this sort of packet loss.  Discovery Relays are not expected to
+   buffer more than a few mDNS packets.  Excess mDNS packets are
+   silently discarded.  In practice this is not expected to be a issue.
+   Particularly on networks like Wi-Fi, multicast packets are
+   transmitted at rates ten or even a hundred times slower than unicast
+   packets.  This means that even at peak multicast packets rates, it is
+   likely that a unicast TCP connection will able to carry those packets
+   with ease.
 
-   Clients send encapsulated mDNS messages they wish to have sent on
-   their behalf on remote multicast link(s) on which the Client has an
-   active subscription.  A Discovery Relay will not transmit mDNS
-   packets on any multicast link on which the Client does not have an
-   active subscription, since it makes no sense for a Client to ask to
-   have a query sent on its behalf if it's not able to receive the
+   Clients send encapsulated mDNS query messages they wish to have sent
+   on their behalf on remote multicast link(s) on which the Client has
+   an active subscription.  A Discovery Relay will not transmit mDNS
+   query packets on any multicast link on which the Client does not have
+   an active subscription, since it makes no sense for a Client to ask
+   to have a query sent on its behalf if it's not able to receive the
    responses to that query.
-
 
 
 
@@ -529,28 +529,28 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    forwarding packets when the link becomes available.
 
    If the requested link is valid, the Relay begins forwarding all mDNS
-   traffic from that link to the Client.  Delivery is not guaranteed: if
-   there is no buffer space, packets will be dropped.  It is expected
-   that regular mDNS retry processing will take care of retransmission
-   of lost packets.  The amount of buffer space is implementation
-   dependent, but generally should not be more than the bandwidth delay
-   product of the TCP connection [RFC1323].  The Discovery Relay should
-   use the TCP_NOTSENT_LOWAT mechanism [NOTSENT][PRIO] or equivalent, to
-   avoid building up a backlog of data in excess of the amount necessary
-   to have in flight to fill the bandwidth delay product of the TCP
-   connection.
+   response messages from that link to the Client.  Delivery is not
+   guaranteed: if there is no buffer space, packets will be dropped.  It
+   is expected that regular mDNS retry processing will take care of
+   retransmission of lost packets.  The amount of buffer space is
+   implementation dependent, but generally should not be more than the
+   bandwidth delay product of the TCP connection [RFC1323].  The
+   Discovery Relay should use the TCP_NOTSENT_LOWAT mechanism
+   [NOTSENT][PRIO] or equivalent, to avoid building up a backlog of data
+   in excess of the amount necessary to have in flight to fill the
+   bandwidth delay product of the TCP connection.
 
-   Encapsulated mDNS messages from Relays to Clients are framed within
-   DSO messages.  Each DSO message can contain multiple TLVs, but only a
-   single encapsulated mDNS message is conveyed per DSO message.  Each
-   forwarded mDNS message is sent in an Encapsulated mDNS Message TLV
-   (Section 8.4).  The source IP address and port of the message MUST be
-   encoded in an IP Source TLV (Section 8.5).  The multicast link on
-   which the message was received MUST be encoded in a Link Identifier
-   TLV (Section 8.3).  As described in the DSO specification
-   [I-D.ietf-dnsop-session-signal], a Client MUST silently ignore
-   unrecognized Additional TLVs in mDNS messages, and MUST NOT discard
-   mDNS messages that include unrecognized Additional TLVs.
+   Encapsulated mDNS response messages from Relays to Clients are framed
+   within DSO messages.  Each DSO message can contain multiple TLVs, but
+   only a single encapsulated mDNS message is conveyed per DSO message.
+   Each forwarded mDNS response message is sent in an Encapsulated mDNS
+   Message TLV (Section 8.4).  The source IP address and port of the
+   message MUST be encoded in an IP Source TLV (Section 8.5).  The
+   multicast link on which the message was received MUST be encoded in a
+   Link Identifier TLV (Section 8.3).  As described in the DSO
+   specification [I-D.ietf-dnsop-session-signal], a Client MUST silently
+   ignore unrecognized Additional TLVs in mDNS messages, and MUST NOT
+   discard mDNS messages that include unrecognized Additional TLVs.
 
    A Client may discontinue listening for mDNS messages on a particular
    multicast link by sending a DSO message containing an mDNS Link Data
@@ -620,13 +620,13 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
 6.  Traffic from Clients to Relays
 
-   Like mDNS traffic from relays, each mDNS message sent by a Client to
-   a Discovery Relay is communicated in an Encapsulated mDNS Message TLV
-   (Section 8.4) within a DSO message.  Each message MUST contain
-   exactly one Link Identifier TLV (Section 8.3).  The Discovery Relay
-   will transmit the message to the mDNS port and multicast address on
-   the link specified in the message using the specified IP address
-   family.
+   Like mDNS traffic from relays, each mDNS query message sent by a
+   Client to a Discovery Relay is communicated in an Encapsulated mDNS
+   Message TLV (Section 8.4) within a DSO message.  Each message MUST
+   contain exactly one Link Identifier TLV (Section 8.3).  The Discovery
+   Relay will transmit the mDNS query message to the mDNS port and
+   multicast address on the link specified in the message using the
+   specified IP address family.
 
    Although the communication between Clients and Relays uses the DNS
    stream protocol and DNS Stateless Operations, there is no case in
