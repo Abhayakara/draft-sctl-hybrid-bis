@@ -349,10 +349,9 @@
 	Each DSO message can contain multiple TLVs,
 	but only a single mDNS message is conveyed per DSO message.
 	Each forwarded mDNS message is contained in
-	an mDNS Message TLV (<xref target="mDNSmessage"/>).  The layer two source address of the
-	message, if known, MAY be encoded in a Layer Two Source TLV (<xref target="l2sa"/>).  The
-	source IP address and port of the message MUST be encoded in an IP Source TLV (<xref
-	target="ipsrc"/>).  The multicast link on which the message was received MUST be
+	an mDNS Message TLV (<xref target="mDNSmessage"/>).
+	The source IP address and port of the message MUST be encoded in an IP Source TLV
+	(<xref target="ipsrc"/>).  The multicast link on which the message was received MUST be
 	encoded in a Link Identifier TLV (<xref target="linkid"/>).  The Client MUST
 	silently ignore unrecognized TLVs in mDNS messages, and MUST NOT discard mDNS messages
 	that include unrecognized TLVs.
@@ -505,20 +504,6 @@
 	</t>
 	<t>
 	  The mDNS Message TLV can only be used as a primary TLV, and is not acknowledged.
-	</t>
-      </section>
-      <section anchor="l2sa" title="Layer Two Source Address">
-	<t>
-	  The Layer Two Source Address TLV is used to report the link-layer address from which an
-	  mDNS message was received.  This TLV is optionally present in DSO
-	  messages from Discovery Relays to Clients that contain mDNS messages when
-	  the source link-layer address is known.  The DSO-TYPE is TBD-2.  DSO-LENGTH is
-	  variable, depending on the length of link-layer addresses on the link from which the
-	  message was received.  DSO-DATA is the link-layer address as it was received on the
-	  link.
-	</t>
-	<t>
-	  The Layer Two Source Address TLV can only be used as an additional TLV.
 	</t>
       </section>
       <section anchor="ipsrc" title="IP Source">
@@ -930,7 +915,6 @@ Relay Downstairs
 	<c>TBD-D</c>		<c>Standard</c>		<c>mDNS Discontinue</c>
 	<c>TBD-L</c>		<c>Standard</c>		<c>Link Identifier</c>
 	<c>TBD-M</c>		<c>Standard</c>		<c>mDNS Messsage</c>
-	<c>TBD-2</c>		<c>Standard</c>		<c>Layer Two Source Address</c>
 	<c>TBD-A</c>		<c>Standard</c>		<c>IP Source</c>
 	<c>TBD-P</c>		<c>Standard</c>		<c>Report Link Changes</c>
 	<c>TBD-S</c>		<c>Standard</c>		<c>Stop Reporting Link Changes</c>
