@@ -653,7 +653,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
    The IP Source TLV is used to report the IP source address and port
    from which an mDNS message was received.  This TLV is present in DSO
    messages from Discovery Relays to Clients that contain encapsulated
-   mDNS messages.  DSO-TYPE is TBD-A.  DSO-LENGTH is either 6, for an
+   mDNS messages.  DSO-TYPE is TBD-S.  DSO-LENGTH is either 6, for an
    IPv4 address, or 18, for an IPv6 address.  DSO-DATA is the two-byte
    source port, followed by the 4- or 16-byte IP Address, both in the
    canonical byte order (i.e., the same representation as used in the
@@ -689,7 +689,7 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
 
    The Link State Discontinue TLV requests that the Discovery Relay stop
    reporting on the availability of links supported by the relay.  This
-   cancels the effect of a Link State Request TLV.  DSO-TYPE is TBD-S.
+   cancels the effect of a Link State Request TLV.  DSO-TYPE is TBD-Q.
    DSO-LENGTH is 0.
 
    The mDNS Link State Discontinue TLV can only be used as a primary
@@ -1185,9 +1185,9 @@ Internet-Draft            mDNS Discovery Relay                  May 2018
              | TBD-D  | Standard | Link Data Discontinue     |
              | TBD-L  | Standard | Link Identifier           |
              | TBD-M  | Standard | Encapsulated mDNS Message |
-             | TBD-A  | Standard | IP Source                 |
+             | TBD-S  | Standard | IP Source                 |
              | TBD-P  | Standard | Link State Request        |
-             | TBD-S  | Standard | Link State Discontinue    |
+             | TBD-Q  | Standard | Link State Discontinue    |
              | TBD-V  | Standard | Link Available            |
              | TBD-U  | Standard | Link Unavailable          |
              | TBD-K  | Standard | Link Prefix               |
