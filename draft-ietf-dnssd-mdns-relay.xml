@@ -189,8 +189,8 @@
 	  <list style="symbols">
 	    <t>Control messages from Client to Relay</t>
 	    <t>Link status messages from Relay to Client</t>
-	    <t>mDNS messages from Client to Relay</t>
-	    <t>mDNS messages from Relay to Client</t>
+	    <t>Encapsulated mDNS messages from Client to Relay</t>
+	    <t>Encapsulated mDNS messages from Relay to Client</t>
 	  </list>
 	</t>
 	<t>
@@ -207,13 +207,13 @@
 	  become available, or that a formerly-available link is no longer available.
 	</t>
 	<t>
-	  mDNS messages from a Discovery Proxy to a Discovery Relay cause the Discovery Relay
-	  to transmit the mDNS message on one or more multicast links to which the Discovery Relay
-	  host is directly attached.
+	  Encapsulated mDNS messages from a Discovery Relay to a Client are sent whenever an
+	  mDNS message is received on a multicast link to which the Discovery Relay has subscribed.
 	</t>
 	<t>
-	  mDNS messages from a Discovery Relay to a Discovery Proxy are sent whenever an
-	  mDNS message is received on a multicast link to which the Discovery Relay has subscribed.
+	  Encapsulated mDNS messages from a Client to a Discovery Relay cause the Discovery Relay
+	  to transmit the mDNS message on the specified multicast link to which the Discovery Relay
+	  host is directly attached.
 	</t>
 	<t>
 	  During periods with no traffic flowing, Clients are responsible for
@@ -240,7 +240,7 @@
 	  a unicast TCP connection will able to carry those packets with ease.
 	</t>
 	<t>
-	  Clients send mDNS messages they wish to have sent on their behalf
+	  Clients send encapsulated mDNS messages they wish to have sent on their behalf
 	  on remote multicast link(s) on which the Client has an active subscription.
 	  A Discovery Relay will not transmit mDNS packets on any multicast link on which
 	  the Client does not have an active subscription,
@@ -347,11 +347,11 @@
 	flight to fill the bandwidth delay product of the TCP connection.
       </t>
       <t>
-	mDNS messages from Relays to Clients are framed within DSO messages.
+	Encapsulated mDNS messages from Relays to Clients are framed within DSO messages.
 	Each DSO message can contain multiple TLVs,
-	but only a single mDNS message is conveyed per DSO message.
-	Each forwarded mDNS message is contained in
-	an mDNS Message TLV (<xref target="mDNSmessage"/>).
+	but only a single encapsulated mDNS message is conveyed per DSO message.
+	Each forwarded mDNS message is sent in
+	an Encapsulated mDNS Message TLV (<xref target="mDNSmessage"/>).
 	The source IP address and port of the message MUST be encoded in an IP Source TLV
 	(<xref target="ipsrc"/>).  The multicast link on which the message was received MUST be
 	encoded in a Link Identifier TLV (<xref target="linkid"/>).
@@ -373,7 +373,7 @@
     <section title="Traffic from Clients to Relays">
       <t>
 	Like mDNS traffic from relays, each mDNS message sent by a Client to a
-	Discovery Relay is encapsulated in an mDNS Message TLV (<xref target="mDNSmessage"/>)
+	Discovery Relay is communicated in an Encapsulated mDNS Message TLV (<xref target="mDNSmessage"/>)
 	within a DSO message.  Each message MUST contain exactly one Link
 	Identifier TLV (<xref target="linkid"/>).  The Discovery Relay will transmit the
 	message to the mDNS port and multicast address on the link specified in the message
@@ -501,25 +501,25 @@
 	  The Link Identifier TLV can only be used as an additional TLV.
 	</t>
       </section>
-      <section anchor="mDNSmessage" title="mDNS Message">
+      <section anchor="mDNSmessage" title="Encapsulated mDNS Message">
 	<t>
-	  The mDNS Message TLV is used to encapsulate an mDNS message that a Relay is forwarding
+	  The Encapsulated mDNS Message TLV is used to communicate an mDNS message that a Relay is forwarding
 	  from a multicast link to a Client, or that a Client is sending to a Relay
 	  for transmission on a multicast link.  Only the application-layer payload of the mDNS
-	  message is carried in the DSO mDNS Message TLV, i.e., just the DNS message itself,
+	  message is carried in the DSO “Encapsulated mDNS Message” TLV, i.e., just the DNS message itself,
 	  beginning with the DNS Message ID, not the IP or UDP headers.  The DSO-TYPE for this
 	  TLV is TBD-M.  DSO-LENGTH is the length of the encapsulated mDNS message.  DSO-DATA is
 	  the content of the encapsulated mDNS message.
 	</t>
 	<t>
-	  The mDNS Message TLV can only be used as a primary TLV, and is not acknowledged.
+	  The Encapsulated mDNS Message TLV can only be used as a primary TLV, and is not acknowledged.
 	</t>
       </section>
       <section anchor="ipsrc" title="IP Source">
 	<t>
 	  The IP Source TLV is used to report the IP source address and port from which an mDNS
 	  message was received.  This TLV is present in DSO messages from Discovery Relays to
-	  Clients that contain mDNS messages.  DSO-TYPE is TBD-A.  DSO-LENGTH is
+	  Clients that contain encapsulated mDNS messages.  DSO-TYPE is TBD-A.  DSO-LENGTH is
 	  either 6, for an IPv4 address, or 18, for an IPv6 address.
 	  DSO-DATA is the two-byte source port, followed by the 4- or 16-byte IP Address,
 	  both in the canonical byte order
