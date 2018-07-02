@@ -303,16 +303,9 @@
 	<xref target="I-D.ietf-dnsop-session-signal"/>) if sent by the Discovery Relay.
       </t>
       <t>
-	Clients may establish more than one connection to a specific Discovery Relay.
-	This would happen in the case that a TCP connection stalls, and the Client is
-	able to reconnect before the previous connection has timed out.  It could also happen as
-	a result of a server restart.  It is not likely that two active connections from the
-	same Client would be present at the same time, but it must be possible for
-	additional connections to be established.  The Discovery Relay may drop the old
-	connection when the new one has been fully established, including a successful TLS
-	handshake.  What it means for two connections to be from the same Client is
-	that the connections both have source addresses that belong to the same Client,
-	and that they were authenticated using the same client certificate.
+	Clients SHOULD avoid establishing more than one connection to a specific Discovery Relay.
+	However, there may be situations where multiple connections to the same Discovery Relay
+	are unavoidable, so Discovery Relays MUST be willing to accept multiple connections from the same Client.
       </t>
       <t>
 	In order to know what links to request, the Client can be configured with a list of
