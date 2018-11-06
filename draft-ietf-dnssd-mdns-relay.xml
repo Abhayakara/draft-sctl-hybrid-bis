@@ -15,29 +15,29 @@
     <author initials="T" surname="Lemon" fullname="Ted Lemon">
       <organization>Nibbhaya Consulting</organization>
       <address>
-	<postal>
-	  <street>P.O. Box 958</street>
-	  <city>Brattleboro</city>
-	  <region>Vermont</region>
-	  <country>United States of America</country>
-	  <code>05301</code>
-	</postal>
-	<email>mellon@fugue.com</email>
+        <postal>
+          <street>P.O. Box 958</street>
+          <city>Brattleboro</city>
+          <region>Vermont</region>
+          <country>United States of America</country>
+          <code>05301</code>
+        </postal>
+        <email>mellon@fugue.com</email>
       </address>
     </author>
 
     <author initials='S.' surname='Cheshire' fullname='Stuart Cheshire'>
       <organization>Apple Inc.</organization>
       <address>
-	<postal>
-          <street>1 Infinite Loop</street>
+        <postal>
+          <street>One Apple Park Way</street>
           <city>Cupertino</city>
           <region>California</region>
           <code>95014</code>
           <country>USA</country>
-	</postal>
-	<phone>+1 408 974 3207</phone>
-	<email>cheshire@apple.com</email>
+        </postal>
+        <phone>+1 (408) 996-1010</phone>
+        <email>cheshire@apple.com</email>
       </address>
     </author>
 

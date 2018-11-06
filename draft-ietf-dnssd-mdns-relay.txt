@@ -1465,8 +1465,8 @@ Internet-Draft            mDNS Discovery Relay                 July 2018
    [I-D.ietf-dnsop-session-signal]
               Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
               Lemon, T., and T. Pusateri, "DNS Stateful Operations",
-              draft-ietf-dnsop-session-signal-10 (work in progress),
-              June 2018.
+              draft-ietf-dnsop-session-signal-18 (work in progress),
+              October 2018.
 
    [I-D.ietf-dnssd-hybrid]
               Cheshire, S., "Discovery Proxy for Multicast DNS-Based
@@ -1527,8 +1527,8 @@ Internet-Draft            mDNS Discovery Relay                 July 2018
    [I-D.ietf-mboned-ieee802-mcast-problems]
               Perkins, C., McBride, M., Stanley, D., Kumari, W., and J.
               Zuniga, "Multicast Considerations over IEEE 802 Wireless
-              Media", draft-ietf-mboned-ieee802-mcast-problems-01 (work
-              in progress), February 2018.
+              Media", draft-ietf-mboned-ieee802-mcast-problems-03 (work
+              in progress), October 2018.
 
    [NOTSENT]  "TCP_NOTSENT_LOWAT socket option", July 2013,
               <https://lwn.net/Articles/560082/>.
@@ -1581,11 +1581,11 @@ Internet-Draft            mDNS Discovery Relay                 July 2018
 
    Stuart Cheshire
    Apple Inc.
-   1 Infinite Loop
+   One Apple Park Way
    Cupertino, California  95014
    USA
 
-   Phone: +1 408 974 3207
+   Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
 
 
