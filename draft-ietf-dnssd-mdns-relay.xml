@@ -743,7 +743,7 @@
 		an optional human-readable name which can appear in provisioning, monitoring and
 		debugging systems.  Must be unique within a Discovery Domain.
 	      </t>
-	      <t hangText="certificat">
+	      <t hangText="certificate">
 		a certificate that identifies the Discovery Proxy. This certificate can be shared across
 		services on the Discovery Proxy Host.  The public key in the certificate is used both to uniquely
 		identify the Discovery Proxy and to authenticate connections from it.   The certificate should

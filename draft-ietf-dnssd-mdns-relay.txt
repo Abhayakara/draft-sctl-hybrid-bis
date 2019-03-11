@@ -1095,7 +1095,7 @@ Internet-Draft            mDNS Discovery Relay                March 2019
       provisioning, monitoring and debugging systems.  Must be unique
       within a Discovery Domain.
 
-   certificat  a certificate that identifies the Discovery Proxy.  This
+   certificate  a certificate that identifies the Discovery Proxy.  This
       certificate can be shared across services on the Discovery Proxy
       Host.  The public key in the certificate is used both to uniquely
       identify the Discovery Proxy and to authenticate connections from
