@@ -988,7 +988,7 @@ Relay Downstairs
 
     <section title="Acknowledgments">
       <t>
-        To be completed...
+	Thanks to Derek Atkins for the secdir early review.
       </t>
 <?rfc needLines="48" ?>
     </section>
