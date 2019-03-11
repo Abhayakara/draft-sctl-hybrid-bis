@@ -449,7 +449,7 @@
       <t>
 	Discovery Proxies do not generally respond to mDNS queries on relay-connected links.
 	The one exception is responding to the Domain Enumeration queries used to
-	bootstrap unicast service discovery ("lb._dns-sd._udp.local", etc.) <xref target="RFC6763"/>.
+	bootstrap unicast service discovery ("lb._dns&nbhy;sd._udp.local", etc.) <xref target="RFC6763"/>.
 	Apart from these Domain Enumeration queries,
 	if any other mDNS query is received from a Discovery Relay, the Discovery Proxy silently discards it.
       </t>
