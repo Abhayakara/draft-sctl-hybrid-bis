@@ -10,7 +10,7 @@ Expires: September 12, 2019                                   Apple Inc.
 
 
                      Multicast DNS Discovery Relay
-                     draft-ietf-dnssd-mdns-relay-02
+                     draft-ietf-dnssd-mdns-relay-03
 
 Abstract
 
@@ -1429,7 +1429,7 @@ Internet-Draft            mDNS Discovery Relay                March 2019
 
 12.  Acknowledgments
 
-   To be completed...
+   Thanks to Derek Atkins for the secdir early review.
 
 
 
@@ -1470,8 +1470,8 @@ Internet-Draft            mDNS Discovery Relay                March 2019
 
    [I-D.ietf-dnssd-hybrid]
               Cheshire, S., "Discovery Proxy for Multicast DNS-Based
-              Service Discovery", draft-ietf-dnssd-hybrid-08 (work in
-              progress), March 2018.
+              Service Discovery", draft-ietf-dnssd-hybrid-10 (work in
+              progress), March 2019.
 
    [I-D.ietf-tls-tls13]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
@@ -1541,8 +1541,8 @@ Internet-Draft            mDNS Discovery Relay                March 2019
    [I-D.ietf-mboned-ieee802-mcast-problems]
               Perkins, C., McBride, M., Stanley, D., Kumari, W., and J.
               Zuniga, "Multicast Considerations over IEEE 802 Wireless
-              Media", draft-ietf-mboned-ieee802-mcast-problems-04 (work
-              in progress), November 2018.
+              Media", draft-ietf-mboned-ieee802-mcast-problems-06 (work
+              in progress), July 2019.
 
    [NOTSENT]  Dumazet, E., "TCP_NOTSENT_LOWAT socket option", July 2013,
               <https://lwn.net/Articles/560082/>.

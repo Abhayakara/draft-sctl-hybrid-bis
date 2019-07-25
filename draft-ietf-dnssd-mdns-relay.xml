@@ -3,7 +3,7 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd">
 
 <rfc ipr="trust200902"
-     docName="draft-ietf-dnssd-mdns-relay-02"
+     docName="draft-ietf-dnssd-mdns-relay-03"
      category="std">
 
   <?rfc toc="yes"?> <?rfc symrefs="yes"?> <?rfc autobreaks="yes"?>
@@ -26,7 +26,7 @@
       </address>
     </author>
 
-    <author initials='S.' surname='Cheshire' fullname='Stuart Cheshire'>
+    <author initials='S' surname='Cheshire' fullname='Stuart Cheshire'>
       <organization>Apple Inc.</organization>
       <address>
         <postal>
@@ -1031,7 +1031,7 @@ Relay Downstairs
                  target="https://lwn.net/Articles/560082/">
         <front>
           <title>TCP_NOTSENT_LOWAT socket option</title>
-          <author fullname="Eric Dumazet" ></author>
+          <author fullname="Eric Dumazet" initials='E' surname='Dumazet'></author>
           <date month="July" year="2013"/>
         </front>
       </reference>
@@ -1040,7 +1040,7 @@ Relay Downstairs
                  target="https://insouciant.org/tech/prioritization-only-works-when-theres-pending-data-to-prioritize/">
         <front>
           <title>Prioritization Only Works When There's Pending Data to Prioritize</title>
-          <author fullname="William Chan" ></author>
+          <author fullname="William Chan" initials='W' surname='Chan'></author>
           <date month="January" year="2014"/>
         </front>
       </reference>
