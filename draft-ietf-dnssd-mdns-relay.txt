@@ -85,19 +85,19 @@ Table of Contents
      8.10. Link Prefix . . . . . . . . . . . . . . . . . . . . . . .  16
    9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  18
      9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  19
-       9.1.1.  Multicast Link  . . . . . . . . . . . . . . . . . . .  19
-       9.1.2.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  20
-       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  21
-     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  22
-     9.3.  Discovery Proxy Private Configuration . . . . . . . . . .  24
-     9.4.  Discovery Relay Private Configuration . . . . . . . . . .  24
-   10. Security Considerations . . . . . . . . . . . . . . . . . . .  25
-   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  26
-   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  26
-   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  27
-     13.1.  Normative References . . . . . . . . . . . . . . . . . .  27
-     13.2.  Informative References . . . . . . . . . . . . . . . . .  28
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  29
+       9.1.1.  Multicast Link  . . . . . . . . . . . . . . . . . . .  20
+       9.1.2.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  21
+       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  22
+     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  23
+     9.3.  Discovery Proxy Private Configuration . . . . . . . . . .  25
+     9.4.  Discovery Relay Private Configuration . . . . . . . . . .  25
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .  26
+   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  27
+   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  27
+   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  28
+     13.1.  Normative References . . . . . . . . . . . . . . . . . .  28
+     13.2.  Informative References . . . . . . . . . . . . . . . . .  29
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  30
 
 
 
@@ -117,10 +117,10 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 1.  Introduction
 
    The Discovery Proxy for Multicast DNS-Based Service Discovery
-   [I-D.ietf-dnssd-hybrid] is a mechanism for discovering services on a
-   subnetted network through the use of Discovery Proxies, which issue
-   Multicast DNS (mDNS) requests [RFC6762] on various multicast links in
-   the network on behalf of a remote host performing DNS-Based Service
+   [DisProx] is a mechanism for discovering services on a subnetted
+   network through the use of Discovery Proxies, which issue Multicast
+   DNS (mDNS) requests [RFC6762] on various multicast links in the
+   network on behalf of a remote host performing DNS-Based Service
    Discovery [RFC6763].
 
    In the original Discovery Proxy specification, it is imagined that
@@ -1026,6 +1026,46 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
    name.  Similarly, no two entities can have the same machine-readable
    name.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Lemon & Cheshire        Expires January 27, 2020               [Page 19]
+
+Internet-Draft            mDNS Discovery Relay                 July 2019
+
+
 9.1.1.  Multicast Link
 
    The description of a multicast link consists of:
@@ -1037,9 +1077,8 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
    ldh-name  A fully-qualified domain name for the multicast link that
       is used to form an LDH domain name as described in section 5.3 of
-      the Discovery Proxy specification [I-D.ietf-dnssd-hybrid].  This
-      name is used to identify the link during provisioning, and must be
-      present.
+      the Discovery Proxy specification [DisProx].  This name is used to
+      identify the link during provisioning, and must be present.
 
    hr-name  A human-readable user-friendly fully-qualified domain name
       for the multicast link.  This name MUST be unique within the
@@ -1049,8 +1088,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
       not required to do so.)
 
    The ldh-name and hr-name can be used to form the LDH and human-
-   readable domain names as described in [I-D.ietf-dnssd-hybrid],
-   section 5.3.
+   readable domain names as described in [DisProx], section 5.3.
 
    Note that the ldh-name and hr-name can be used in two different ways.
 
@@ -1058,14 +1096,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
    configuration, link names may be directly visible to the user.  For
    example, a search in 'home.arpa' on a small home network may discover
    services on both ethernet.home.arpa and wi-fi.home.arpa.  In the case
-
-
-
-Lemon & Cheshire        Expires January 27, 2020               [Page 19]
-
-Internet-Draft            mDNS Discovery Relay                 July 2019
-
-
    of a home user who has one Ethernet-connected printer and one Wi-Fi-
    connected printer, discovering that they have one printer on
    ethernet.home.arpa and another on wi-fi.home.arpa is understandable
@@ -1083,6 +1113,14 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
    addresses or IPv6 addresses.  They are used internally by the
    software as unique identifiers, but generally are not exposed to end
    users.
+
+
+
+
+Lemon & Cheshire        Expires January 27, 2020               [Page 20]
+
+Internet-Draft            mDNS Discovery Relay                 July 2019
+
 
 9.1.2.  Discovery Proxy
 
@@ -1114,14 +1152,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
       listens on to receive requests from clients.  This is not used for
       interoperation with Discovery Relays, but is mentioned here for
       completeness: the list of addresses listened on for incoming
-
-
-
-Lemon & Cheshire        Expires January 27, 2020               [Page 20]
-
-Internet-Draft            mDNS Discovery Relay                 July 2019
-
-
       client requests may differ from the 'source-ip-addresses' list of
       addresses used for issuing outbound connection requests to
       Discovery Relays.  If any of these addresses are reachable from
@@ -1139,6 +1169,14 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
    to have a list of links, but simply to support the set of all links
    available on relays to which the Discovery Proxy is configured to
    communicate.
+
+
+
+
+Lemon & Cheshire        Expires January 27, 2020               [Page 21]
+
+Internet-Draft            mDNS Discovery Relay                 July 2019
+
 
 9.1.3.  Discovery Relay
 
@@ -1170,14 +1208,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
       listen on all addresses on a single port, but this is not
       required, so the port as well as the address must be specified.
 
-
-
-
-Lemon & Cheshire        Expires January 27, 2020               [Page 21]
-
-Internet-Draft            mDNS Discovery Relay                 July 2019
-
-
    multicast links  a list of multicast links to which this relay is
       physically connected.
 
@@ -1192,6 +1222,17 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
    the names of network interfaces, or based on the set of available
    prefixes seen on those interfaces.  The details of this sort of
    configuration are not specified in this document.
+
+
+
+
+
+
+
+Lemon & Cheshire        Expires January 27, 2020               [Page 22]
+
+Internet-Draft            mDNS Discovery Relay                 July 2019
+
 
 9.2.  Configuration Files
 
@@ -1229,7 +1270,22 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 
 
-Lemon & Cheshire        Expires January 27, 2020               [Page 22]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Lemon & Cheshire        Expires January 27, 2020               [Page 23]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
@@ -1285,7 +1341,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 
 
-Lemon & Cheshire        Expires January 27, 2020               [Page 23]
+Lemon & Cheshire        Expires January 27, 2020               [Page 24]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
@@ -1341,7 +1397,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 
 
-Lemon & Cheshire        Expires January 27, 2020               [Page 24]
+Lemon & Cheshire        Expires January 27, 2020               [Page 25]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
@@ -1397,7 +1453,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 
 
-Lemon & Cheshire        Expires January 27, 2020               [Page 25]
+Lemon & Cheshire        Expires January 27, 2020               [Page 26]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
@@ -1453,7 +1509,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 
 
-Lemon & Cheshire        Expires January 27, 2020               [Page 26]
+Lemon & Cheshire        Expires January 27, 2020               [Page 27]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
@@ -1462,8 +1518,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 13.1.  Normative References
 
-   [I-D.ietf-dnssd-hybrid]
-              Cheshire, S., "Discovery Proxy for Multicast DNS-Based
+   [DisProx]  Cheshire, S., "Discovery Proxy for Multicast DNS-Based
               Service Discovery", draft-ietf-dnssd-hybrid-10 (work in
               progress), March 2019.
 
@@ -1509,7 +1564,8 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 
 
-Lemon & Cheshire        Expires January 27, 2020               [Page 27]
+
+Lemon & Cheshire        Expires January 27, 2020               [Page 28]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
@@ -1565,7 +1621,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 
 
-Lemon & Cheshire        Expires January 27, 2020               [Page 28]
+Lemon & Cheshire        Expires January 27, 2020               [Page 29]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
@@ -1621,4 +1677,4 @@ Authors' Addresses
 
 
 
-Lemon & Cheshire        Expires January 27, 2020               [Page 29]
+Lemon & Cheshire        Expires January 27, 2020               [Page 30]

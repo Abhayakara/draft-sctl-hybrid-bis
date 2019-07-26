@@ -59,7 +59,7 @@
     <section anchor="intro" title="Introduction">
       <t>
 	The Discovery Proxy for Multicast DNS-Based Service Discovery
-	<xref target="I-D.ietf-dnssd-hybrid"/>
+	<xref target="DisProx"/>
 	is a mechanism for discovering
 	services on a subnetted network through the use of Discovery Proxies,
 	which issue Multicast DNS (mDNS) requests <xref target="RFC6762"/>
@@ -686,6 +686,7 @@
 	  No two entities can have the same human-readable name.
 	  Similarly, no two entities can have the same machine-readable name.
 	</t>
+<?rfc needLines="35" ?>
 	<section title="Multicast Link">
 	  <t>
 	    The description of a multicast link consists of:
@@ -698,7 +699,7 @@
 	      <t hangText="ldh-name">
 		A fully-qualified domain name for the multicast link that is used to form an LDH
 		domain name as described in section 5.3 of the Discovery Proxy specification
-		<xref target="I-D.ietf-dnssd-hybrid"/>.  This name is used to identify the link
+		<xref target="DisProx"/>.  This name is used to identify the link
 		during provisioning, and must be present.
 	      </t>
 	      <t hangText="hr-name">
@@ -712,7 +713,7 @@
 	  </t>
 	  <t>
 	    The ldh-name and hr-name can be used to form the LDH and human-readable
-	    domain names as described in <xref target="I-D.ietf-dnssd-hybrid"/>, section 5.3.
+	    domain names as described in <xref target="DisProx"/>, section 5.3.
 	  </t>
 	  <t>
 	    Note that the ldh-name and hr-name can be used in two different ways.
@@ -1020,7 +1021,28 @@ Relay Downstairs
       <?rfc include="reference.RFC.8310"?>
       <?rfc include="reference.RFC.8446"?>
       <?rfc include="reference.RFC.8490"?>
-      <?rfc include="reference.I-D.ietf-dnssd-hybrid"?>
+
+<reference anchor='DisProx'>
+<front>
+<title>Discovery Proxy for Multicast DNS-Based Service Discovery</title>
+
+<author initials='S' surname='Cheshire' fullname='Stuart Cheshire'>
+    <organization />
+</author>
+
+<date month='March' day='24' year='2019' />
+
+<abstract><t>This document specifies a network proxy that uses Multicast DNS to
+automatically populate the wide-area unicast Domain Name System namespace with
+records describing devices and services found on the local link.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-dnssd-hybrid-10' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-dnssd-hybrid-10.txt' />
+</reference>
+
     </references>
 
     <references title="Informative References">
