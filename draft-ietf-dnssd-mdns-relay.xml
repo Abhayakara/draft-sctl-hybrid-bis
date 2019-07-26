@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date year='2019' month='March' day='11'/>
+    <date year='2019' month='July' day='26'/>
 
     <abstract>
       <t>
@@ -88,9 +88,9 @@
 	When a Client connects, the connection is authenticated and secured using TLS.
 	The Client can then specify one or more multicast links from which it wishes to
 	receive mDNS traffic.  The Client can also send messages to be transmitted on
-	its behalf on one or more of those multicast links.  DNS Stateful Operations (DSO) <xref
-	target="I-D.ietf-dnsop-session-signal"/> is used as a framework for conveying interface
-	and IP header information associated with each message.
+	its behalf on one or more of those multicast links.
+	DNS Stateful Operations (DSO) <xref target="RFC8490"/> is used as a framework
+	for conveying interface and IP header information associated with each message.
 	DSO formats its messages using type-length-value (TLV) data structures.
 	This document defines additional DSO TLV types, used to implement the Discovery Relay functionality.
       </t>
@@ -193,8 +193,9 @@
 <?rfc needLines="13" ?>
 	<t>
 	  The stream encapsulated in TLS will carry DNS frames as in the DNS TCP protocol
-	  <xref target="RFC1035"/> Section 4.2.2.  However, all messages will be DSO
-	  messages <xref target="I-D.ietf-dnsop-session-signal"/>.  There will be
+	  <xref target="RFC1035"/> Section 4.2.2.
+	  However, all messages will be DSO messages <xref target="RFC8490"/>.
+	  There will be
 	  four types of such messages between Discovery Relays and Clients:
 	  <list style="symbols">
 	    <t>Control messages from Client to Relay</t>
@@ -229,7 +230,7 @@
 	<t>
 	  During periods with no traffic flowing, Clients are responsible for
 	  generating any necessary keepalive traffic, as stated in the DSO specification
-	  <xref target="I-D.ietf-dnsop-session-signal"/>.
+	  <xref target="RFC8490"/>.
 	</t>
       </section>
 
@@ -278,25 +279,25 @@
 	whitelist.  If the connection is not permitted either because of the source address or
 	the destination address, the Discovery Relay closes the connection.
 	If possible, before closing the connection, the Discovery Relay first sends a TLS user_canceled alert
-	(<xref target="I-D.ietf-tls-tls13"/> Section 6.1).
+	(<xref target="RFC8446"/> Section 6.1).
 	Discovery Relays SHOULD refuse to accept TCP connections to invalid destination addresses,
 	rather than accepting and then closing the connection, if this is possible.
       </t>
       <t>
 	Otherwise, the Discovery Relay will attempt to complete a TLS handshake with the
 	Client.  Clients are required to send the post_handshake_auth
-	extension (<xref target="I-D.ietf-tls-tls13"/> Section 4.2.5).  If a Discovery Relay
+	extension (<xref target="RFC8446"/> Section 4.2.5).  If a Discovery Relay
 	receives a ClientHello message with no post_handshake_auth extension, the Discovery
 	Relay rejects the connection with a certificate_required alert (<xref
-	target="I-D.ietf-tls-tls13"/> Section 6.2).
+	target="RFC8446"/> Section 6.2).
       </t>
       <t>
 	Once the TLS handshake is complete, the Discovery Relay MUST request post-handshake
-	authentication as described in (<xref target="I-D.ietf-tls-tls13"/> Section 4.6.2).  If
+	authentication (<xref target="RFC8446"/> Section 4.6.2).  If
 	the Client refuses to send a certificate, or the key presented does not match
 	the key associated with the IP address from which the connection originated, or the
 	CertificateVerify does not validate, the connection is dropped with the TLS
-	access_denied alert (<xref target="I-D.ietf-tls-tls13"/> Section 6.2).
+	access_denied alert (<xref target="RFC8446"/> Section 6.2).
       </t>
       <t>
 	Clients MUST validate server certificates.   If the client is configured with a server
@@ -320,9 +321,9 @@
       </t>
       <t>
 	Aliveness of connections between Clients and Relays is maintained as described
-	in Section 4 of <xref target="I-D.ietf-dnsop-session-signal"/>.  Clients must
+	in Section 4 of the DSO specification <xref target="RFC8490"/>.  Clients must
 	also honor the 'Retry Delay' TLV (section 5 of
-	<xref target="I-D.ietf-dnsop-session-signal"/>) if sent by the Discovery Relay.
+	<xref target="RFC8490"/>) if sent by the Discovery Relay.
       </t>
       <t>
 	Clients SHOULD avoid establishing more than one connection to a specific Discovery Relay.
@@ -365,7 +366,7 @@
 	packets will be dropped.  It is expected that regular mDNS retry processing will take
 	care of retransmission of lost packets.  The amount of buffer space is implementation
 	dependent, but generally should not be more than the bandwidth delay product of the TCP
-	connection <xref target="RFC1323"/>.  The Discovery Relay should use the
+	connection <xref target="RFC7323"/>.  The Discovery Relay should use the
 	TCP_NOTSENT_LOWAT mechanism <xref target="NOTSENT"/><xref target="PRIO"/> or equivalent,
 	to avoid building up a backlog of data in excess of the amount necessary to have in
 	flight to fill the bandwidth delay product of the TCP connection.
@@ -379,7 +380,7 @@
 	The source IP address and port of the message MUST be encoded in an IP Source TLV
 	(<xref target="ipsrc"/>).  The multicast link on which the message was received MUST be
 	encoded in a Link Identifier TLV (<xref target="linkid"/>).
-	As described in the DSO specification <xref target="I-D.ietf-dnsop-session-signal"/>,
+	As described in the DSO specification <xref target="RFC8490"/>,
 	a Client MUST silently ignore unrecognized Additional TLVs in mDNS messages,
 	and MUST NOT discard mDNS messages that include unrecognized Additional TLVs.
       </t>
@@ -945,7 +946,7 @@ Relay Downstairs
 	  Our assessment is that TLS 1.3 probably will be around for many years to come.
 	  <xref target="RFC2246">TLS 1.0</xref> was used for about a decade, and similarly
 	  <xref target="RFC5246">TLS 1.2</xref> was also used for about a decade.
-	  We expect <xref target="I-D.ietf-tls-tls13">TLS 1.3</xref> to have at least that lifespan.
+	  We expect <xref target="RFC8446">TLS 1.3</xref> to have at least that lifespan.
 	  In addition, recent IETF efforts are pushing for better software update practices
 	  for devices like routers, for other security reasons, making it likely that in ten years
 	  time it will be less common to be using routers that haven't had a software update for ten years.
@@ -966,7 +967,7 @@ Relay Downstairs
     <section title="IANA Considerations">
       <t>
 	The IANA is kindly requested to update the DSO Type Codes Registry
-	<xref target="I-D.ietf-dnsop-session-signal"/> by allocating codes for each of the TBD
+	<xref target="RFC8490"/> by allocating codes for each of the TBD
 	type codes listed in the following table, and by updating this document, here and in
 	<xref target="tlvs"/>.  Each type code should list this document as its reference
 	document.
@@ -997,27 +998,27 @@ Relay Downstairs
   <back>
 
     <references title="Normative References">
-      <?rfc include="reference.RFC.1035.xml"?>
-      <?rfc include="reference.RFC.1323.xml"?>
-      <?rfc include="reference.RFC.6125.xml"?>
-      <?rfc include="reference.RFC.6241.xml"?>
-      <?rfc include="reference.RFC.6762.xml"?>
+      <?rfc include="reference.RFC.1035"?>
+      <?rfc include="reference.RFC.6125"?>
+      <?rfc include="reference.RFC.6241"?>
+      <?rfc include="reference.RFC.6762"?>
       <?rfc include="reference.RFC.6763"?>
+      <?rfc include="reference.RFC.7323"?>
       <?rfc include="reference.RFC.7766"?>
       <?rfc include="reference.RFC.7788"?>
       <?rfc include="reference.RFC.8310"?>
+      <?rfc include="reference.RFC.8446"?>
+      <?rfc include="reference.RFC.8490"?>
       <?rfc include="reference.I-D.ietf-dnssd-hybrid"?>
-      <?rfc include="reference.I-D.sctl-discovery-broker"?>
-      <?rfc include="reference.I-D.ietf-dnsop-session-signal"?>
-      <?rfc include="reference.I-D.ietf-tls-tls13"?>
     </references>
 
     <references title="Informative References">
 
+      <?rfc include="reference.RFC.0951"?>
+      <?rfc include="reference.RFC.2246"?>
+      <?rfc include="reference.RFC.5246"?>
       <?rfc include="reference.I-D.ietf-mboned-ieee802-mcast-problems"?>
-      <?rfc include="reference.RFC.0951.xml"?>
-      <?rfc include="reference.RFC.2246.xml"?>
-      <?rfc include="reference.RFC.5246.xml"?>
+      <?rfc include="reference.I-D.sctl-discovery-broker"?>
       <reference anchor="TR-069"
                  target="https://www.broadband-forum.org/technical/download/TR-069_Amendment-5.pdf">
         <front>
