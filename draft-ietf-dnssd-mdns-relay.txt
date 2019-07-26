@@ -177,6 +177,14 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
 
 2.  Terminology
 
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.  These words may also appear in this
+   document in lower case as plain English words, absent their normative
+   meanings.
+
    The following definitions may be of use:
 
    Client  A network service that uses a Discovery Relay to send and
@@ -210,14 +218,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
       where the multiple Wi-Fi access points and their shared Ethernet
       backbone form a single unicast link (a single IPv4 subnet, or
       single IPv6 prefix) but not a single multicast link.  Unicast
-      packets sent directly between two hosts on that IPv4 subnet or
-      IPv6 prefix, without passing through an intervening IP-layer
-      router, are correctly delivered, but multicast packets are not
-      forwarded between the various Wi-Fi access points.  Given the
-      slowness of Wi-Fi multicast
-      [I-D.ietf-mboned-ieee802-mcast-problems], having a packet that may
-      be of interest to only one or two end systems transmitted to
-      hundreds of devices, across multiple Wi-Fi access points, is
 
 
 
@@ -226,6 +226,14 @@ Lemon & Cheshire        Expires January 27, 2020                [Page 4]
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
 
+      packets sent directly between two hosts on that IPv4 subnet or
+      IPv6 prefix, without passing through an intervening IP-layer
+      router, are correctly delivered, but multicast packets are not
+      forwarded between the various Wi-Fi access points.  Given the
+      slowness of Wi-Fi multicast
+      [I-D.ietf-mboned-ieee802-mcast-problems], having a packet that may
+      be of interest to only one or two end systems transmitted to
+      hundreds of devices, across multiple Wi-Fi access points, is
       especially wasteful.  Hence the common configuration decision to
       not forward multicast packets between Wi-Fi access points is very
       reasonable.  This further motivates the need for technologies like
@@ -242,14 +250,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
       sent it.  The service receiving the message may log the event, and
       may also count such events: "silently" does not preclude such
       behavior.
-
-
-
-
-
-
-
-
 
 
 
@@ -1471,6 +1471,11 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
               November 1987, <https://www.rfc-editor.org/info/rfc1035>.
 
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
    [RFC6125]  Saint-Andre, P. and J. Hodges, "Representation and
               Verification of Domain-Based Application Service Identity
               within Internet Public Key Infrastructure Using X.509
@@ -1501,11 +1506,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
               Requirements", RFC 7766, DOI 10.17487/RFC7766, March 2016,
               <https://www.rfc-editor.org/info/rfc7766>.
 
-   [RFC7788]  Stenberg, M., Barth, S., and P. Pfister, "Home Networking
-              Control Protocol", RFC 7788, DOI 10.17487/RFC7788, April
-              2016, <https://www.rfc-editor.org/info/rfc7788>.
-
-
 
 
 
@@ -1513,6 +1513,14 @@ Lemon & Cheshire        Expires January 27, 2020               [Page 27]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
+
+   [RFC7788]  Stenberg, M., Barth, S., and P. Pfister, "Home Networking
+              Control Protocol", RFC 7788, DOI 10.17487/RFC7788, April
+              2016, <https://www.rfc-editor.org/info/rfc7788>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
    [RFC8310]  Dickinson, S., Gillmor, D., and T. Reddy, "Usage Profiles
               for DNS over TLS and DNS over DTLS", RFC 8310,
@@ -1553,14 +1561,6 @@ Internet-Draft            mDNS Discovery Relay                 July 2019
               <https://insouciant.org/tech/prioritization-only-works-
               when-theres-pending-data-to-prioritize/>.
 
-   [RFC0951]  Croft, W. and J. Gilmore, "Bootstrap Protocol", RFC 951,
-              DOI 10.17487/RFC0951, September 1985,
-              <https://www.rfc-editor.org/info/rfc951>.
-
-   [RFC2246]  Dierks, T. and C. Allen, "The TLS Protocol Version 1.0",
-              RFC 2246, DOI 10.17487/RFC2246, January 1999,
-              <https://www.rfc-editor.org/info/rfc2246>.
-
 
 
 
@@ -1569,6 +1569,14 @@ Lemon & Cheshire        Expires January 27, 2020               [Page 28]
 
 Internet-Draft            mDNS Discovery Relay                 July 2019
 
+
+   [RFC0951]  Croft, W. and J. Gilmore, "Bootstrap Protocol", RFC 951,
+              DOI 10.17487/RFC0951, September 1985,
+              <https://www.rfc-editor.org/info/rfc951>.
+
+   [RFC2246]  Dierks, T. and C. Allen, "The TLS Protocol Version 1.0",
+              RFC 2246, DOI 10.17487/RFC2246, January 1999,
+              <https://www.rfc-editor.org/info/rfc2246>.
 
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
@@ -1598,14 +1606,6 @@ Authors' Addresses
 
    Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
-
-
-
-
-
-
-
-
 
 
 
