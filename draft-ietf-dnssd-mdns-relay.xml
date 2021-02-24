@@ -3,7 +3,7 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd">
 
 <rfc ipr="trust200902"
-     docName="draft-ietf-dnssd-mdns-relay-03"
+     docName="draft-ietf-dnssd-mdns-relay-04"
      category="std">
 
   <?rfc toc="yes"?> <?rfc symrefs="yes"?> <?rfc autobreaks="yes"?>
@@ -42,7 +42,7 @@
       </address>
     </author>
 
-    <date year='2020' month='July' day='13'/>
+    <date year='2021' month='February' day='22'/>
 
     <abstract>
       <t>
@@ -59,19 +59,24 @@
 <?rfc needLines="30" ?>
     <section anchor="intro" title="Introduction">
       <t>
+	This document defines a Discovery Relay.
+	A Discovery Relay is a companion technology that works in conjunction
+	with Discovery Proxies, and other clients.
+      </t>
+      <t>
 	The Discovery Proxy for Multicast DNS-Based Service Discovery
 	<xref target="RFC8766"/>
 	is a mechanism for discovering
-	services on a subnetted network through the use of Discovery Proxies,
-	which issue Multicast DNS (mDNS) requests <xref target="RFC6762"/>
+	services on a subnetted network through the use of Discovery Proxies.
+	Discovery Proxies issue Multicast DNS (mDNS) requests <xref target="RFC6762"/>
 	on various multicast links in the network on behalf of a remote host
 	performing DNS-Based Service Discovery <xref target="RFC6763"/>.
       </t>
       <t>
-        In the original Discovery Proxy specification, it is imagined that for every multicast link on
+        In the original Discovery Proxy specification, it was imagined that for every multicast link on
         which services will be discovered, a host will be present running a full Discovery
 	Proxy.  This document introduces a lightweight Discovery Relay that can be used
-	in conjunction with a Discovery Proxy
+	in conjunction with a central Discovery Proxy
 	to provide discovery services on a multicast link without requiring a full Discovery Proxy
 	on every multicast link.
       </t>
@@ -185,7 +190,7 @@
 	    This further motivates the need for technologies
 	    like Discovery Proxy and Discovery Relay to facilitate discovery on these networks.
 	  </t>
-	  <t hangText="whitelist">
+	  <t hangText="allow-list">
 	    A list of one or more IP addresses from which a Discovery Relay may accept
 	    connections.
 	  </t>
@@ -312,9 +317,9 @@
 	is bound to a specific IP address, this check is unnecessary.
       </t>
       <t>
-	If the relay is using an IP address whitelist, the next step is for
+	If the relay is using an IP address allow-list, the next step is for
 	the relay to verify that that the source IP address of the connection is on its
-	whitelist.  If the connection is not permitted either because of the source address or
+	allow-list.  If the connection is not permitted either because of the source address or
 	the destination address, the Discovery Relay closes the connection.
 	If possible, before closing the connection, the Discovery Relay first sends a TLS user_canceled alert
 	(<xref target="RFC8446"/> Section 6.1).
@@ -909,7 +914,7 @@ Relay upstairs
   listen-tuple fd00::1 1917
   link upstairs-wifi
   link upstairs-wired
-  client-whitelist main
+  client-allow-list main
 
 Relay downstairs
   certificate yyy
@@ -917,7 +922,7 @@ Relay downstairs
   listen-tuple fd00::2 2088
   link downstairs-wifi
   link downstairs-wired
-  client-whitelist main
+  client-allow-list main
 
 Proxy main
   certificate zzz

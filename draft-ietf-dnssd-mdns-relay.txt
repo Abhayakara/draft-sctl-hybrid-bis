@@ -5,11 +5,11 @@
 Network Working Group                                           T. Lemon
 Internet-Draft                                               S. Cheshire
 Intended status: Standards Track                              Apple Inc.
-Expires: January 14, 2021                                  July 13, 2020
+Expires: August 26, 2021                               February 22, 2021
 
 
                      Multicast DNS Discovery Relay
-                     draft-ietf-dnssd-mdns-relay-03
+                     draft-ietf-dnssd-mdns-relay-04
 
 Abstract
 
@@ -34,11 +34,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 14, 2021.
+   This Internet-Draft will expire on August 26, 2021.
 
 Copyright Notice
 
-   Copyright (c) 2020 IETF Trust and the persons identified as the
+   Copyright (c) 2021 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Lemon & Cheshire        Expires January 14, 2021                [Page 1]
+Lemon & Cheshire         Expires August 26, 2021                [Page 1]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 Table of Contents
@@ -109,27 +109,31 @@ Table of Contents
 
 
 
-Lemon & Cheshire        Expires January 14, 2021                [Page 2]
+Lemon & Cheshire         Expires August 26, 2021                [Page 2]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 1.  Introduction
 
+   This document defines a Discovery Relay.  A Discovery Relay is a
+   companion technology that works in conjunction with Discovery
+   Proxies, and other clients.
+
    The Discovery Proxy for Multicast DNS-Based Service Discovery
    [RFC8766] is a mechanism for discovering services on a subnetted
-   network through the use of Discovery Proxies, which issue Multicast
-   DNS (mDNS) requests [RFC6762] on various multicast links in the
-   network on behalf of a remote host performing DNS-Based Service
-   Discovery [RFC6763].
+   network through the use of Discovery Proxies.  Discovery Proxies
+   issue Multicast DNS (mDNS) requests [RFC6762] on various multicast
+   links in the network on behalf of a remote host performing DNS-Based
+   Service Discovery [RFC6763].
 
-   In the original Discovery Proxy specification, it is imagined that
+   In the original Discovery Proxy specification, it was imagined that
    for every multicast link on which services will be discovered, a host
    will be present running a full Discovery Proxy.  This document
    introduces a lightweight Discovery Relay that can be used in
-   conjunction with a Discovery Proxy to provide discovery services on a
-   multicast link without requiring a full Discovery Proxy on every
-   multicast link.
+   conjunction with a central Discovery Proxy to provide discovery
+   services on a multicast link without requiring a full Discovery Proxy
+   on every multicast link.
 
    The primary purpose of a Discovery Relay is providing remote virtual
    interface functionality to Discovery Proxies, and this document is
@@ -158,17 +162,18 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
    The Discovery Relay functions essentially as a set of one or more
    remote virtual interfaces for the Client, one on each multicast link
    to which the Discovery Relay is connected.  In a complex network, it
+
+
+
+Lemon & Cheshire         Expires August 26, 2021                [Page 3]
+
+Internet-Draft            mDNS Discovery Relay             February 2021
+
+
    is possible that more than one Discovery Relay will be connected to
    the same multicast link; in this case, the Client ideally should only
    be using one such Relay Proxy per multicast link, since using more
    than one will generate duplicate traffic.
-
-
-
-Lemon & Cheshire        Expires January 14, 2021                [Page 3]
-
-Internet-Draft            mDNS Discovery Relay                 July 2020
-
 
    How such duplication is detected and avoided is out of scope for this
    document; in principle it could be detected using HNCP [RFC7788] or
@@ -214,17 +219,16 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
       communicate with remote mDNS Agents, using the services of a
       Discovery Relay, is a Client of the Discovery Relay.
 
+
+
+Lemon & Cheshire         Expires August 26, 2021                [Page 4]
+
+Internet-Draft            mDNS Discovery Relay             February 2021
+
+
    Discovery Relay  A network service which relays mDNS messages
       received on a local link to a Client, and on behalf of that Client
       can transmit mDNS messages on a local link.
-
-
-
-
-Lemon & Cheshire        Expires January 14, 2021                [Page 4]
-
-Internet-Draft            mDNS Discovery Relay                 July 2020
-
 
    multicast link  A maximal set of network connection points, such that
       any host connected to any connection point in the set may send a
@@ -252,7 +256,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
       Discovery Proxy and Discovery Relay to facilitate discovery on
       these networks.
 
-   whitelist  A list of one or more IP addresses from which a Discovery
+   allow-list  A list of one or more IP addresses from which a Discovery
       Relay may accept connections.
 
    silently discard  When a message that is not supported or not
@@ -273,13 +277,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-
-
-
-
-Lemon & Cheshire        Expires January 14, 2021                [Page 5]
+Lemon & Cheshire         Expires August 26, 2021                [Page 5]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 3.  Protocol Overview
@@ -333,9 +333,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021                [Page 6]
+Lemon & Cheshire         Expires August 26, 2021                [Page 6]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
    Encapsulated mDNS messages from a Client to a Discovery Relay cause
@@ -389,9 +389,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021                [Page 7]
+Lemon & Cheshire         Expires August 26, 2021                [Page 7]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 4.  Connections between Clients and Relays (details)
@@ -406,9 +406,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
    configured on certain interfaces.  If the listener is bound to a
    specific IP address, this check is unnecessary.
 
-   If the relay is using an IP address whitelist, the next step is for
+   If the relay is using an IP address allow-list, the next step is for
    the relay to verify that that the source IP address of the connection
-   is on its whitelist.  If the connection is not permitted either
+   is on its allow-list.  If the connection is not permitted either
    because of the source address or the destination address, the
    Discovery Relay closes the connection.  If possible, before closing
    the connection, the Discovery Relay first sends a TLS user_canceled
@@ -445,9 +445,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021                [Page 8]
+Lemon & Cheshire         Expires August 26, 2021                [Page 8]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
    [RFC8310] Section 7.1, and uses the authentication method described
@@ -501,9 +501,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021                [Page 9]
+Lemon & Cheshire         Expires August 26, 2021                [Page 9]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 5.  Traffic from Relays to Clients
@@ -557,9 +557,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 10]
+Lemon & Cheshire         Expires August 26, 2021               [Page 10]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
    queued may arrive after the Client has discontinued its listening.
@@ -613,9 +613,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 11]
+Lemon & Cheshire         Expires August 26, 2021               [Page 11]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 6.  Traffic from Clients to Relays
@@ -669,9 +669,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 12]
+Lemon & Cheshire         Expires August 26, 2021               [Page 12]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 7.  Discovery Proxy Behavior
@@ -725,9 +725,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 13]
+Lemon & Cheshire         Expires August 26, 2021               [Page 13]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 8.  DSO TLVs
@@ -781,9 +781,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 14]
+Lemon & Cheshire         Expires August 26, 2021               [Page 14]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 8.3.  Link Identifier
@@ -837,9 +837,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 15]
+Lemon & Cheshire         Expires August 26, 2021               [Page 15]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 8.6.  Link State Request
@@ -893,9 +893,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 16]
+Lemon & Cheshire         Expires August 26, 2021               [Page 16]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 8.10.  Link Prefix
@@ -949,9 +949,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 17]
+Lemon & Cheshire         Expires August 26, 2021               [Page 17]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 9.  Provisioning
@@ -1005,9 +1005,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 18]
+Lemon & Cheshire         Expires August 26, 2021               [Page 18]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
    self-signed and PKIX-authenticated certificates, with PKIX, DANE or a
@@ -1061,9 +1061,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 19]
+Lemon & Cheshire         Expires August 26, 2021               [Page 19]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 9.1.1.  Multicast Link
@@ -1117,9 +1117,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 20]
+Lemon & Cheshire         Expires August 26, 2021               [Page 20]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 9.1.2.  Discovery Proxy
@@ -1173,9 +1173,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 21]
+Lemon & Cheshire         Expires August 26, 2021               [Page 21]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 9.1.3.  Discovery Relay
@@ -1229,9 +1229,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 22]
+Lemon & Cheshire         Expires August 26, 2021               [Page 22]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 9.2.  Configuration Files
@@ -1285,9 +1285,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 23]
+Lemon & Cheshire         Expires August 26, 2021               [Page 23]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
    The master file contains a list of Discovery Relays, Discovery
@@ -1301,7 +1301,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
                        listen-tuple fd00::1 1917
                        link upstairs-wifi
                        link upstairs-wired
-                       client-whitelist main
+                       client-allow-list main
 
                      Relay downstairs
                        certificate yyy
@@ -1309,7 +1309,7 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
                        listen-tuple fd00::2 2088
                        link downstairs-wifi
                        link downstairs-wired
-                       client-whitelist main
+                       client-allow-list main
 
                      Proxy main
                        certificate zzz
@@ -1341,9 +1341,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 24]
+Lemon & Cheshire         Expires August 26, 2021               [Page 24]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 9.3.  Discovery Proxy Private Configuration
@@ -1397,9 +1397,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 25]
+Lemon & Cheshire         Expires August 26, 2021               [Page 25]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 10.  Security Considerations
@@ -1453,9 +1453,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 26]
+Lemon & Cheshire         Expires August 26, 2021               [Page 26]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 11.  IANA Considerations
@@ -1509,9 +1509,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 27]
+Lemon & Cheshire         Expires August 26, 2021               [Page 27]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 13.  References
@@ -1565,9 +1565,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 28]
+Lemon & Cheshire         Expires August 26, 2021               [Page 28]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
@@ -1605,8 +1605,8 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
    [I-D.ietf-mboned-ieee802-mcast-problems]
               Perkins, C., McBride, M., Stanley, D., Kumari, W., and J.
               Zuniga, "Multicast Considerations over IEEE 802 Wireless
-              Media", draft-ietf-mboned-ieee802-mcast-problems-11 (work
-              in progress), December 2019.
+              Media", draft-ietf-mboned-ieee802-mcast-problems-12 (work
+              in progress), October 2020.
 
    [I-D.sctl-discovery-broker]
               Cheshire, S. and T. Lemon, "Service Discovery Broker",
@@ -1621,9 +1621,9 @@ Internet-Draft            mDNS Discovery Relay                 July 2020
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 29]
+Lemon & Cheshire         Expires August 26, 2021               [Page 29]
 
-Internet-Draft            mDNS Discovery Relay                 July 2020
+Internet-Draft            mDNS Discovery Relay             February 2021
 
 
    [PRIO]     Chan, W., "Prioritization Only Works When There's Pending
@@ -1677,4 +1677,4 @@ Authors' Addresses
 
 
 
-Lemon & Cheshire        Expires January 14, 2021               [Page 30]
+Lemon & Cheshire         Expires August 26, 2021               [Page 30]
