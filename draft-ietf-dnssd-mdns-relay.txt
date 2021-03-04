@@ -5,7 +5,7 @@
 Network Working Group                                           T. Lemon
 Internet-Draft                                               S. Cheshire
 Intended status: Standards Track                              Apple Inc.
-Expires: August 26, 2021                               February 22, 2021
+Expires: 26 August 2021                                 22 February 2021
 
 
                      Multicast DNS Discovery Relay
@@ -34,7 +34,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 26, 2021.
+   This Internet-Draft will expire on 26 August 2021.
 
 Copyright Notice
 
@@ -42,18 +42,18 @@ Copyright Notice
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
-   Provisions Relating to IETF Documents
-   (https://trustee.ietf.org/license-info) in effect on the date of
-   publication of this document.  Please review these documents
-   carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Simplified BSD License text as described in Section 4.e of
-   the Trust Legal Provisions and are provided without warranty as
-   described in the Simplified BSD License.
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Simplified BSD License text
+   as described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Simplified BSD License.
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 1]
+
+Lemon & Cheshire         Expires 26 August 2021                 [Page 1]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -67,34 +67,33 @@ Table of Contents
      3.2.  mDNS Messages On Multicast Links  . . . . . . . . . . . .   7
    4.  Connections between Clients and Relays (details)  . . . . . .   8
    5.  Traffic from Relays to Clients  . . . . . . . . . . . . . . .  10
-   6.  Traffic from Clients to Relays  . . . . . . . . . . . . . . .  12
-   7.  Discovery Proxy Behavior  . . . . . . . . . . . . . . . . . .  13
-   8.  DSO TLVs  . . . . . . . . . . . . . . . . . . . . . . . . . .  14
-     8.1.  mDNS Link Data Request  . . . . . . . . . . . . . . . . .  14
-     8.2.  mDNS Link Data Discontinue  . . . . . . . . . . . . . . .  14
-     8.3.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  15
-     8.4.  Encapsulated mDNS Message . . . . . . . . . . . . . . . .  15
-     8.5.  IP Source . . . . . . . . . . . . . . . . . . . . . . . .  15
-     8.6.  Link State Request  . . . . . . . . . . . . . . . . . . .  16
-     8.7.  Link State Discontinue  . . . . . . . . . . . . . . . . .  16
-     8.8.  Link Available  . . . . . . . . . . . . . . . . . . . . .  16
-     8.9.  Link Unavailable  . . . . . . . . . . . . . . . . . . . .  16
-     8.10. Link Prefix . . . . . . . . . . . . . . . . . . . . . . .  17
-   9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  18
-     9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  19
-       9.1.1.  Multicast Link  . . . . . . . . . . . . . . . . . . .  20
-       9.1.2.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  21
-       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  22
-     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  23
-     9.3.  Discovery Proxy Private Configuration . . . . . . . . . .  25
-     9.4.  Discovery Relay Private Configuration . . . . . . . . . .  25
-   10. Security Considerations . . . . . . . . . . . . . . . . . . .  26
-   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  27
-   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  27
-   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  28
-     13.1.  Normative References . . . . . . . . . . . . . . . . . .  28
-     13.2.  Informative References . . . . . . . . . . . . . . . . .  29
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  30
+   6.  Traffic from Clients to Relays  . . . . . . . . . . . . . . .  11
+   7.  Discovery Proxy Behavior  . . . . . . . . . . . . . . . . . .  12
+   8.  DSO TLVs  . . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     8.1.  mDNS Link Data Request  . . . . . . . . . . . . . . . . .  13
+     8.2.  mDNS Link Data Discontinue  . . . . . . . . . . . . . . .  13
+     8.3.  Link Identifier . . . . . . . . . . . . . . . . . . . . .  14
+     8.4.  Encapsulated mDNS Message . . . . . . . . . . . . . . . .  14
+     8.5.  IP Source . . . . . . . . . . . . . . . . . . . . . . . .  14
+     8.6.  Link State Request  . . . . . . . . . . . . . . . . . . .  15
+     8.7.  Link State Discontinue  . . . . . . . . . . . . . . . . .  15
+     8.8.  Link Available  . . . . . . . . . . . . . . . . . . . . .  15
+     8.9.  Link Unavailable  . . . . . . . . . . . . . . . . . . . .  15
+     8.10. Link Prefix . . . . . . . . . . . . . . . . . . . . . . .  16
+   9.  Provisioning  . . . . . . . . . . . . . . . . . . . . . . . .  16
+     9.1.  Provisioned Objects . . . . . . . . . . . . . . . . . . .  17
+       9.1.1.  Multicast Link  . . . . . . . . . . . . . . . . . . .  17
+       9.1.2.  Discovery Proxy . . . . . . . . . . . . . . . . . . .  18
+       9.1.3.  Discovery Relay . . . . . . . . . . . . . . . . . . .  19
+     9.2.  Configuration Files . . . . . . . . . . . . . . . . . . .  20
+     9.3.  Discovery Proxy Private Configuration . . . . . . . . . .  22
+     9.4.  Discovery Relay Private Configuration . . . . . . . . . .  22
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .  23
+   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  24
+   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  24
+   13. Normative References  . . . . . . . . . . . . . . . . . . . .  25
+   14. Informative References  . . . . . . . . . . . . . . . . . . .  26
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  27
 
 
 
@@ -109,7 +108,8 @@ Table of Contents
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 2]
+
+Lemon & Cheshire         Expires 26 August 2021                 [Page 2]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -165,7 +165,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 3]
+Lemon & Cheshire         Expires 26 August 2021                 [Page 3]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -221,7 +221,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 4]
+Lemon & Cheshire         Expires 26 August 2021                 [Page 4]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -246,15 +246,14 @@ Internet-Draft            mDNS Discovery Relay             February 2021
       IPv6 prefix, without passing through an intervening IP-layer
       router, are correctly delivered, but multicast packets are not
       forwarded between the various Wi-Fi access points.  Given the
-      slowness of Wi-Fi multicast
-      [I-D.ietf-mboned-ieee802-mcast-problems], having a packet that may
-      be of interest to only one or two end systems transmitted to
-      hundreds of devices, across multiple Wi-Fi access points, is
-      especially wasteful.  Hence the common configuration decision to
-      not forward multicast packets between Wi-Fi access points is very
-      reasonable.  This further motivates the need for technologies like
-      Discovery Proxy and Discovery Relay to facilitate discovery on
-      these networks.
+      slowness of Wi-Fi multicast [MCAST], having a packet that may be
+      of interest to only one or two end systems transmitted to hundreds
+      of devices, across multiple Wi-Fi access points, is especially
+      wasteful.  Hence the common configuration decision to not forward
+      multicast packets between Wi-Fi access points is very reasonable.
+      This further motivates the need for technologies like Discovery
+      Proxy and Discovery Relay to facilitate discovery on these
+      networks.
 
    allow-list  A list of one or more IP addresses from which a Discovery
       Relay may accept connections.
@@ -277,7 +276,8 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 5]
+
+Lemon & Cheshire         Expires 26 August 2021                 [Page 5]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -305,13 +305,13 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    DSO messages [RFC8490].  There will be four types of such messages
    between Discovery Relays and Clients:
 
-   o  Control messages from Client to Relay
+   *  Control messages from Client to Relay
 
-   o  Link status messages from Relay to Client
+   *  Link status messages from Relay to Client
 
-   o  Encapsulated mDNS messages from Client to Relay
+   *  Encapsulated mDNS messages from Client to Relay
 
-   o  Encapsulated mDNS messages from Relay to Client
+   *  Encapsulated mDNS messages from Relay to Client
 
    Clients can send four different control messages to Relays: Link
    State Request, Link State Discontinue, Link Data Request and Link
@@ -333,7 +333,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 6]
+Lemon & Cheshire         Expires 26 August 2021                 [Page 6]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -389,7 +389,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 7]
+Lemon & Cheshire         Expires 26 August 2021                 [Page 7]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -445,7 +445,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 8]
+Lemon & Cheshire         Expires 26 August 2021                 [Page 8]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -501,7 +501,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021                [Page 9]
+Lemon & Cheshire         Expires 26 August 2021                 [Page 9]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -557,7 +557,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021               [Page 10]
+Lemon & Cheshire         Expires 26 August 2021                [Page 10]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -567,56 +567,6 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    Relay does not respond to the Link Data Discontinue message other
    than to discontinue forwarding mDNS messages from the specified
    links.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 11]
-
-Internet-Draft            mDNS Discovery Relay             February 2021
-
 
 6.  Traffic from Clients to Relays
 
@@ -640,8 +590,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    TLV.  A superficial evaluation of this suggested that this might be a
    useful optimization, since when a query is issued, it will often be
    issued to all links.  However, on many link types, like Wi-Fi,
-   multicast traffic is expensive
-   [I-D.ietf-mboned-ieee802-mcast-problems] and should be generated
+   multicast traffic is expensive [MCAST] and should be generated
    frugally, so providing convenient ways to generate additional
    multicast traffic was determined to be an unwise optimization.  In
    addition, because of the way mDNS handles retries, it will almost
@@ -664,12 +613,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 12]
+Lemon & Cheshire         Expires 26 August 2021                [Page 11]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -725,7 +669,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021               [Page 13]
+Lemon & Cheshire         Expires 26 August 2021                [Page 12]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -781,7 +725,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021               [Page 14]
+Lemon & Cheshire         Expires 26 August 2021                [Page 13]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -837,7 +781,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021               [Page 15]
+Lemon & Cheshire         Expires 26 August 2021                [Page 14]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -893,7 +837,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021               [Page 16]
+Lemon & Cheshire         Expires 26 August 2021                [Page 15]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -908,51 +852,6 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    sixteen bytes.  DSO-TYPE is TBD-K.
 
    The Link Prefix TLV can only be used as a secondary TLV.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 17]
-
-Internet-Draft            mDNS Discovery Relay             February 2021
-
 
 9.  Provisioning
 
@@ -987,6 +886,18 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    Discovery Relays within such a network will be referred to in this
    section as a 'Discovery Domain'.
 
+
+
+
+
+
+
+
+Lemon & Cheshire         Expires 26 August 2021                [Page 16]
+
+Internet-Draft            mDNS Discovery Relay             February 2021
+
+
    Depending on the context, several different candidates for
    configuration of Discovery Proxies and Discovery Relays may be
    applicable.  The simplest such mechanism is a manual configuration
@@ -1001,15 +912,6 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    method is used is to some extent up to the implementation, but at a
    minimum, it should be possible to associate an IP address with a
    self-signed certificate, and it should be possible to validate both
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 18]
-
-Internet-Draft            mDNS Discovery Relay             February 2021
-
-
    self-signed and PKIX-authenticated certificates, with PKIX, DANE or a
    pre-configured trust anchor.
 
@@ -1026,46 +928,6 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    name.  Similarly, no two entities can have the same machine-readable
    name.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 19]
-
-Internet-Draft            mDNS Discovery Relay             February 2021
-
-
 9.1.1.  Multicast Link
 
    The description of a multicast link consists of:
@@ -1081,6 +943,17 @@ Internet-Draft            mDNS Discovery Relay             February 2021
       identify the link during provisioning, and must be present.
 
    hr-name  A human-readable user-friendly fully-qualified domain name
+
+
+
+
+
+
+Lemon & Cheshire         Expires 26 August 2021                [Page 17]
+
+Internet-Draft            mDNS Discovery Relay             February 2021
+
+
       for the multicast link.  This name MUST be unique within the
       Discovery Domain.  Each multicast link MUST have exactly one such
       name.  The hr-name MAY be the same as the ldh-name.  (The hr-name
@@ -1104,23 +977,14 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    On a large corporate network with hundreds of Wi-Fi access points,
    the individual link names of the hundreds of multicast links are less
    likely to be useful to end users.  In these cases, Discovery Broker
-   functionality [I-D.sctl-discovery-broker] may be used to translate
-   the many link names to something more meaningful to users.  For
-   example, in a building with 50 Wi-Fi access points, each with their
-   own link names, services on all the different physical links may be
-   presented to the user as appearing in 'headquarters.example.com'.  In
-   this case, the individual link names can be thought of similar to MAC
-   addresses or IPv6 addresses.  They are used internally by the
-   software as unique identifiers, but generally are not exposed to end
-   users.
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 20]
-
-Internet-Draft            mDNS Discovery Relay             February 2021
-
+   functionality [Broker] may be used to translate the many link names
+   to something more meaningful to users.  For example, in a building
+   with 50 Wi-Fi access points, each with their own link names, services
+   on all the different physical links may be presented to the user as
+   appearing in 'headquarters.example.com'.  In this case, the
+   individual link names can be thought of similar to MAC addresses or
+   IPv6 addresses.  They are used internally by the software as unique
+   identifiers, but generally are not exposed to end users.
 
 9.1.2.  Discovery Proxy
 
@@ -1138,6 +1002,13 @@ Internet-Draft            mDNS Discovery Relay             February 2021
       Host.  The public key in the certificate is used both to uniquely
       identify the Discovery Proxy and to authenticate connections from
       it.  The certificate should be signed by its own private key.
+
+
+
+Lemon & Cheshire         Expires 26 August 2021                [Page 18]
+
+Internet-Draft            mDNS Discovery Relay             February 2021
+
 
    private-key  the private key corresponding to the public key in the
       certificate.
@@ -1170,14 +1041,6 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    available on relays to which the Discovery Proxy is configured to
    communicate.
 
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 21]
-
-Internet-Draft            mDNS Discovery Relay             February 2021
-
-
 9.1.3.  Discovery Relay
 
    The description of a Discovery Relay consists of:
@@ -1195,6 +1058,14 @@ Internet-Draft            mDNS Discovery Relay             February 2021
       running on the same host, the same certificate can be used for
       both.  The public key in the certificate uniquely identifies the
       Discovery Relay and is used by a Discovery Relay Client (e.g., a
+
+
+
+Lemon & Cheshire         Expires 26 August 2021                [Page 19]
+
+Internet-Draft            mDNS Discovery Relay             February 2021
+
+
       Discovery Proxy) to verify that it is talking to the intended
       Discovery Relay after a TLS connection has been established.  The
       certificate must either be signed by its own key, or have a
@@ -1224,16 +1095,6 @@ Internet-Draft            mDNS Discovery Relay             February 2021
    prefixes seen on those interfaces.  The details of this sort of
    configuration are not specified in this document.
 
-
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 22]
-
-Internet-Draft            mDNS Discovery Relay             February 2021
-
-
 9.2.  Configuration Files
 
    For this discussion, we assume the simplest possible means of
@@ -1256,36 +1117,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 23]
+Lemon & Cheshire         Expires 26 August 2021                [Page 20]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -1331,6 +1163,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
                        id 4
                        hr-name Downstairs Wired
 
+                                  Figure 1
 
 
 
@@ -1340,8 +1173,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 24]
+Lemon & Cheshire         Expires 26 August 2021                [Page 21]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -1365,6 +1197,8 @@ Internet-Draft            mDNS Discovery Relay             February 2021
                          subscribe upstairs-wired
                          subscribe downstairs-wired
 
+                                  Figure 2
+
    When combined with the master file, this configuration is sufficient
    for the Discovery Proxy to identify and connect to the Discovery
    Relays that serve the links it is configured to support.
@@ -1379,6 +1213,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
                              Relay Downstairs
                                private-key yyy
 
+                                  Figure 3
 
 
 
@@ -1394,10 +1229,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 25]
+Lemon & Cheshire         Expires 26 August 2021                [Page 22]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -1453,7 +1285,7 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021               [Page 26]
+Lemon & Cheshire         Expires 26 August 2021                [Page 23]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -1470,18 +1302,27 @@ Internet-Draft            mDNS Discovery Relay             February 2021
             | DSO-TYPE | Status   | Name                      |
             +----------+----------+---------------------------+
             | TBD-R    | Standard | Link Data Request         |
+            +----------+----------+---------------------------+
             | TBD-D    | Standard | Link Data Discontinue     |
+            +----------+----------+---------------------------+
             | TBD-L    | Standard | Link Identifier           |
+            +----------+----------+---------------------------+
             | TBD-M    | Standard | Encapsulated mDNS Message |
+            +----------+----------+---------------------------+
             | TBD-S    | Standard | IP Source                 |
+            +----------+----------+---------------------------+
             | TBD-P    | Standard | Link State Request        |
+            +----------+----------+---------------------------+
             | TBD-Q    | Standard | Link State Discontinue    |
+            +----------+----------+---------------------------+
             | TBD-V    | Standard | Link Available            |
+            +----------+----------+---------------------------+
             | TBD-U    | Standard | Link Unavailable          |
+            +----------+----------+---------------------------+
             | TBD-K    | Standard | Link Prefix               |
             +----------+----------+---------------------------+
 
-                      DSO Type Codes to be allocated
+                  Table 1: DSO Type Codes to be allocated
 
 12.  Acknowledgments
 
@@ -1500,23 +1341,12 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-
-
-
-
-
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 27]
+Lemon & Cheshire         Expires 26 August 2021                [Page 24]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
 
-13.  References
-
-13.1.  Normative References
+13.  Normative References
 
    [RFC1035]  Mockapetris, P., "Domain names - implementation and
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
@@ -1561,18 +1391,16 @@ Internet-Draft            mDNS Discovery Relay             February 2021
               Control Protocol", RFC 7788, DOI 10.17487/RFC7788, April
               2016, <https://www.rfc-editor.org/info/rfc7788>.
 
-
-
-
-
-Lemon & Cheshire         Expires August 26, 2021               [Page 28]
-
-Internet-Draft            mDNS Discovery Relay             February 2021
-
-
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+
+
+Lemon & Cheshire         Expires 26 August 2021                [Page 25]
+
+Internet-Draft            mDNS Discovery Relay             February 2021
+
 
    [RFC8310]  Dickinson, S., Gillmor, D., and T. Reddy, "Usage Profiles
               for DNS over TLS and DNS over DTLS", RFC 8310,
@@ -1592,26 +1420,29 @@ Internet-Draft            mDNS Discovery Relay             February 2021
               Service Discovery", RFC 8766, DOI 10.17487/RFC8766, June
               2020, <https://www.rfc-editor.org/info/rfc8766>.
 
-13.2.  Informative References
+14.  Informative References
 
    [AdFam]    "IANA Address Family Numbers Registry",
               <https://www.iana.org/assignments/address-family-
               numbers/>.
 
    [AdProx]   Cheshire, S. and T. Lemon, "Advertising Proxy for DNS-SD
-              Service Registration Protocol", draft-sctl-advertising-
-              proxy-00 (work in progress), July 2020.
+              Service Registration Protocol", Work in Progress,
+              Internet-Draft, draft-sctl-advertising-proxy-00, 13 July
+              2020, <https://tools.ietf.org/html/draft-sctl-advertising-
+              proxy-00>.
 
-   [I-D.ietf-mboned-ieee802-mcast-problems]
-              Perkins, C., McBride, M., Stanley, D., Kumari, W., and J.
+   [Broker]   Cheshire, S. and T. Lemon, "Service Discovery Broker",
+              Work in Progress, Internet-Draft, draft-sctl-discovery-
+              broker-00, 3 July 2017, <https://tools.ietf.org/html/
+              draft-sctl-discovery-broker-00>.
+
+   [MCAST]    Perkins, C., McBride, M., Stanley, D., Kumari, W., and J.
               Zuniga, "Multicast Considerations over IEEE 802 Wireless
-              Media", draft-ietf-mboned-ieee802-mcast-problems-12 (work
-              in progress), October 2020.
-
-   [I-D.sctl-discovery-broker]
-              Cheshire, S. and T. Lemon, "Service Discovery Broker",
-              draft-sctl-discovery-broker-00 (work in progress), July
-              2017.
+              Media", Work in Progress, Internet-Draft, draft-ietf-
+              mboned-ieee802-mcast-problems-12, 26 October 2020,
+              <https://tools.ietf.org/html/draft-ietf-mboned-ieee802-
+              mcast-problems-12>.
 
    [NOTSENT]  Dumazet, E., "TCP_NOTSENT_LOWAT socket option", July 2013,
               <https://lwn.net/Articles/560082/>.
@@ -1621,7 +1452,8 @@ Internet-Draft            mDNS Discovery Relay             February 2021
 
 
 
-Lemon & Cheshire         Expires August 26, 2021               [Page 29]
+
+Lemon & Cheshire         Expires 26 August 2021                [Page 26]
 
 Internet-Draft            mDNS Discovery Relay             February 2021
 
@@ -1653,7 +1485,7 @@ Authors' Addresses
    Ted Lemon
    Apple Inc.
    One Apple Park Way
-   Cupertino, California  95014
+   Cupertino, California 95014
    United States of America
 
    Phone: +1 (408) 996-1010
@@ -1663,7 +1495,7 @@ Authors' Addresses
    Stuart Cheshire
    Apple Inc.
    One Apple Park Way
-   Cupertino, California  95014
+   Cupertino, California 95014
    United States of America
 
    Phone: +1 (408) 996-1010
@@ -1677,4 +1509,4 @@ Authors' Addresses
 
 
 
-Lemon & Cheshire         Expires August 26, 2021               [Page 30]
+Lemon & Cheshire         Expires 26 August 2021                [Page 27]

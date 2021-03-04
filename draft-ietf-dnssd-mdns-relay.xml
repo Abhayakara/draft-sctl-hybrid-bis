@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<!DOCTYPE rfc SYSTEM "rfc2629-xhtml.ent">
 
-<rfc ipr="trust200902"
-     docName="draft-ietf-dnssd-mdns-relay-04"
-     category="std">
-
-  <?rfc toc="yes"?> <?rfc symrefs="yes"?> <?rfc autobreaks="yes"?>
-  <?rfc tocindent="yes"?> <?rfc compact="yes"?> <?rfc subcompact="no"?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" consensus="true"
+     category="std" docName="draft-ietf-dnssd-mdns-relay-04" ipr="trust200902"
+     obsoletes="" updates="" submissionType="IETF" xml:lang="en"
+     tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true"
+     version="3">
 
   <front>
     <title abbrev="mDNS Discovery Relay">Multicast DNS Discovery Relay</title>
@@ -58,7 +57,7 @@
 
 <?rfc needLines="30" ?>
     <section anchor="intro" title="Introduction">
-      <t>
+      <t keepWithNext="true">
 	This document defines a Discovery Relay.
 	A Discovery Relay is a companion technology that works in conjunction
 	with Discovery Proxies, and other clients.
@@ -90,7 +89,7 @@
 	between the Client and the Relay, and the term "Discovery Proxy" when we are referring
 	specifically to a Discovery Relay Client that also happens to be a Discovery Proxy.
 	One example of another kind of device that can be a client of a
-	Discovery Relay is an Advertising Proxy <xref target="AdProx"/>.
+	Discovery Relay is an Advertising Proxy <xref target="I-D.sctl-advertising-proxy"/>.
       </t>
       <t>
 	The Discovery Relay operates by listening for TCP connections from Clients.
@@ -147,26 +146,32 @@
 
       <t>
 	The following definitions may be of use:
-	<list style="hanging">
-	  <t hangText="Client">
+      </t>
+	<dl>
+	  <dt>Client</dt>
+	  <dd>
 	    A network service that uses a Discovery Relay to send and receive mDNS multicast traffic on a remote link,
 	    to enable it to communicate with mDNS Agents on that remote link.
-	  </t>
-	  <t hangText="mDNS Agent">
+	  </dd>
+	  <dt>mDNS Agent</dt>
+	  <dd>
 	    A host which sends and/or responds to mDNS queries directly on its local link(s).
 	    Examples include network cameras, networked printers, networked home electronics, etc.
-	  </t>
-	  <t hangText="Discovery Proxy">
+	  </dd>
+	  <dt>Discovery Proxy</dt>
+	  <dd>
 	    A network service which receives well-formed questions using the DNS protocol,
 	    performs multicast DNS queries to find answers to those questions, and responds with those
 	    answers using the DNS protocol.  A Discovery Proxy that can communicate with
 	    remote mDNS Agents, using the services of a Discovery Relay, is a Client of the Discovery Relay.
-	  </t>
-	  <t hangText="Discovery Relay">
+	  </dd>
+	  <dt>Discovery Relay</dt>
+	  <dd>
 	    A network service which relays mDNS messages received on a local link to a Client,
 	    and on behalf of that Client can transmit mDNS messages on a local link.
-	  </t>
-	  <t hangText="multicast link">
+	  </dd>
+	  <dt>multicast link</dt>
+	  <dd>
 	    A maximal set of network connection points, such that any host connected to any
 	    connection point in the set may send a packet with a link-local multicast destination address
 	    (specifically the mDNS link-local multicast destination address <xref target="RFC6762"/>)
@@ -189,20 +194,21 @@
 	    Wi-Fi access points is very reasonable.
 	    This further motivates the need for technologies
 	    like Discovery Proxy and Discovery Relay to facilitate discovery on these networks.
-	  </t>
-	  <t hangText="allow-list">
+	  </dd>
+	  <dt>allow-list</dt>
+	  <dd>
 	    A list of one or more IP addresses from which a Discovery Relay may accept
 	    connections.
-	  </t>
-	  <t hangText="silently discard">
+	  </dd>
+	  <dt>silently discard</dt>
+	  <dd>
 	    When a message that is not supported or not permitted is received, and the
 	    required response to that message is to "silently discard" it, that means that
 	    no response is sent by the service that is discarding the message to the service
 	    that sent it.  The service receiving the message may log the event, and may also
 	    count such events: "silently" does not preclude such behavior.
-	  </t>
-	</list>
-      </t>
+	  </dd>
+	</dl>
       <t>
       Take care when reading this document not to confuse the terms
       "Discovery Proxy" and "Discovery Relay".
@@ -240,13 +246,13 @@
 	  However, all messages will be DSO messages <xref target="RFC8490"/>.
 	  There will be
 	  four types of such messages between Discovery Relays and Clients:
-	  <list style="symbols">
-	    <t>Control messages from Client to Relay</t>
-	    <t>Link status messages from Relay to Client</t>
-	    <t>Encapsulated mDNS messages from Client to Relay</t>
-	    <t>Encapsulated mDNS messages from Relay to Client</t>
-	  </list>
 	</t>
+	<ul>
+	    <li>Control messages from Client to Relay</li>
+	    <li>Link status messages from Relay to Client</li>
+	    <li>Encapsulated mDNS messages from Client to Relay</li>
+	    <li>Encapsulated mDNS messages from Relay to Client</li>
+	</ul>
 	<t>
 	  Clients can send four different control messages to Relays:
 	  Link State Request, Link State Discontinue,
@@ -302,12 +308,18 @@
 	  since it makes no sense for a Client to ask to have a query
 	  sent on its behalf if it's not able to receive the responses to that query.
 	</t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="40" ?>
       </section>
     </section>
 
     <section anchor="tlsconn" title="Connections between Clients and Relays (details)">
-      <t>
+      <t keepWithNext="true">
 	When a Discovery Relay starts, it opens a passive TCP listener to receive incoming connection requests
 	from Clients.  This listener may be bound to one or more source IP addresses,
 	or to the wildcard address, depending on the implementation.  When a connection is
@@ -316,7 +328,7 @@
 	are allowed, or to the IP addresses configured on certain interfaces.  If the listener
 	is bound to a specific IP address, this check is unnecessary.
       </t>
-      <t>
+      <t keepWithNext="true">
 	If the relay is using an IP address allow-list, the next step is for
 	the relay to verify that that the source IP address of the connection is on its
 	allow-list.  If the connection is not permitted either because of the source address or
@@ -381,18 +393,29 @@
 	contexts, for example when debugging, a Client may operate with no information about the
 	set of links supported by a relay, simply relying on the relay to provide one.
       </t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="40" ?>
     </section>
 
     <section title="Traffic from Relays to Clients">
-      <t>
+      <t keepWithNext="true">
 	The mere act of connecting to a Discovery Relay does not result in any mDNS traffic
 	being forwarded.  In order to request that mDNS traffic from a particular multicast link be
 	forwarded on a particular connection, the Client must send one or more DSO
 	messages, each containing a single mDNS Link Data Request TLV (<xref target="mDNSlinkrq"/>)
 	indicating the multicast link from which traffic is requested.
       </t>
-      <t>
+      <t keepWithNext="true">
 	When an mDNS Link Data Request message is received, the Discovery Relay validates that it
 	recognizes the link identifier, and that forwarding is enabled for that link.
 	If both checks are successful, it MUST send a response with RCODE=0 (NOERROR).
@@ -401,7 +424,7 @@
 	If the relay cannot satisfy the request for some other reason, for example resource
 	exhaustion, it sends a response with RCODE=2 (SERVFAIL).
       </t>
-      <t>
+      <t keepWithNext="true">
 	If the requested link is valid, the Relay begins forwarding all mDNS messages from that
 	link to the Client.  Delivery is not guaranteed: if there is no buffer space,
 	packets will be dropped.  It is expected that regular mDNS retry processing will take
@@ -472,11 +495,15 @@
 	Therefore, the complexity that this optimization adds is not justified by the
 	potential benefit, and this idea has been abandoned.
       </t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="40" ?>
     </section>
 
     <section title="Discovery Proxy Behavior">
-      <t>
+      <t keepWithNext="true">
 	Discovery Proxies treat multicast links for which Discovery Relay service is being used as if they
 	were virtual interfaces; in other words, a Discovery Proxy serving multiple remote multicast links using
 	multiple remote Discovery Relays behaves the same as a Discovery Proxy serving multiple local multicast links
@@ -508,11 +535,20 @@
 	current work in service discovery, and to benefit from wide-area service discovery
 	such client devices should be updated to support service discovery using unicast queries.
       </t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="30" ?>
     </section>
 
     <section anchor="tlvs" title="DSO TLVs">
-      <t>
+      <t keepWithNext="true">
 	This document defines a modest number of new DSO TLVs.
       </t>
       <section anchor="mDNSlinkrq" title="mDNS Link Data Request">
@@ -671,7 +707,7 @@
     </section>
 
     <section anchor="prov" title="Provisioning">
-      <t>
+      <t keepWithNext="true">
 	In order for a Discovery Proxy to use Discovery Relays, it must be configured with
 	sufficient information to identify multicast links on which service discovery is to be
 	supported and, if it is not running on a host that is directly connected to those
@@ -730,27 +766,30 @@
 	<section title="Multicast Link">
 	  <t>
 	    The description of a multicast link consists of:
-	    <list style="hanging">
-	      <t hangText="link-identifier">
+	  </t>
+	  <dl>
+	    <dt>link-identifier</dt>
+	    <dd>
 		A 32-bit identifier that uniquely identifies that link within the Discovery
 		Domain.  Each link MUST have exactly one such identifier.  Link Identifiers do
 		not have any special semantics, and are not intended to be human-readable.
-	      </t>
-	      <t hangText="ldh-name">
+	    </dd>
+	    <dt>ldh-name</dt>
+	    <dd>
 		A fully-qualified domain name for the multicast link that is used to form an LDH
 		domain name as described in section 5.3 of the Discovery Proxy specification
 		<xref target="RFC8766"/>.  This name is used to identify the link
 		during provisioning, and must be present.
-	      </t>
-	      <t hangText="hr-name">
+	    </dd>
+	    <dt>hr-name</dt>
+	    <dd>
 		A human-readable user-friendly fully-qualified domain name for the multicast
 		link.  This name MUST be unique within the Discovery Domain.  Each multicast
 		link MUST have exactly one such name.  The hr-name MAY be the same as the
 		ldh-name.  (The hr-name is allowed to contain spaces, punctuation and rich text,
 		but it is not required to do so.)
-	      </t>
-	    </list>
-	  </t>
+	    </dd>
+	  </dl>
 	  <t>
 	    The ldh-name and hr-name can be used to form the LDH and human-readable
 	    domain names as described in <xref target="RFC8766"/>, section 5.3.
@@ -786,30 +825,37 @@
 	<section title="Discovery Proxy">
 	  <t>
 	    The description of a Discovery Proxy consists of:
-	    <list style="hanging">
-	      <t hangText="name">
+	  </t>
+	    <dl>
+	      <dt>name</dt>
+	      <dd>
 		a machine-readable name used to reference this Discovery Proxy in provisioning.
-	      </t>
-	      <t hangText="hr-name">
+	      </dd>
+	      <dt>hr-name</dt>
+	      <dd>
 		an optional human-readable name which can appear in provisioning, monitoring and
 		debugging systems.  Must be unique within a Discovery Domain.
-	      </t>
-	      <t hangText="certificate">
+	      </dd>
+	      <dt>certificate</dt>
+	      <dd>
 		a certificate that identifies the Discovery Proxy. This certificate can be shared across
 		services on the Discovery Proxy Host.  The public key in the certificate is used both to uniquely
 		identify the Discovery Proxy and to authenticate connections from it.   The certificate should
 		be signed by its own private key.
-	      </t>
-	      <t hangText="private-key">
+	      </dd>
+	      <dt>private-key</dt>
+	      <dd>
 		the private key corresponding to the public key in the certificate.
-	      </t>
-	      <t hangText="source-ip-addresses">
+	      </dd>
+	      <dt>source-ip-addresses</dt>
+	      <dd>
 		a list of IP addresses that may be used by the Discovery Proxy when connecting
 		to Discovery Relays.  These addresses should be addresses that are configured
 		on the Discovery Proxy Host.  They should not be temporary addresses.  All
 		such addresses must be reachable within the Discovery Domain.
-	      </t>
-	      <t hangText="public-ip-addresses">
+	      </dd>
+	      <dt>public-ip-addresses</dt>
+	      <dd>
 		a list of IP addresses that a Discovery Proxy listens on to receive requests from clients.
 		This is not used for interoperation with Discovery Relays, but is
 		mentioned here for completeness:
@@ -819,12 +865,12 @@
 		If any of these addresses are reachable from outside
 		of the Discovery Domain, services in that domain will be discoverable outside of
 		the domain.
-	      </t>
-	      <t hangText="multicast links">
+	      </dd>
+	      <dt>multicast links</dt>
+	      <dd>
 		a list of multicast links on which this Discovery Proxy is expected to provide service
-	      </t>
-	    </list>
-	  </t>
+	      </dd>
+	    </dl>
 	  <t>
 	    The private key should never be distributed to other hosts; all of the other
 	    information describing a Discovery Proxy can be safely shared with Discovery Relays.
@@ -838,15 +884,19 @@
 	<section title="Discovery Relay">
 	  <t>
 	    The description of a Discovery Relay consists of:
-	    <list style="hanging">
-	      <t hangText="name">
+	  </t>
+	    <dl>
+	      <dt>name</dt>
+	      <dd>
 		a required machine-readable identifier used to reference the relay
-	      </t>
-	      <t hangText="hr-name">
+	      </dd>
+	      <dt>hr-name</dt>
+	      <dd>
 		an optional human-readable name which can appear in provisioning, monitoring and
 		debugging systems.  Must be unique within a Discovery Domain.
-	      </t>
-	      <t hangText="certificate">
+	      </dd>
+	      <dt>certificate</dt>
+	      <dd>
 		a certificate that identifies the Discovery Relay. This certificate can be shared across
 		services on the Discovery Relay Host.  Indeed, if a Discovery Proxy and Discovery
 		Relay are running on the same host, the same certificate can be used for both.  The public
@@ -855,20 +905,22 @@
 		to verify that it is talking to the intended Discovery Relay after a TLS connection
 		has been established.   The certificate must either be signed by its own key, or have a signature
 		chain that can be validated using PKIX authentication <xref target="RFC6125"/>.
-	      </t>
-	      <t hangText="private-key">
+	      </dd>
+	      <dt>private-key</dt>
+	      <dd>
 		the private key corresponding to the public key in the certificate.
-	      </t>
-	      <t hangText="listen-tuple">
+	      </dd>
+	      <dt>listen-tuple</dt>
+	      <dd>
 		a list of IP address/port tuples that may be used to connect to the Discovery
 		Relay.  The relay may be configured to listen on all addresses on a single port,
 		but this is not required, so the port as well as the address must be specified.
-	      </t>
-	      <t hangText="multicast links">
+	      </dd>
+	      <dt>multicast links</dt>
+	      <dd>
 		a list of multicast links to which this relay is physically connected.
-	      </t>
-	    </list>
-	  </t>
+	      </dd>
+	    </dl>
 	  <t>
 	    The private key should never be distributed to other hosts; all of the other
 	    information describing a Discovery Relay can be safely shared with Discovery
@@ -981,12 +1033,17 @@ Proxy main
 Relay Downstairs
   private-key yyy
 ]]></artwork></figure>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="20" ?>
       </section>
     </section>
 
     <section anchor="security" title="Security Considerations">
-	<t>
+	<t keepWithNext="true">
 	  Part of the purpose of the Multicast DNS Discovery Relay protocol is to place a simple relay,
 	  analogous to a BOOTP relay, into routers and similar devices that may not be updated frequently.
 	  The <xref target="RFC0951">BOOTP</xref> protocol has been around since 1985, and continues to be useful today.
@@ -1012,90 +1069,114 @@ Relay Downstairs
 	  we feel that in such a future hypothetical scenario, using even a weak encryption algorithm
 	  still makes passive eavesdropping and tampering harder, and is preferable to using no encryption at all.
 	</t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="48" ?>
     </section>
 
     <section title="IANA Considerations">
-      <t>
+      <t keepWithNext="true">
 	The IANA is kindly requested to update the DSO Type Codes Registry
 	<xref target="RFC8490"/> by allocating codes for each of the TBD
 	type codes listed in the following table, and by updating this document, here and in
 	<xref target="tlvs"/>.  Each type code should list this document as its reference
 	document.
       </t>
-      <texttable title="DSO Type Codes to be allocated">
-	<ttcol>DSO-TYPE</ttcol>	<ttcol>Status</ttcol>	<ttcol>Name</ttcol>
-	<c>TBD-R</c>		<c>Standard</c>		<c>Link Data Request</c>
-	<c>TBD-D</c>		<c>Standard</c>		<c>Link Data Discontinue</c>
-	<c>TBD-L</c>		<c>Standard</c>		<c>Link Identifier</c>
-	<c>TBD-M</c>		<c>Standard</c>		<c>Encapsulated mDNS Message</c>
-	<c>TBD-S</c>		<c>Standard</c>		<c>IP Source</c>
-	<c>TBD-P</c>		<c>Standard</c>		<c>Link State Request</c>
-	<c>TBD-Q</c>		<c>Standard</c>		<c>Link State Discontinue</c>
-	<c>TBD-V</c>		<c>Standard</c>		<c>Link Available</c>
-	<c>TBD-U</c>		<c>Standard</c>		<c>Link Unavailable</c>
-	<c>TBD-K</c>		<c>Standard</c>		<c>Link Prefix</c>
-      </texttable>
+      <table>
+      <name>DSO Type Codes to be allocated</name>
+      <thead>
+	<tr><td>DSO-TYPE</td>	<td>Status</td>	        <td>Name</td></tr>
+      </thead>
+      <tbody>
+	<tr><td>TBD-R</td>		<td>Standard</td>		<td>Link Data Request</td></tr>
+	<tr><td>TBD-D</td>		<td>Standard</td>		<td>Link Data Discontinue</td></tr>
+	<tr><td>TBD-L</td>		<td>Standard</td>		<td>Link Identifier</td></tr>
+	<tr><td>TBD-M</td>		<td>Standard</td>		<td>Encapsulated mDNS Message</td></tr>
+	<tr><td>TBD-S</td>		<td>Standard</td>		<td>IP Source</td></tr>
+	<tr><td>TBD-P</td>		<td>Standard</td>		<td>Link State Request</td></tr>
+	<tr><td>TBD-Q</td>		<td>Standard</td>		<td>Link State Discontinue</td></tr>
+	<tr><td>TBD-V</td>		<td>Standard</td>		<td>Link Available</td></tr>
+	<tr><td>TBD-U</td>		<td>Standard</td>		<td>Link Unavailable</td></tr>
+	<tr><td>TBD-K</td>		<td>Standard</td>		<td>Link Prefix</td></tr>
+      </tbody>
+      </table>
     </section>
 
     <section title="Acknowledgments">
       <t>
 	Thanks to Derek Atkins for the secdir early review.
       </t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="48" ?>
     </section>
   </middle>
 
   <back>
 
+<displayreference target="I-D.ietf-mboned-ieee802-mcast-problems" to="MCAST"/>
+<displayreference target="I-D.sctl-discovery-broker"              to="Broker"/>
+<displayreference target="I-D.sctl-advertising-proxy"             to="AdProx"/>
+
     <references title="Normative References">
-      <?rfc include="reference.RFC.1035"?>
-      <?rfc include="reference.RFC.2119"?>
-      <?rfc include="reference.RFC.6125"?>
-      <?rfc include="reference.RFC.6241"?>
-      <?rfc include="reference.RFC.6762"?>
-      <?rfc include="reference.RFC.6763"?>
-      <?rfc include="reference.RFC.7323"?>
-      <?rfc include="reference.RFC.7766"?>
-      <?rfc include="reference.RFC.7788"?>
-      <?rfc include="reference.RFC.8174"?>
-      <?rfc include="reference.RFC.8310"?>
-      <?rfc include="reference.RFC.8446"?>
-      <?rfc include="reference.RFC.8490"?>
-      <?rfc include="reference.RFC.8766"?>
+        <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.1035.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6125.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6241.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6762.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6763.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7323.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7766.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7788.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8310.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8490.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8766.xml"/>
     </references>
 
     <references title="Informative References">
-
-      <?rfc include="reference.RFC.0951"?>
-      <?rfc include="reference.RFC.2246"?>
-      <?rfc include="reference.RFC.5246"?>
-      <?rfc include="reference.I-D.ietf-mboned-ieee802-mcast-problems"?>
-      <?rfc include="reference.I-D.sctl-discovery-broker"?>
-
-<reference anchor='AdProx'>
-<front>
-<title>Advertising Proxy for DNS-SD Service Registration Protocol</title>
-<author initials="S." surname="Cheshire" fullname="Stuart Cheshire">
-    <organization />
-</author>
-<author initials="T." surname="Lemon" fullname="Ted Lemon">
-    <organization />
-</author>
-<date month='July' day='13' year='2020' />
-<abstract>
-      <t>An Advertising Proxy allows a device
-      that accepts service registra-tions using
-      Service Registration Protocol (SRP)
-      to make those regis-trations visible
-      to legacy clients that only implement Multicast DNS.</t>
-</abstract>
-</front>
-<seriesInfo name='Internet-Draft' value='draft-sctl-advertising-proxy-00' />
-<format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-sctl-advertising-proxy-00.txt' />
-</reference>
-
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.0951.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2246.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-mboned-ieee802-mcast-problems.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.sctl-discovery-broker.xml"/>
+      <xi:include
+          href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.sctl-advertising-proxy.xml"/>
 
       <reference anchor="TR-069"
                  target="https://www.broadband-forum.org/technical/download/TR-069_Amendment-5.pdf">
