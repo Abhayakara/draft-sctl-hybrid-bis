@@ -60,7 +60,7 @@
       <t keepWithNext="true">
 	This document defines a Discovery Relay.
 	A Discovery Relay is a companion technology that works in conjunction
-	with Discovery Proxies, and other clients.
+	with Discovery Proxies <xref target="RFC8766"/>, and other clients.
       </t>
       <t>
 	The Discovery Proxy for Multicast DNS-Based Service Discovery
@@ -72,12 +72,14 @@
 	performing DNS-Based Service Discovery <xref target="RFC6763"/>.
       </t>
       <t>
-        In the original Discovery Proxy specification, it was imagined that for every multicast link on
+        In the original Discovery Proxy specification <xref target="RFC8766"/>,
+        it was imagined that for every multicast link on
         which services will be discovered, a host will be present running a full Discovery
 	Proxy.  This document introduces a lightweight Discovery Relay that can be used
-	in conjunction with a central Discovery Proxy
+	in conjunction with a central Discovery Proxy,
 	to provide discovery services on a multicast link without requiring a full Discovery Proxy
 	on every multicast link.
+	[SC: I plan to add a diagram here.]
       </t>
       <t>
 	The primary purpose of a Discovery Relay is providing remote virtual interface
@@ -214,7 +216,8 @@
       "Discovery Proxy" and "Discovery Relay".
       A Discovery Proxy <xref target="RFC8766"/>
       provides Multicast DNS discovery service to remote clients.
-      A Discovery Relay is a simple software entity that provides
+      A Discovery Relay (defined in this document)
+      is a simple software entity that provides
       virtual link connectivity to one or more Discovery Proxies
       or other Discovery Relay clients.
       </t>
@@ -250,15 +253,15 @@
 	<ul>
 	    <li>Control messages from Client to Relay</li>
 	    <li>Link status messages from Relay to Client</li>
-	    <li>Encapsulated mDNS messages from Client to Relay</li>
 	    <li>Encapsulated mDNS messages from Relay to Client</li>
+	    <li>Encapsulated mDNS messages from Client to Relay</li>
 	</ul>
 	<t>
 	  Clients can send four different control messages to Relays:
 	  Link State Request, Link State Discontinue,
 	  Link Data Request and Link Data Discontinue.
 	  The first two are used by the Client to request that the Relay report on the set of
-	  links that can be requested, and to request that it discontinue such reporting.
+	  available links, and to request that it discontinue such reporting.
 	  The second two are used by the Client to indicate to the Discovery Relay that mDNS
 	  messages from one or more specified multicast links are to be relayed to the Client,
 	  and to subsequently stop such relaying.
@@ -307,6 +310,12 @@
 	  the Client does not have an active subscription,
 	  since it makes no sense for a Client to ask to have a query
 	  sent on its behalf if it's not able to receive the responses to that query.
+	  If a Client sends an encapsulated mDNS message
+	  for transmission on a link
+	  for which the client does not have
+	  a current Link Data Request subscription,
+	  that is a fatal error and the Discovery Relay MUST
+	  immediately abort that DSO session with a TCP reset (RST).
 	</t>
       <t></t>
       <t></t>
@@ -323,14 +332,15 @@
 	When a Discovery Relay starts, it opens a passive TCP listener to receive incoming connection requests
 	from Clients.  This listener may be bound to one or more source IP addresses,
 	or to the wildcard address, depending on the implementation.  When a connection is
-	received, the relay must first validate that it is a connection to an IP address to
+	received, the Relay must first validate that it is a connection to an IP address to
 	which connections are allowed.  For example, it may be that only connections to ULAs
 	are allowed, or to the IP addresses configured on certain interfaces.  If the listener
-	is bound to a specific IP address, this check is unnecessary.
+	is bound to a specific IP address, this check is performed automatically by the lower
+	layers of the networking stack.
       </t>
       <t keepWithNext="true">
-	If the relay is using an IP address allow-list, the next step is for
-	the relay to verify that that the source IP address of the connection is on its
+	If the Relay is using an IP address allow-list, the next step is for
+	the Relay to verify that that the source IP address of the connection is on its
 	allow-list.  If the connection is not permitted either because of the source address or
 	the destination address, the Discovery Relay closes the connection.
 	If possible, before closing the connection, the Discovery Relay first sends a TLS user_canceled alert
@@ -357,7 +367,7 @@
       <t>
 	Clients MUST validate server certificates.   If the client is configured with a server
 	IP address and certificate, it can validate the server by comparing the certificate
-	offered by the server to the certificate that was provided: they should be the same.
+	offered by the server to the certificate that was provided: they should match.
 	If the certificate includes a Distinguished Name that is a fully-qualified domain name,
 	the client SHOULD present that domain name to the server in an SNI request.
       </t>
@@ -371,7 +381,7 @@
 	copy of the server certificate can be used, as in the previous paragraph.
       </t>
       <t>
-	Once the connection is established and authenticated, it is treated as a DNS TCP
+	Once the TLS session is established and authenticated, it is treated as a DNS TCP
 	connection <xref target="RFC7766"/>.
       </t>
       <t>
@@ -390,8 +400,8 @@
 	links supported by the Relay.  However, in some networking contexts, dynamic changes in
 	the availability of links are likely; therefore Clients may also use the Report Link
 	Changes TLV to request that the Relay report on the availability of its links.  In some
-	contexts, for example when debugging, a Client may operate with no information about the
-	set of links supported by a relay, simply relying on the relay to provide one.
+	contexts, for example when debugging, a Client may operate with no advance information about the
+	set of links supported by a Relay, simply relying on the Relay to provide the list.
       </t>
       <t></t>
       <t></t>
@@ -416,13 +426,11 @@
 	indicating the multicast link from which traffic is requested.
       </t>
       <t keepWithNext="true">
-	When an mDNS Link Data Request message is received, the Discovery Relay validates that it
-	recognizes the link identifier, and that forwarding is enabled for that link.
-	If both checks are successful, it MUST send a response with RCODE=0 (NOERROR).
-	If the link identifier is not recognized, it sends a response with RCODE=3 (NXDOMAIN/Name Error).
-	If forwarding from that link to the Client is not enabled, it sends a response with RCODE=5 (REFUSED).
-	If the relay cannot satisfy the request for some other reason, for example resource
-	exhaustion, it sends a response with RCODE=2 (SERVFAIL).
+	When an mDNS Link Data Request message is received, the Discovery Relay records the request.
+	If the link identifier is recognized and forwarding is enabled for that link,
+	then forwarding begins immediately.
+	If the referenced link is not currently available, then the request is held
+	and forwarding begins if that link becomes available at a later time.
       </t>
       <t keepWithNext="true">
 	If the requested link is valid, the Relay begins forwarding all mDNS messages from that
@@ -465,7 +473,7 @@
 
     <section title="Traffic from Clients to Relays">
       <t>
-	Like mDNS traffic from relays, each mDNS message sent by a Client to a
+	Like mDNS traffic from Relays, each mDNS message sent by a Client to a
 	Discovery Relay is communicated in an Encapsulated mDNS Message TLV (<xref target="mDNSmessage"/>)
 	within a DSO message.  Each message MUST contain exactly one Link
 	Identifier TLV (<xref target="linkid"/>).  The Discovery Relay will transmit the
@@ -504,15 +512,16 @@
 
     <section title="Discovery Proxy Behavior">
       <t keepWithNext="true">
-	Discovery Proxies treat multicast links for which Discovery Relay service is being used as if they
+	Discovery Proxies <xref target="RFC8766"/>
+	treat multicast links for which Discovery Relay service is being used as if they
 	were virtual interfaces; in other words, a Discovery Proxy serving multiple remote multicast links using
 	multiple remote Discovery Relays behaves the same as a Discovery Proxy serving multiple local multicast links
 	using multiple local physical network interfaces.  In this section we refer to multicast links served
 	directly by the Discovery Proxy as locally-connected links, and multicast links served through the
 	Discovery Relay as relay-connected links.
-	A relay-connected link can be thought of as similar to
-	a link that a Discovery Proxy connects to using a USB Ethernet interface,
-	just with a very long USB cable (that runs over TCP).
+	A relay-connected link can be thought of as being similar to
+	a link that a Discovery Proxy connects to directly using a USB-connected Ethernet interface,
+	except with a very long USB cable (that runs over TCP).
       </t>
       <t>
 	When a Discovery Proxy receives a DNS query from a DNS client via
@@ -527,14 +536,15 @@
 	and forwarded to the Client; the Client then processes these messages
 	using the link-identifying information included in the encapsulation.
       </t>
-      <t>
-	In principle it could be the case that some device is capable of performing service
-	discovery using Multicast DNS, but not using traditional unicast DNS.
-	Responding to mDNS queries received from the Discovery Relay could address this use case.
-	However, continued reliance on multicast is counter to the goals of the
-	current work in service discovery, and to benefit from wide-area service discovery
-	such client devices should be updated to support service discovery using unicast queries.
-      </t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
       <t></t>
       <t></t>
       <t></t>
@@ -549,22 +559,120 @@
 
     <section anchor="tlvs" title="DSO TLVs">
       <t keepWithNext="true">
-	This document defines a modest number of new DSO TLVs.
+	This document defines a modest number of new DSO TLVs
+	to support the operation of Discovery Relays.
       </t>
+      <t>
+	Several of these new DSO TLVs for Discovery Relay
+	use a construct called a Discovery Relay Link Identifier.
+	A Discovery Relay Link Identifier is a five-byte entity,
+	consisting of an one-byte address family
+	followed by a four-byte link index.
+	The one-byte address family is an 8-bit value,
+	where 1 indicates IPv4 and 2 indicates IPv6, as recorded in
+	the IANA Registry of Address Family Numbers <xref target="AdFam"/>.
+	The four-byte link index is a 32-bit unsigned integer
+	in network (big endian) byte order indicating 
+	which interface on the Discovery Relay is being referred to,
+	for the specified address family.
+	For the purposes of Discovery Relay,
+	IPv4 on a given physical link and
+	IPv6 on the same physical link
+	are treated as if they were two
+	unrelated logical links, since
+	IPv4-only hosts on that link will not receive
+	any IPv6 multicast packets on that link,
+	and vice versa.
+      </t>
+      <t>SC: I plan to add a table here summarizing the new TLVs and what data they carry.</t>
+
+      <section anchor="reporch" title="Link State Request">
+	<t>
+	  The Link State Request TLV requests that the Discovery Relay report link changes.
+	  When the Relay is reporting link changes and a new link becomes available, it sends a
+	  Link Available message to the Client.  When a link becomes unavailable, it sends a
+	  Link Unavailable message to the Client.  If there are links available when the request
+	  is received, then for each such link the Relay immediately sends a Link Available
+	  Message to the Client.
+	  It is optional for a Client to use the Link State Request TLV.
+	  If a Client already knows the Link Identifiers it wishes to use via some other means
+	  then it can use these Link Identifiers directly, without issuing a prior Link State Request.
+	  The DSO-TYPE for this TLV is TBD-P.
+	  DSO-LENGTH is 0.
+	</t>
+	<t>
+	  The mDNS Link State Request TLV can only be used as a primary TLV, and requires an
+	  acknowledgement.  The acknowledgment does not contain a Link Available TLV: it is just a
+	  response to the Link State Request message.
+	  [SC: Do we need an acknowledgement?]
+	</t>
+	<t>
+	  A Client MUST NOT send duplicate Link State Requests.
+	  If a client sends a second Link State Request when
+	  it already has a Link State Request active on that DSO session,
+	  this is a fatal error and the Discovery Relay MUST
+	  immediately abort that DSO session with a TCP reset (RST).
+	</t>
+      </section>
+      <section anchor="streporch" title="Link State Discontinue">
+	<t>
+	  The Link State Discontinue TLV requests that the Discovery Relay stop reporting
+	  on the availability of links supported by the Relay.  This cancels the effect of a
+	  previous Link State Request TLV.
+	  The DSO-TYPE for this TLV is TBD-Q.
+	  DSO-LENGTH is 0.
+	</t>
+	<t>
+	  The mDNS Link State Discontinue TLV can only be used as a DSO unidirectional message TLV, and is not
+	  acknowledged.
+	</t>
+      </section>
+      <section anchor="lava" title="Link Available">
+	<t>
+	  The Link Available TLV is used by Discovery Relays to indicate to Clients that a new
+	  link has become available.
+	  The DSO-TYPE for this TLV is TBD-V.
+	  DSO-LENGTH is always 5.
+	  DSO-DATA is a Discovery Relay Link Identifier.
+	  The Link Available TLV MAY be accompanied by one or more Link
+	  Prefix TLVs which indicate IP prefixes the Relay knows to be present on the link.
+	  [SC: Why include the Link Prefix TLVs here? What is that for?]
+	  [SC: Would it be useful to include a textual name (e.g., “en0”) here?]
+	</t>
+	<t>
+	  The mDNS Link Available TLV can only be used as a DSO unidirectional message TLV, and is not
+	  acknowledged.
+	</t>
+      </section>
+      <section anchor="luna" title="Link Unavailable">
+	<t>
+	  The Link Unavailable TLV is used by Discovery Relays to indicate to Clients that an
+	  existing link has become unavailable.
+	  The DSO-TYPE for this TLV is TBD-U.
+	  DSO-LENGTH is always 5.
+	  DSO-DATA is a Discovery Relay Link Identifier.
+	</t>
+	<t>
+	  The mDNS Link Unavailable TLV can only be used as a DSO unidirectional message TLV, and is not
+	  acknowledged.
+	</t>
+      </section>
       <section anchor="mDNSlinkrq" title="mDNS Link Data Request">
 	<t>
-	  The mDNS Link Data Request TLV conveys a link identifier from which a Client
-	  is requesting that a Discovery Relay forward mDNS traffic.  The link identifier
-	  comes from the provisioning configuration (see <xref target="prov"/>).
-	  The DSO-TYPE for this TLV is TBD-R.  DSO-LENGTH is always 5.
-	  DSO-DATA is the 8-bit address family followed by the link identifier,
-	  a 32-bit unsigned integer in network (big endian) byte order, as described in <xref target="prov"/>.
-	  An address family value of 1 indicates IPv4 and 2 indicates IPv6,
-	  as recorded in the IANA Registry of Address Family Numbers <xref target="AdFam"/>.
+	  The mDNS Link Data Request TLV conveys a Link Identifier from which a Client
+	  is requesting that a Discovery Relay forward mDNS traffic.
+	  The Link Identifier
+	  may come from the provisioning configuration (see <xref target="prov"/>)
+	  or may be learned dynamically by the Client from the Discovery Relay itself
+	  via a Link State Request operation.
+	  The DSO-TYPE for this TLV is TBD-R.
+	  DSO-LENGTH is always 5.
+	  DSO-DATA is a Discovery Relay Link Identifier.
 	</t>
 	<t>
 	  The mDNS Link Data Request TLV can only be used as a primary TLV, and requires an
 	  acknowledgement.
+	  [SC: Do we need an acknowledgement?]
 	</t>
 	<t>
 	  At most one mDNS Link Data Request TLV may appear in a DSO message.
@@ -577,14 +685,32 @@
 	  If a Discovery Relay receives a duplicate link subscription request, it MUST immediately
 	  abort that DSO session with a TCP reset (RST).
 	</t>
+	<t>
+	  It is not an error for a Client to send a Link Data Request referencing
+	  a Link Identifier for a link on the Discovery Relay that is currently inactive,
+	  or that the Discovery Relay is otherwise currently unaware of.
+	  If the referenced link is unavailable or unknown,
+	  the Discovery Relay records the request,
+	  and should that link become available later
+	  the Discovery Relay begins forwarding mDNS traffic.
+	  Similarly, a link to which a Client is currently subscribed
+	  may become temporarily unavailable
+	  (e.g., when an Ethernet cable is disconnected)
+	  and may later reappear
+	  (e.g., when the Ethernet cable is reconnected).
+	  The disappearance of a link does not cause a corresponding
+	  Link Data Request to be terminated,
+	  though the Client may be made aware of the state change
+	  via Link State Request response messages.
+	</t>
       </section>
       <section anchor="mDNSdis" title="mDNS Link Data Discontinue">
 	<t>
 	  The mDNS Link Data Discontinue TLV is used by Clients to unsubscribe to mDNS messages on the
 	  specified multicast link.
-	  DSO-TYPE is TBD-D.  DSO-LENGTH is always 5.
-	  DSO-DATA is the 8-bit address family followed by the 32-bit link identifier,
-	  a 32-bit unsigned integer in network (big endian) byte order, as described in <xref target="prov"/>.
+	  The DSO-TYPE for this TLV is TBD-D.
+	  DSO-LENGTH is always 5.
+	  DSO-DATA is a Discovery Relay Link Identifier.
 	</t>
 	<t>
 	  The mDNS Link Data Discontinue TLV can only be used as a DSO unidirectional message TLV, and is not acknowledged.
@@ -595,6 +721,27 @@
 	  each containing a single mDNS Link Data Discontinue TLV.
 	</t>
       </section>
+      <section anchor="mDNSmessage" title="Encapsulated mDNS Message">
+	<t>
+	  The Encapsulated mDNS Message TLV is used to communicate an mDNS message that a Relay is forwarding
+	  from a multicast link to a Client, or that a Client is sending to a Relay
+	  for transmission on a multicast link.  Only the application-layer payload of the mDNS
+	  message is carried in the DSO "Encapsulated mDNS Message" TLV, i.e., just the DNS message itself,
+	  beginning with the DNS Message ID, not the IP or UDP headers.
+	  The DSO-TYPE for this TLV is TBD-M.
+	  DSO-LENGTH is the length of the encapsulated mDNS message.
+	  DSO-DATA is the content of the encapsulated mDNS message.
+	  An Encapsulated mDNS Message TLV MUST be accompanied by a Link Identifier additional TLV.
+	  If an Encapsulated mDNS Message TLV is received
+	  without an accompanying Link Identifier additional TLV
+	  that is a fatal error and the Discovery Relay MUST
+	  immediately abort that DSO session with a TCP reset (RST).
+	</t>
+	<t>
+	  The Encapsulated mDNS Message TLV can only be used as a 
+	  DSO unidirectional message TLV, and is not acknowledged.
+	</t>
+      </section>
       <section anchor="linkid" title="Link Identifier">
 	<t>
 	  This option is used both in DSO messages from Discovery Relays to Clients
@@ -602,28 +749,13 @@
 	  that contain mDNS messages to be transmitted on the multicast link.  In the former
 	  case, it indicates the multicast link on which the message was received; in the latter
 	  case, it indicates the multicast link on which the message should be transmitted.
-	  DSO-TYPE is TBD-L.  DSO-LENGTH is always 5.  DSO-DATA is the 8-bit address family
-	  followed by the link identifier,
-	  a 32-bit unsigned integer in network (big endian) byte order, as described in <xref target="prov"/>.
+	  The DSO-TYPE for this TLV is TBD-L.
+	  DSO-LENGTH is always 5.
+	  DSO-DATA is a Discovery Relay Link Identifier.
 	</t>
 	<t>
 	  The Link Identifier TLV can only be used as an additional TLV.
 	  The Link Identifier TLV can only appear at most once in a Discovery Relay DSO message.
-	</t>
-      </section>
-      <section anchor="mDNSmessage" title="Encapsulated mDNS Message">
-	<t>
-	  The Encapsulated mDNS Message TLV is used to communicate an mDNS message that a Relay is forwarding
-	  from a multicast link to a Client, or that a Client is sending to a Relay
-	  for transmission on a multicast link.  Only the application-layer payload of the mDNS
-	  message is carried in the DSO "Encapsulated mDNS Message" TLV, i.e., just the DNS message itself,
-	  beginning with the DNS Message ID, not the IP or UDP headers.  The DSO-TYPE for this
-	  TLV is TBD-M.  DSO-LENGTH is the length of the encapsulated mDNS message.  DSO-DATA is
-	  the content of the encapsulated mDNS message.
-	</t>
-	<t>
-	  The Encapsulated mDNS Message TLV can only be used as a 
-	  DSO unidirectional message TLV, and is not acknowledged.
 	</t>
       </section>
       <section anchor="ipsrc" title="IP Source">
@@ -631,7 +763,7 @@
 	  The IP Source TLV is used to report the IP source address and port from which an mDNS
 	  message was received.  This TLV is present in DSO messages from Discovery Relays to
 	  Clients that contain encapsulated mDNS messages.
-	  DSO-TYPE is TBD-S.
+	  The DSO-TYPE for this TLV is TBD-S.
 	  DSO-LENGTH is either 6, for an IPv4 address, or 18, for an IPv6 address.
 	  DSO-DATA is the two-byte source port, followed by the 4- or 16-byte IP Address.
 	  Both port and address are in the canonical byte order
@@ -640,87 +772,76 @@
 	<t>
 	  The IP Source TLV can only be used as an additional TLV.
 	  The IP Source TLV can only appear at most once in a Discovery Relay DSO message.
-	</t>
-      </section>
-      <section anchor="reporch" title="Link State Request">
-	<t>
-	  The Link State Request TLV requests that the Discovery Relay report link changes.
-	  When the relay is reporting link changes and a new link becomes available, it sends a
-	  Link Available message to the Client.  When a link becomes unavailable, it sends a
-	  Link Unavailable message to the Client.  If there are links available when the request
-	  is received, then for each such link the relay immediately sends a Link Available
-	  Message to the Client.  DSO-TYPE is TBD-P.  DSO-LENGTH is 0.
-	</t>
-	<t>
-	  The mDNS Link State Request TLV can only be used as a primary TLV, and requires an
-	  acknowledgement.  The acknowledgment does not contain a Link Available TLV: it is just a
-	  response to the Link State Request message.
-	</t>
-      </section>
-      <section anchor="streporch" title="Link State Discontinue">
-	<t>
-	  The Link State Discontinue TLV requests that the Discovery Relay stop reporting
-	  on the availability of links supported by the relay.  This cancels the effect of a
-	  Link State Request TLV.  DSO-TYPE is TBD-Q.   DSO-LENGTH is 0.
-	</t>
-	<t>
-	  The mDNS Link State Discontinue TLV can only be used as a DSO unidirectional message TLV, and is not
-	  acknowledged.
-	</t>
-      </section>
-      <section anchor="lava" title="Link Available">
-	<t>
-	  The Link Available TLV is used by Discovery Relays to indicate to Clients that a new
-	  link has become available.  The format is the same as the Link Identifier TLV.
-	  DSO-TYPE is TBD-V.  The Link Available TLV may be accompanied by one or more Link
-	  Prefix TLVs which indicate IP prefixes the Relay knows to be present on the link.
-	</t>
-	<t>
-	  The mDNS Link Available TLV can only be used as a DSO unidirectional message TLV, and is not
-	  acknowledged.
-	</t>
-      </section>
-      <section anchor="luna" title="Link Unavailable">
-	<t>
-	  The Link Unavailable TLV is used by Discovery Relays to indicate to Clients that an
-	  existing link has become unavailable.  The format is the same as the Link Identifier
-	  TLV.  DSO-TYPE is TBD-U.
-	</t>
-	<t>
-	  The mDNS Link Unavailable TLV can only be used as a DSO unidirectional message TLV, and is not
-	  acknowledged.
+	  [SC: Do we need IP Source? What is the intended usage?]
 	</t>
       </section>
       <section anchor="linkpre" title="Link Prefix">
 	<t>
-	  The Link Prefix TLV represents an IP address or prefix configured on a link.  The
-	  length is 17 for an IPv6 address or prefix, and 5 for an IPv4 address or prefix.  The
-	  TLV consists of a prefix length, between 0 and 32 for IPv4 or between 0 and 128 for
-	  IPv6, represented as a single byte.  This is followed by the IP address, either four
-	  or sixteen bytes.   DSO-TYPE is TBD-K.
+	  The Link Prefix TLV represents an IP address or prefix configured on a link.
+	  TLV 
+	  The DSO-TYPE for this TLV is TBD-K.
+	  DSO-LENGTH is 17 for an IPv6 address or prefix, or 5 for an IPv4 address or prefix.
+	  DSO-DATA consists of a prefix length,
+	  between 0 and 32 for IPv4 or between 0 and 128 for IPv6,
+	  represented as a single byte.
+	  This is followed by the IP address, either four or sixteen bytes.
+	  [SC: Do we need Link Prefix? What is the intended usage?]
 	</t>
 	<t>
 	  The Link Prefix TLV can only be used as a secondary TLV.
 	</t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="48" ?>
       </section>
     </section>
 
     <section anchor="prov" title="Provisioning">
       <t keepWithNext="true">
-	In order for a Discovery Proxy to use Discovery Relays, it must be configured with
+	In order for a Discovery Proxy <xref target="RFC8766"/>
+	to use Discovery Relays, the Discovery Proxy must be configured with
 	sufficient information to identify multicast links on which service discovery is to be
 	supported and, if it is not running on a host that is directly connected to those
 	multicast links, connect to Discovery Relays supporting those multicast links.
       </t>
       <t>
 	A Discovery Relay must be configured both with a set of multicast links to which the host on which
-	it is running is connected, on which mDNS relay service is to be provided, and also with
+	it is running is connected, on which mDNS Relay service is to be provided, and also with
 	a list of one or more Clients authorized to use it.
       </t>
       <t>
-	On a network supporting DNS Service Discovery using Discovery Relays, more than one
-	different Discovery Relay implementation may be present.  While it may be that
+	On a network supporting DNS Service Discovery using Discovery Relays, multiple
+	different Discovery Relay implementations may be present.  While it may be that
 	only a single Discovery Proxy is present, that implementation will need to be able to be
 	configured to interoperate with all of the Discovery Relays that are present.
 	Consequently, it is necessary that a standard set of configuration parameters be defined
@@ -762,6 +883,30 @@
 	  No two entities can have the same human-readable name.
 	  Similarly, no two entities can have the same machine-readable name.
 	</t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="35" ?>
 	<section title="Multicast Link">
 	  <t>
@@ -770,16 +915,17 @@
 	  <dl>
 	    <dt>link-identifier</dt>
 	    <dd>
-		A 32-bit identifier that uniquely identifies that link within the Discovery
+		A 32-bit unsigned integer that uniquely identifies that link within the Discovery
 		Domain.  Each link MUST have exactly one such identifier.  Link Identifiers do
 		not have any special semantics, and are not intended to be human-readable.
+		[SC: Do we want link-identifiers to be per-domain or per-relay?]
 	    </dd>
 	    <dt>ldh-name</dt>
 	    <dd>
 		A fully-qualified domain name for the multicast link that is used to form an LDH
 		domain name as described in section 5.3 of the Discovery Proxy specification
 		<xref target="RFC8766"/>.  This name is used to identify the link
-		during provisioning, and must be present.
+		during provisioning, and must be present and unique within the Discovery Domain.
 	    </dd>
 	    <dt>hr-name</dt>
 	    <dd>
@@ -792,7 +938,8 @@
 	  </dl>
 	  <t>
 	    The ldh-name and hr-name can be used to form the LDH and human-readable
-	    domain names as described in <xref target="RFC8766"/>, section 5.3.
+	    domain names as described in
+	    section 5.3 of the Discovery Proxy specification <xref target="RFC8766"/>.
 	  </t>
 	  <t>
 	    Note that the ldh-name and hr-name can be used in two different ways.
@@ -821,6 +968,42 @@
 	    MAC addresses or IPv6 addresses. They are used internally by the software
 	    as unique identifiers, but generally are not exposed to end users.
 	  </t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+<?rfc needLines="35" ?>
 	</section>
 	<section title="Discovery Proxy">
 	  <t>
@@ -830,6 +1013,7 @@
 	      <dt>name</dt>
 	      <dd>
 		a machine-readable name used to reference this Discovery Proxy in provisioning.
+		Must be unique within a Discovery Domain.
 	      </dd>
 	      <dt>hr-name</dt>
 	      <dd>
@@ -862,13 +1046,14 @@
 		the list of addresses listened on for incoming client requests may differ from the
 		'source-ip-addresses' list of addresses used for issuing outbound connection requests
 		to Discovery Relays.
-		If any of these addresses are reachable from outside
+		If any of these public addresses are reachable from outside
 		of the Discovery Domain, services in that domain will be discoverable outside of
 		the domain.
 	      </dd>
 	      <dt>multicast links</dt>
 	      <dd>
-		a list of multicast links on which this Discovery Proxy is expected to provide service
+		a list of the ldh-names of multicast links
+		on which this Discovery Proxy is expected to provide service.
 	      </dd>
 	    </dl>
 	  <t>
@@ -877,7 +1062,7 @@
 	  </t>
 	  <t>
 	    In some configurations it may make sense for the Discovery Relay not to have a list
-	    of links, but simply to support the set of all links available on relays to which the
+	    of links, but simply to support the set of all links available on Relays to which the
 	    Discovery Proxy is configured to communicate.
 	  </t>
 	</section>
@@ -888,7 +1073,7 @@
 	    <dl>
 	      <dt>name</dt>
 	      <dd>
-		a required machine-readable identifier used to reference the relay
+		a required machine-readable identifier used to reference the Relay
 	      </dd>
 	      <dt>hr-name</dt>
 	      <dd>
@@ -913,12 +1098,13 @@
 	      <dt>listen-tuple</dt>
 	      <dd>
 		a list of IP address/port tuples that may be used to connect to the Discovery
-		Relay.  The relay may be configured to listen on all addresses on a single port,
-		but this is not required, so the port as well as the address must be specified.
+		Relay.  The Relay may be configured to listen on all addresses on a single port,
+		but this is not required, so the listening port must be specified for each listening address,
+		even when all listening addresses are using the same port.
 	      </dd>
 	      <dt>multicast links</dt>
 	      <dd>
-		a list of multicast links to which this relay is physically connected.
+		a list of multicast links to which this Relay is physically connected.
 	      </dd>
 	    </dl>
 	  <t>
@@ -929,7 +1115,7 @@
 	  <t>
 	    In some cases a Relay may not be configured with a static list of links, but may
 	    simply discover links by monitoring the set of available interfaces on the host on
-	    which the Relay is running.  In that case, the relay could be configured to identify
+	    which the Relay is running.  In that case, the Relay could be configured to identify
 	    links based on the names of network interfaces, or based on the set of available
 	    prefixes seen on those interfaces.  The details of this sort of configuration
 	    are not specified in this document.
@@ -939,22 +1125,52 @@
       <section title="Configuration Files">
 	<t>
 	  For this discussion, we assume the simplest possible means of configuring Discovery
-	  Proxies and Discovery Relays: the configuration file.  Any environment where changes
+	  Proxies and Discovery Relays: the textual configuration file.  Any environment where changes
 	  will happen on a regular basis will either require some automatic means of generating
 	  these configuration files as the network topology changes, or will need to use a more
 	  automatic method for configuration, such as HNCP <xref target="RFC7788"/>.
 	</t>
 	<t>
 	  There are many different ways to organize configuration files.  This discussion
-	  assumes that multicast links, relays and proxies will be specified as objects, as described
+	  assumes that multicast links, Relays and proxies will be specified as objects, as described
 	  above, perhaps in a master file, and then the specific configuration of each proxy
-	  or relay will reference the set of objects in the master file, referencing objects
+	  or Relay will reference the set of objects in the master file, referencing objects
 	  by name.  This approach is not required, but is simply shown as an example.
-	  In addition, the private keys for each proxy or relay must appear only in that
-	  proxy or relay's configuration file.
+	  In addition, the private keys for each proxy or Relay must appear only in that
+	  proxy or Relay's configuration file.
 	</t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
+      <t></t>
 <?rfc needLines="48" ?>
-	<t>
+	<t keepWithNext="true">
 	  The master file contains a list of Discovery Relays, Discovery Proxies and Multicast Links.
 	  Each object has a name and all the other data associated with it.  We do not formally
 	  specify the format of the file, but it might look something like this:
@@ -1044,7 +1260,7 @@ Relay Downstairs
 
     <section anchor="security" title="Security Considerations">
 	<t keepWithNext="true">
-	  Part of the purpose of the Multicast DNS Discovery Relay protocol is to place a simple relay,
+	  Part of the purpose of the Multicast DNS Discovery Relay protocol is to place a simple Relay,
 	  analogous to a BOOTP relay, into routers and similar devices that may not be updated frequently.
 	  The <xref target="RFC0951">BOOTP</xref> protocol has been around since 1985, and continues to be useful today.
 	  The BOOTP protocol uses no encryption, and in many enterprise networks this is considered acceptable.
@@ -1095,18 +1311,21 @@ Relay Downstairs
 	<tr><td>DSO-TYPE</td>	<td>Status</td>	        <td>Name</td></tr>
       </thead>
       <tbody>
-	<tr><td>TBD-R</td>		<td>Standard</td>		<td>Link Data Request</td></tr>
-	<tr><td>TBD-D</td>		<td>Standard</td>		<td>Link Data Discontinue</td></tr>
-	<tr><td>TBD-L</td>		<td>Standard</td>		<td>Link Identifier</td></tr>
-	<tr><td>TBD-M</td>		<td>Standard</td>		<td>Encapsulated mDNS Message</td></tr>
-	<tr><td>TBD-S</td>		<td>Standard</td>		<td>IP Source</td></tr>
 	<tr><td>TBD-P</td>		<td>Standard</td>		<td>Link State Request</td></tr>
 	<tr><td>TBD-Q</td>		<td>Standard</td>		<td>Link State Discontinue</td></tr>
 	<tr><td>TBD-V</td>		<td>Standard</td>		<td>Link Available</td></tr>
 	<tr><td>TBD-U</td>		<td>Standard</td>		<td>Link Unavailable</td></tr>
+	<tr><td>TBD-R</td>		<td>Standard</td>		<td>Link Data Request</td></tr>
+	<tr><td>TBD-D</td>		<td>Standard</td>		<td>Link Data Discontinue</td></tr>
+	<tr><td>TBD-M</td>		<td>Standard</td>		<td>Encapsulated mDNS Message</td></tr>
+	<tr><td>TBD-L</td>		<td>Standard</td>		<td>Link Identifier</td></tr>
+	<tr><td>TBD-S</td>		<td>Standard</td>		<td>IP Source</td></tr>
 	<tr><td>TBD-K</td>		<td>Standard</td>		<td>Link Prefix</td></tr>
       </tbody>
       </table>
+      <t>
+	[SC: We should include the standard DSO table here.]
+      </t>
     </section>
 
     <section title="Acknowledgments">
